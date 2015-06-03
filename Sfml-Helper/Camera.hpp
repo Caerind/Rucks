@@ -7,6 +7,17 @@
 namespace sfh
 {
 
+sf::FloatRect getViewRect(sf::View const& view)
+{
+    return sf::FloatRect(view.getCenter()-view.getSize()*0.5f,view.getSize());
+}
+
+bool isInView(sf::FloatRect const& rect, sf::View const& view)
+{
+    return rect.intersects(getViewRect(view));
+}
+
+
 class Camera : public sf::View
 {
     public:
@@ -19,6 +30,9 @@ class Camera : public sf::View
         void detach();
 
         void update();
+
+        bool isIn(sf::FloatRect const& rect);
+        sf::FloatRect getRect();
 
     private:
         sf::Transformable* mTarget;
@@ -63,6 +77,15 @@ void Camera::update()
     }
 }
 
+bool Camera::isIn(sf::FloatRect const& rect)
+{
+    return isInView(rect,*this);
+}
+
+sf::FloatRect Camera::getRect()
+{
+    return getViewRect(*this);
+}
 
 
 } // namespace sfh
