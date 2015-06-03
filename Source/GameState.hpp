@@ -6,6 +6,11 @@
 #include <map>
 #include <Thor/Input/Connection.hpp>
 
+#include "PauseState.hpp"
+#include "EndState.hpp"
+
+#include "World.hpp"
+
 class GameState : public ah::State
 {
     public:
@@ -22,8 +27,10 @@ class GameState : public ah::State
 
     private:
         void toPause();
+        void toEnd();
 
     private:
+        World mWorld;
         std::map<std::string,thor::Connection> mConnections;
 };
 

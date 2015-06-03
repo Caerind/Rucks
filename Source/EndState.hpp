@@ -1,15 +1,17 @@
-#ifndef LOADINGSTATE_HPP
-#define LOADINGSTATE_HPP
+#ifndef ENDSTATE_HPP
+#define ENDSTATE_HPP
 
 #include "../Aharos/State.hpp"
 #include "../SimpleGui/SimpleGui.hpp"
 
-#include "GameState.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 
-class LoadingState : public ah::State
+#include "MenuState.hpp"
+
+class EndState : public ah::State
 {
     public:
-        LoadingState(ah::StateManager& manager);
+        EndState(ah::StateManager& manager);
 
         static std::string getID();
 
@@ -18,11 +20,14 @@ class LoadingState : public ah::State
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     private:
-        void toGame();
+        void toMenu();
 
     private:
+        sf::RectangleShape mShape;
+
         sg::Container mContainer;
-        sg::Timer::Ptr mTimer;
+        sg::Box::Ptr mMenu;
 };
 
-#endif // LOADINGSTATE_HPP
+
+#endif // ENDSTATE_HPP

@@ -79,6 +79,7 @@ void App::loadStateManager()
     registerState<LoadingState>(LoadingState::getID());
     registerState<GameState>(GameState::getID());
     registerState<PauseState>(PauseState::getID());
+    registerState<EndState>(EndState::getID());
 
     pushState(IntroState::getID());
 }

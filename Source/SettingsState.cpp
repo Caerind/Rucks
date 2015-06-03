@@ -12,18 +12,18 @@ SettingsState::SettingsState(ah::StateManager& manager) : ah::State(manager)
     mShape.setSize(static_cast<sf::Vector2f>(getApplication().getSize()));
     mShape.setFillColor(sf::Color(35,35,35,150));
 
-    auto back = mContainer.create<sg::Box>();
-    back->setSize(sf::Vector2f(300,60));
-    back->setPosition(250,400);
-    back->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
-    back->setTextureRect(sf::IntRect(0,0,300,50),0);
-    back->setTextureRect(sf::IntRect(0,50,300,50),1);
-    back->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    back->setTextAlign(sg::Box::Center);
-    back->setTextColor(sf::Color::White);
-    back->setString("Back to " + mLastState);
-    back->setCharacterSize(20);
-    back->setCallback([&](){backState();},0);
+    mBack = mContainer.create<sg::Box>();
+    mBack->setSize(sf::Vector2f(300,60));
+    mBack->setPosition(250,400);
+    mBack->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mBack->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mBack->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mBack->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mBack->setTextAlign(sg::Box::Center);
+    mBack->setTextColor(sf::Color::White);
+    mBack->setString("Back to " + mLastState);
+    mBack->setCharacterSize(20);
+    mBack->setCallback([&](){backState();},0);
 }
 
 std::string SettingsState::getID()

@@ -5,13 +5,13 @@ IntroState::IntroState(ah::StateManager& manager) : ah::State(manager)
 {
     mType = IntroState::getID();
 
-    auto timer = mContainer.create<sg::Timer>();
-    timer->setSize(sf::Vector2f(600,50));
-    timer->setPosition(100,400);
-    timer->setFillColor(sf::Color(36, 44, 102));
-    timer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
-    timer->restart(sf::seconds(0.3));
-    timer->setCallback([&](){toMenu();},0);
+    mTimer = mContainer.create<sg::Timer>();
+    mTimer->setSize(sf::Vector2f(600,50));
+    mTimer->setPosition(100,400);
+    mTimer->setFillColor(sf::Color(36, 44, 102));
+    mTimer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
+    mTimer->restart(sf::seconds(0.3));
+    mTimer->setCallback([&](){toMenu();},0);
 }
 
 std::string IntroState::getID()

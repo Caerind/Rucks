@@ -25,8 +25,11 @@ class PreGameState : public ah::State
         void toMenu();
 
     private:
-        sg::Container mContainer;
         sf::RectangleShape mShape;
+
+        sg::Container mContainer;
+        sg::Box::Ptr mLoading;
+        sg::Box::Ptr mMenu;
 };
 
 #endif // PREGAMESTATE_HPP

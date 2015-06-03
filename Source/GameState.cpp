@@ -1,7 +1,7 @@
 #include "GameState.hpp"
 #include "App.hpp"
 
-GameState::GameState(ah::StateManager& manager) : ah::State(manager)
+GameState::GameState(ah::StateManager& manager) : ah::State(manager), mWorld(manager.getApplication())
 {
     mType = GameState::getID();
 }
@@ -13,11 +13,13 @@ std::string GameState::getID()
 
 bool GameState::handleEvent(sf::Event const& event)
 {
+    mWorld.handleEvent(event);
     return true;
 }
 
 bool GameState::update(sf::Time dt)
 {
+    mWorld.update(dt);
     return true;
 }
 
@@ -46,4 +48,10 @@ void GameState::onDeactivate()
 void GameState::toPause()
 {
     requestPush(PauseState::getID());
+}
+
+void GameState::toEnd()
+{
+    requestClear();
+    requestPush(EndState::getID());
 }

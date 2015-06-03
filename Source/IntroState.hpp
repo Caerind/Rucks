@@ -22,6 +22,7 @@ class IntroState : public ah::State
 
     private:
         sg::Container mContainer;
+        sg::Timer::Ptr mTimer;
 };
 
 #endif // INTROSTATE_HPP

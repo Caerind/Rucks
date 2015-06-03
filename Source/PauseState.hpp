@@ -6,7 +6,7 @@
 
 #include <SFML/Graphics/RectangleShape.hpp>
 
-#include "MenuState.hpp"
+#include "EndState.hpp"
 #include "GameState.hpp"
 #include "SettingsState.hpp"
 
@@ -27,7 +27,7 @@ class PauseState : public ah::State
     private:
         void toGame();
         void toSettings();
-        void toMenu();
+        void toEnd();
 
     private:
         sf::RectangleShape mShape;
@@ -35,7 +35,7 @@ class PauseState : public ah::State
         sg::Container mContainer;
         sg::Box::Ptr mGame;
         sg::Box::Ptr mSettings;
-        sg::Box::Ptr mMenu;
+        sg::Box::Ptr mEnd;
 };
 
 #endif // PAUSESTATE_HPP

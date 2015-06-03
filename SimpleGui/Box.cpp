@@ -27,14 +27,14 @@ void Box::update(sf::Event const& event, sf::Vector2f mousePosition)
 {
     if (mEnabled && mVisible)
     {
-        if (event.type == sf::Event::MouseMoved && getGlobalBounds().contains(mousePosition) && !mActive)
+        if (getGlobalBounds().contains(mousePosition) && !mActive)
         {
             setActive(true);
             if (mCallbacks.size() >= 2)
                 if (mCallbacks[1])
                     mCallbacks[1]();
         }
-        if (event.type == sf::Event::MouseMoved && !getGlobalBounds().contains(mousePosition) && mActive)
+        if (!getGlobalBounds().contains(mousePosition) && mActive)
         {
             setActive(false);
             if (mCallbacks.size() >= 2)

@@ -10,6 +10,7 @@
 #include "LoadingState.hpp"
 #include "GameState.hpp"
 #include "PauseState.hpp"
+#include "EndState.hpp"
 
 class App : public ah::Application
 {

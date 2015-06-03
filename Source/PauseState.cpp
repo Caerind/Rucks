@@ -34,18 +34,18 @@ PauseState::PauseState(ah::StateManager& manager) : ah::State(manager)
     mSettings->setCharacterSize(20);
     mSettings->setCallback([&](){toSettings();},0);
 
-    mMenu = mContainer.create<sg::Box>();
-    mMenu->setSize(sf::Vector2f(300,60));
-    mMenu->setPosition(250,400);
-    mMenu->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
-    mMenu->setTextureRect(sf::IntRect(0,0,300,50),0);
-    mMenu->setTextureRect(sf::IntRect(0,50,300,50),1);
-    mMenu->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    mMenu->setTextAlign(sg::Box::Center);
-    mMenu->setTextColor(sf::Color::White);
-    mMenu->setString("Menu");
-    mMenu->setCharacterSize(20);
-    mMenu->setCallback([&](){toMenu();},0);
+    mEnd = mContainer.create<sg::Box>();
+    mEnd->setSize(sf::Vector2f(300,60));
+    mEnd->setPosition(250,400);
+    mEnd->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mEnd->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mEnd->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mEnd->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mEnd->setTextAlign(sg::Box::Center);
+    mEnd->setTextColor(sf::Color::White);
+    mEnd->setString("Stop");
+    mEnd->setCharacterSize(20);
+    mEnd->setCallback([&](){toEnd();},0);
 }
 
 std::string PauseState::getID()
@@ -76,14 +76,14 @@ void PauseState::onActivate()
 {
     mGame->setEnabled(true);
     mSettings->setEnabled(true);
-    mMenu->setEnabled(true);
+    mEnd->setEnabled(true);
 }
 
 void PauseState::onDeactivate()
 {
     mGame->setEnabled(false);
     mSettings->setEnabled(false);
-    mMenu->setEnabled(false);
+    mEnd->setEnabled(false);
 }
 
 void PauseState::toGame()
@@ -96,8 +96,8 @@ void PauseState::toSettings()
     requestPush(SettingsState::getID());
 }
 
-void PauseState::toMenu()
+void PauseState::toEnd()
 {
     requestClear();
-    requestPush(MenuState::getID());
+    requestPush(EndState::getID());
 }

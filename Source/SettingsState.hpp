@@ -21,9 +21,11 @@ class SettingsState : public ah::State
         void backState();
 
     private:
-        sg::Container mContainer;
         sf::RectangleShape mShape;
         std::string mLastState;
+
+        sg::Container mContainer;
+        sg::Box::Ptr mBack;
 };
 
 #endif // SETTINGSSTATE_HPP

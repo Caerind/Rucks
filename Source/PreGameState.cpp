@@ -8,31 +8,31 @@ PreGameState::PreGameState(ah::StateManager& manager) : ah::State(manager)
     mShape.setSize(static_cast<sf::Vector2f>(getApplication().getSize()));
     mShape.setFillColor(sf::Color(35,35,35,150));
 
-    auto loading = mContainer.create<sg::Box>();
-    loading->setSize(sf::Vector2f(300,60));
-    loading->setPosition(250,200);
-    loading->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
-    loading->setTextureRect(sf::IntRect(0,0,300,50),0);
-    loading->setTextureRect(sf::IntRect(0,50,300,50),1);
-    loading->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    loading->setTextAlign(sg::Box::Center);
-    loading->setTextColor(sf::Color::White);
-    loading->setString("Play");
-    loading->setCharacterSize(20);
-    loading->setCallback([&](){toLoading();},0);
+    mLoading = mContainer.create<sg::Box>();
+    mLoading->setSize(sf::Vector2f(300,60));
+    mLoading->setPosition(250,200);
+    mLoading->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mLoading->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mLoading->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mLoading->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mLoading->setTextAlign(sg::Box::Center);
+    mLoading->setTextColor(sf::Color::White);
+    mLoading->setString("Play");
+    mLoading->setCharacterSize(20);
+    mLoading->setCallback([&](){toLoading();},0);
 
-    auto menu = mContainer.create<sg::Box>();
-    menu->setSize(sf::Vector2f(300,60));
-    menu->setPosition(250,300);
-    menu->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
-    menu->setTextureRect(sf::IntRect(0,0,300,50),0);
-    menu->setTextureRect(sf::IntRect(0,50,300,50),1);
-    menu->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    menu->setTextAlign(sg::Box::Center);
-    menu->setTextColor(sf::Color::White);
-    menu->setString("Back to Menu");
-    menu->setCharacterSize(20);
-    menu->setCallback([&](){toMenu();},0);
+    mMenu = mContainer.create<sg::Box>();
+    mMenu->setSize(sf::Vector2f(300,60));
+    mMenu->setPosition(250,300);
+    mMenu->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mMenu->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mMenu->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mMenu->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mMenu->setTextAlign(sg::Box::Center);
+    mMenu->setTextColor(sf::Color::White);
+    mMenu->setString("Back to Menu");
+    mMenu->setCharacterSize(20);
+    mMenu->setCallback([&](){toMenu();},0);
 }
 
 std::string PreGameState::getID()

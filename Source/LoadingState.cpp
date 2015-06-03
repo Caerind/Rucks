@@ -5,16 +5,16 @@ LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
 {
     mType = LoadingState::getID();
 
-    auto timer = mContainer.create<sg::Timer>();
-    timer->setSize(sf::Vector2f(600,50));
-    timer->setPosition(100,400);
-    timer->setFillColor(sf::Color(36, 44, 102));
-    timer->setFont(getApplication().getFont("Assets/Fonts/sansation.ttf"));
-    timer->setTextColor(sf::Color::White);
-    timer->setCharacterSize(20);
-    timer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
-    timer->restart(sf::seconds(1));
-    timer->setCallback([&](){toGame();},0);
+    mTimer = mContainer.create<sg::Timer>();
+    mTimer->setSize(sf::Vector2f(600,50));
+    mTimer->setPosition(100,400);
+    mTimer->setFillColor(sf::Color(36, 44, 102));
+    mTimer->setFont(getApplication().getFont("Assets/Fonts/sansation.ttf"));
+    mTimer->setTextColor(sf::Color::White);
+    mTimer->setCharacterSize(20);
+    mTimer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
+    mTimer->restart(sf::seconds(1));
+    mTimer->setCallback([&](){toGame();},0);
 }
 
 std::string LoadingState::getID()
