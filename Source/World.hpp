@@ -10,29 +10,36 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/View.hpp>
 
-#include "Packet.hpp"
 #include "ChunkManager.hpp"
+#include "EntityManager.hpp"
+
+class OnlineManager;
 
 class World : public sf::Drawable
 {
     public:
-        World(ah::Application& application);
+        World(ah::Application& application, bool online);
         ~World();
 
         void handleEvent(sf::Event const& event);
         void update(sf::Time dt);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-        bool isOnline();
-
         ah::Application& getApplication();
-
+        ChunkManager& getChunkManager();
+        EntityManager& getEntityManager();
+        OnlineManager& getOnlineManager();
         sf::View& getView();
+
+        bool isOnline();
 
     private:
         ah::Application& mApplication;
-
+        ChunkManager mChunkManager;
+        EntityManager mEntityManager;
+        OnlineManager& mOnlineManager;
         sf::View mView;
+        bool mOnline;
 };
 
 #endif // WORLD_HPP

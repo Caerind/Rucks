@@ -7,6 +7,11 @@ App& App::instance()
     return mInstance;
 }
 
+OnlineManager& App::getOnlineManager()
+{
+    return mOnlineManager;
+}
+
 void App::loadData()
 {
     ah::DataManager::setData("up",thor::toString(sf::Keyboard::Z));

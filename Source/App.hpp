@@ -2,6 +2,7 @@
 #define APP_HPP
 
 #include "../Aharos/Application.hpp"
+#include "OnlineManager.hpp"
 
 #include "IntroState.hpp"
 #include "MenuState.hpp"
@@ -17,6 +18,8 @@ class App : public ah::Application
     public:
         static App& instance();
 
+        OnlineManager& getOnlineManager();
+
     private:
         void loadData();
         void loadLog();
@@ -30,6 +33,8 @@ class App : public ah::Application
         ~App();
 
         static App mInstance;
+
+        OnlineManager mOnlineManager;
 };
 
 #endif // APP_HPP

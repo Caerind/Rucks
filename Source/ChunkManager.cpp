@@ -1,5 +1,6 @@
 #include "ChunkManager.hpp"
 #include "World.hpp"
+#include "OnlineManager.hpp"
 
 ChunkManager::ChunkManager(World& world) : mWorld(world)
 {
@@ -27,6 +28,7 @@ void ChunkManager::update()
                 if (mWorld.isOnline())
                 {
                     mChunks[m.x+1][m.y+1]->setPos(p+m);
+                    mWorld.getOnlineManager().askChunk(p+m);
                 }
                 else
                 {
