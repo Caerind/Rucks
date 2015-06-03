@@ -5,41 +5,47 @@ MenuState::MenuState(ah::StateManager& manager) : ah::State(manager)
 {
     mType = MenuState::getID();
 
-    auto pregame = mContainer.create<sg::Box>();
-    pregame->setSize(sf::Vector2f(300,60));
-    pregame->setPosition(250,200);
-    pregame->setFillColor(sf::Color(127, 137, 168),0);
-    pregame->setFillColor(sf::Color(167, 179, 205),1);
-    pregame->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    pregame->setTextAlign(sg::Box::Center);
-    pregame->setTextColor(sf::Color::White);
-    pregame->setString("Play");
-    pregame->setCharacterSize(20);
-    pregame->setCallback([&](){toPreGame();},0);
+    mShape.setSize(static_cast<sf::Vector2f>(getApplication().getSize()));
+    mShape.setTexture(&getApplication().getTexture("Assets/Textures/background.png"));
 
-    auto settings = mContainer.create<sg::Box>();
-    settings->setSize(sf::Vector2f(300,60));
-    settings->setPosition(250,300);
-    settings->setFillColor(sf::Color(127, 137, 168),0);
-    settings->setFillColor(sf::Color(167, 179, 205),1);
-    settings->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    settings->setTextAlign(sg::Box::Center);
-    settings->setTextColor(sf::Color::White);
-    settings->setString("Settings");
-    settings->setCharacterSize(20);
-    settings->setCallback([&](){toSettings();},0);
+    mPregame = mContainer.create<sg::Box>();
+    mPregame->setSize(sf::Vector2f(300,60));
+    mPregame->setPosition(250,200);
+    mPregame->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mPregame->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mPregame->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mPregame->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mPregame->setTextAlign(sg::Box::Center);
+    mPregame->setTextColor(sf::Color::White);
+    mPregame->setString("Play");
+    mPregame->setCharacterSize(20);
+    mPregame->setCallback([&](){toPreGame();},0);
 
-    auto quit = mContainer.create<sg::Box>();
-    quit->setSize(sf::Vector2f(300,60));
-    quit->setPosition(250,400);
-    quit->setFillColor(sf::Color(127, 137, 168),0);
-    quit->setFillColor(sf::Color(167, 179, 205),1);
-    quit->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
-    quit->setTextAlign(sg::Box::Center);
-    quit->setTextColor(sf::Color::White);
-    quit->setString("Quit");
-    quit->setCharacterSize(20);
-    quit->setCallback([&](){quitGame();},0);
+    mSettings = mContainer.create<sg::Box>();
+    mSettings->setSize(sf::Vector2f(300,60));
+    mSettings->setPosition(250,300);
+    mSettings->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mSettings->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mSettings->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mSettings->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mSettings->setTextAlign(sg::Box::Center);
+    mSettings->setTextColor(sf::Color::White);
+    mSettings->setString("Settings");
+    mSettings->setCharacterSize(20);
+    mSettings->setCallback([&](){toSettings();},0);
+
+    mQuit = mContainer.create<sg::Box>();
+    mQuit->setSize(sf::Vector2f(300,60));
+    mQuit->setPosition(250,400);
+    mQuit->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    mQuit->setTextureRect(sf::IntRect(0,0,300,50),0);
+    mQuit->setTextureRect(sf::IntRect(0,50,300,50),1);
+    mQuit->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mQuit->setTextAlign(sg::Box::Center);
+    mQuit->setTextColor(sf::Color::White);
+    mQuit->setString("Quit");
+    mQuit->setCharacterSize(20);
+    mQuit->setCallback([&](){quitGame();},0);
 }
 
 std::string MenuState::getID()
@@ -62,12 +68,26 @@ bool MenuState::update(sf::Time dt)
 void MenuState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    target.draw(mContainer);
+    target.draw(mShape,states);
+    target.draw(mContainer,states);
+}
+
+void MenuState::onActivate()
+{
+    mPregame->setEnabled(true);
+    mSettings->setEnabled(true);
+    mQuit->setEnabled(true);
+}
+
+void MenuState::onDeactivate()
+{
+    mPregame->setEnabled(false);
+    mSettings->setEnabled(false);
+    mQuit->setEnabled(false);
 }
 
 void MenuState::toPreGame()
 {
-    requestClear();
     requestPush(PreGameState::getID());
 }
 

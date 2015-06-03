@@ -5,11 +5,15 @@ PreGameState::PreGameState(ah::StateManager& manager) : ah::State(manager)
 {
     mType = PreGameState::getID();
 
+    mShape.setSize(static_cast<sf::Vector2f>(getApplication().getSize()));
+    mShape.setFillColor(sf::Color(35,35,35,150));
+
     auto loading = mContainer.create<sg::Box>();
     loading->setSize(sf::Vector2f(300,60));
     loading->setPosition(250,200);
-    loading->setFillColor(sf::Color(127, 137, 168),0);
-    loading->setFillColor(sf::Color(167, 179, 205),1);
+    loading->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    loading->setTextureRect(sf::IntRect(0,0,300,50),0);
+    loading->setTextureRect(sf::IntRect(0,50,300,50),1);
     loading->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
     loading->setTextAlign(sg::Box::Center);
     loading->setTextColor(sf::Color::White);
@@ -20,8 +24,9 @@ PreGameState::PreGameState(ah::StateManager& manager) : ah::State(manager)
     auto menu = mContainer.create<sg::Box>();
     menu->setSize(sf::Vector2f(300,60));
     menu->setPosition(250,300);
-    menu->setFillColor(sf::Color(127, 137, 168),0);
-    menu->setFillColor(sf::Color(167, 179, 205),1);
+    menu->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    menu->setTextureRect(sf::IntRect(0,0,300,50),0);
+    menu->setTextureRect(sf::IntRect(0,50,300,50),1);
     menu->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
     menu->setTextAlign(sg::Box::Center);
     menu->setTextColor(sf::Color::White);
@@ -38,7 +43,7 @@ std::string PreGameState::getID()
 bool PreGameState::handleEvent(sf::Event const& event)
 {
     mContainer.update(event,getApplication().getMousePosition());
-    return true;
+    return false;
 }
 
 bool PreGameState::update(sf::Time dt)
@@ -50,7 +55,8 @@ bool PreGameState::update(sf::Time dt)
 void PreGameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    target.draw(mContainer);
+    target.draw(mShape,states);
+    target.draw(mContainer,states);
 }
 
 void PreGameState::toLoading()

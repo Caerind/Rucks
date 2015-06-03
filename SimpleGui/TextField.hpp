@@ -9,6 +9,8 @@ namespace sg
 class TextField : public Box
 {
     public:
+        typedef std::shared_ptr<TextField> Ptr;
+
         TextField();
         TextField(Widget* parent);
 

@@ -16,6 +16,8 @@ namespace sg
 class Box : public Widget
 {
     public:
+        typedef std::shared_ptr<Box> Ptr;
+
         enum TextAlign
         {
             Left,

@@ -9,8 +9,10 @@ App& App::instance()
 
 void App::loadData()
 {
-    //ah::DataManager::setData("sound-name","Example/explosion.wav");
-    //ah::DataManager::setData<float>("speed-x",75.f);
+    ah::DataManager::setData("up",thor::toString(sf::Keyboard::Z));
+    ah::DataManager::setData("left",thor::toString(sf::Keyboard::Q));
+    ah::DataManager::setData("down",thor::toString(sf::Keyboard::S));
+    ah::DataManager::setData("right",thor::toString(sf::Keyboard::D));
 }
 
 void App::loadLog()
@@ -63,6 +65,9 @@ void App::loadActionMap()
     mCallbackSystem.connect("screenshot",[&](thor::ActionContext<std::string> context){
         capture().saveToFile("Assets/Screenshots/" + ah::getTime("%d-%m-%y_%H-%M-%S") + ".png");
     });
+
+    // Pause
+    mActionMap["pause"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce);
 }
 
 void App::loadStateManager()

@@ -4,6 +4,8 @@
 #include "../Aharos/State.hpp"
 #include "../SimpleGui/SimpleGui.hpp"
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include "PreGameState.hpp"
 #include "SettingsState.hpp"
 
@@ -18,13 +20,21 @@ class MenuState : public ah::State
         bool update(sf::Time dt);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+        void onActivate();
+        void onDeactivate();
+
     private:
         void toPreGame();
         void toSettings();
         void quitGame();
 
     private:
+        sf::RectangleShape mShape;
+
         sg::Container mContainer;
+        sg::Box::Ptr mPregame;
+        sg::Box::Ptr mSettings;
+        sg::Box::Ptr mQuit;
 };
 
 #endif // MENUSTATE_HPP

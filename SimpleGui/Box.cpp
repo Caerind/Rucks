@@ -114,11 +114,11 @@ void Box::setFillColor(sf::Color color, std::size_t id)
         mFillColors[id] = color;
         if (id == 0 && mFillColors.size() >= 3)
         {
-            if (mFillColors[1] == sf::Color(0,0,0,0))
+            if (mFillColors[1] == sf::Color(0,0,0))
             {
                 mFillColors[1] = color;
             }
-            if (mFillColors[2] == sf::Color(0,0,0,0))
+            if (mFillColors[2] == sf::Color(0,0,0))
             {
                 mFillColors[2] = color;
             }

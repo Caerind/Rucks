@@ -10,7 +10,7 @@ IntroState::IntroState(ah::StateManager& manager) : ah::State(manager)
     timer->setPosition(100,400);
     timer->setFillColor(sf::Color(36, 44, 102));
     timer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
-    timer->restart(sf::seconds(3));
+    timer->restart(sf::seconds(0.3));
     timer->setCallback([&](){toMenu();},0);
 }
 
@@ -34,7 +34,7 @@ bool IntroState::update(sf::Time dt)
 void IntroState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    target.draw(mContainer);
+    target.draw(mContainer,states);
 }
 
 void IntroState::toMenu()

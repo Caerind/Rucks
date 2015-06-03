@@ -14,6 +14,8 @@ namespace sg
 class Timer : public Box, public thor::Timer
 {
     public:
+        typedef std::shared_ptr<Timer> Ptr;
+
         Timer();
         Timer(Widget* parent);
 

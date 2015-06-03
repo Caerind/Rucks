@@ -4,6 +4,8 @@
 #include "../Aharos/State.hpp"
 #include "../SimpleGui/SimpleGui.hpp"
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include "MenuState.hpp"
 #include "LoadingState.hpp"
 
@@ -24,6 +26,7 @@ class PreGameState : public ah::State
 
     private:
         sg::Container mContainer;
+        sf::RectangleShape mShape;
 };
 
 #endif // PREGAMESTATE_HPP

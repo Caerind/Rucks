@@ -11,6 +11,8 @@ namespace sg
 class Slider : public Box
 {
     public:
+        typedef std::shared_ptr<Slider> Ptr;
+
         Slider();
         Slider(Widget* parent);
 

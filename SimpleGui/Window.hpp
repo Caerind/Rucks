@@ -9,6 +9,8 @@ namespace sg
 class Window : public Box
 {
     public:
+        typedef std::shared_ptr<Window> Ptr;
+
         Window();
         Window(Widget* parent);
 

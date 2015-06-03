@@ -25,3 +25,25 @@ void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
 }
+
+void GameState::onActivate()
+{
+    mConnections.clear();
+
+    // Pause
+    mConnections["pause"] = getApplication().getCallbackSystem().connect("pause",[&](thor::ActionContext<std::string> context){toPause();});
+}
+
+void GameState::onDeactivate()
+{
+    for (auto itr = mConnections.begin(); itr != mConnections.end(); itr++)
+    {
+        itr->second.disconnect();
+    }
+    mConnections.clear();
+}
+
+void GameState::toPause()
+{
+    requestPush(PauseState::getID());
+}

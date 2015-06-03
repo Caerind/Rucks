@@ -9,6 +9,8 @@ namespace sg
 class CheckBox : public Box
 {
     public:
+        typedef std::shared_ptr<CheckBox> Ptr;
+
         CheckBox();
         CheckBox(Widget* parent);
 

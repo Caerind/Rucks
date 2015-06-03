@@ -6,15 +6,18 @@ SettingsState::SettingsState(ah::StateManager& manager) : ah::State(manager)
     mType = SettingsState::getID();
 
     mLastState = mManager.getLastActiveStateType().substr(0,4);
+    if (mLastState == "Paus")
+        mLastState = "Game";
 
     mShape.setSize(static_cast<sf::Vector2f>(getApplication().getSize()));
-    mShape.setFillColor(sf::Color(0,0,0,150));
+    mShape.setFillColor(sf::Color(35,35,35,150));
 
     auto back = mContainer.create<sg::Box>();
     back->setSize(sf::Vector2f(300,60));
     back->setPosition(250,400);
-    back->setFillColor(sf::Color(127, 137, 168),0);
-    back->setFillColor(sf::Color(167, 179, 205),1);
+    back->setTexture(getApplication().getTexture("Assets/Textures/gui.png"));
+    back->setTextureRect(sf::IntRect(0,0,300,50),0);
+    back->setTextureRect(sf::IntRect(0,50,300,50),1);
     back->setFont(getApplication().getFont("Assets/Fonts/aniron.ttf"));
     back->setTextAlign(sg::Box::Center);
     back->setTextColor(sf::Color::White);
@@ -43,8 +46,8 @@ bool SettingsState::update(sf::Time dt)
 void SettingsState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    target.draw(mShape);
-    target.draw(mContainer);
+    target.draw(mShape,states);
+    target.draw(mContainer,states);
 }
 
 void SettingsState::backState()

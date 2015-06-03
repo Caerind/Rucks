@@ -101,22 +101,30 @@ void StateManager::applyPendingChanges()
                 if (!mStates.empty())
                 {
                     mLastActiveStateType = mStates.back()->getType();
+                    mStates.back()->onDeactivate();
                 }
 				mStates.push_back(createState(change.id));
+				mStates.back()->onActivate();
 				break;
 
 			case Action::Pop:
                 if (!mStates.empty())
                 {
                     mLastActiveStateType = mStates.back()->getType();
+                    mStates.back()->onDeactivate();
                 }
 				mStates.pop_back();
+				if (!mStates.empty())
+                {
+                    mStates.back()->onActivate();
+                }
 				break;
 
 			case Action::Clear:
                 if (!mStates.empty())
                 {
                     mLastActiveStateType = mStates.back()->getType();
+                    mStates.back()->onDeactivate();
                 }
                 mStates.clear();
                 break;
