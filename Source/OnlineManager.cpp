@@ -35,6 +35,8 @@ void OnlineManager::disconnect()
         updateLinked(mSocket.send(packet));
     }
     mSocket.disconnect();
+    mSocket.setBlocking(false);
+    mClientId = 0;
 }
 
 bool OnlineManager::isLinked()

@@ -8,14 +8,12 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Thread.hpp>
 
-#include "Message.hpp"
-#include "Output.hpp"
 #include "Peer.hpp"
 #include "Settings.hpp"
-#include "CommandHandler.hpp"
 
 #include "../Source/PacketType.hpp"
 
+#include "../Aharos/Clock.hpp"
 #include "../Aharos/String.hpp"
 
 class Server
@@ -30,13 +28,10 @@ class Server
         void sendToAll(sf::Packet& packet);
         void sendToPeer(sf::Packet& packet, unsigned int peerId);
 
-        Settings& getSettings();
-        Output& getOutput();
-
-        void list();
-        void connected();
+        void handleCommand(std::string const& command);
 
         void broadcastMessage(std::string const& username, std::string const& message);
+        void write(std::string const& username, std::string const& message);
 
     protected:
         void setListening(bool enable);
@@ -51,8 +46,6 @@ class Server
         void handleDisconnections();
 
     protected:
-        Output mOutput;
-
         sf::Thread mThread;
         bool mRunning;
 
@@ -70,7 +63,7 @@ class Server
 
         std::vector<Peer::Ptr> mPeers;
 
-        CommandHandler mCommandHandler;
+        std::ofstream mFile;
 };
 
 #endif // SERVER_HPP

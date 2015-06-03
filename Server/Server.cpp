@@ -1,42 +1,53 @@
 #include "Server.hpp"
 
 Server::Server()
-: mOutput()
-, mThread(&Server::run,this)
+: mThread(&Server::run,this)
 , mRunning(false)
 , mListener()
 , mListeningState(false)
 , mSettings()
 , mConnectedPlayers(0)
 , mPeers(1)
-, mCommandHandler(*this)
 {
-    mOutput.init(this);
-
     mMaxPlayers = mSettings.getInt("maxplayers");
     mPort = mSettings.getInt("port");
     mClientTimeoutTime = sf::seconds(mSettings.getFloat("timeout"));
     mUpdateInterval = sf::seconds(mSettings.getFloat("update"));
 
+    std::string logfile = mSettings.getString("logfile");
+    if (logfile == "")
+        logfile = "Assets/Log/server.log";
+    mFile.open(logfile,std::ios::app);
+    if(!mFile.is_open())
+    {
+        std::cout << "Error : Log file cannot be opened" << std::endl;
+    }
+
     mListener.setBlocking(false);
     mPeers[0].reset(new Peer());
 
-	mOutput.write("","Game Server Version 0.1");
+	write("","Game Server Version 0.1");
 
 	start();
 
-	mCommandHandler.run();
+	std::string line;
+    while (isRunning())
+    {
+        line.clear();
+        std::getline(std::cin,line);
+        handleCommand(line);
+    }
 }
 
 void Server::start()
 {
-    mOutput.write("","Starting server...");
+    write("","Starting server...");
 
     mRunning = true;
 
     mThread.launch();
 
-    mOutput.write("","Server started !");
+    write("","Server started !");
 }
 
 void Server::stop()
@@ -53,7 +64,7 @@ void Server::stop()
 
     mThread.wait();
 
-    mOutput.write("","Server stopped !");
+    write("","Server stopped !");
 }
 
 bool Server::isRunning() const
@@ -83,40 +94,78 @@ void Server::sendToPeer(sf::Packet& packet, unsigned int peerId)
     }
 }
 
-Settings& Server::getSettings()
+void Server::handleCommand(std::string const& command)
 {
-    return mSettings;
-}
-
-Output& Server::getOutput()
-{
-    return mOutput;
-}
-
-void Server::list()
-{
-    connected();
-    for (unsigned int i = 0; i < mConnectedPlayers; i++)
+    std::vector<std::string> args;
+    std::stringstream ss(command);
+    std::string arg;
+    while (std::getline(ss,arg,' '))
     {
-        if (mPeers[i]->isConnected())
+        args.push_back(arg);
+    }
+
+    if (args.size() == 0)
+    {
+        return;
+    }
+    if (args[0] == "stop")
+    {
+        stop();
+    }
+    else if (args[0] == "list")
+    {
+        write("","Players : " + ah::to_string(mConnectedPlayers) + " / " + ah::to_string(mMaxPlayers));
+        for (unsigned int i = 0; i < mConnectedPlayers; i++)
         {
-            std::string str = " - " + mPeers[i]->getName();
-            mOutput.write("",str);
+            if (mPeers[i]->isConnected())
+            {
+                std::string str = " - " + mPeers[i]->getName();
+                write("",str);
+            }
         }
     }
-}
-
-void Server::connected()
-{
-    mOutput.write("","Players : " + ah::to_string(mConnectedPlayers) + " / " + ah::to_string(mMaxPlayers));
+    else if (args[0] == "connected")
+    {
+        write("","Players : " + ah::to_string(mConnectedPlayers) + " / " + ah::to_string(mMaxPlayers));
+    }
+    else if (args[0] == "say")
+    {
+        std::string str;
+        for (unsigned int i = 1; i < args.size(); i++)
+        {
+            str += args[i];
+            if (i != args.size()-1)
+            {
+                str += " ";
+            }
+        }
+        broadcastMessage("",str);
+    }
+    else if (args[0] == "help")
+    {
+        write("","help : See the list of commands");
+        write("","stop : Stop the server");
+        write("","list : See the list of players");
+        write("","connected : See the number of connected players");
+        write("","say : Say something as Server");
+    }
 }
 
 void Server::broadcastMessage(std::string const& username, std::string const& message)
 {
-    mOutput.write(username,message);
+    write(username,message);
     sf::Packet mPacket;
     mPacket << Server2Client::Message << username << message;
     sendToAll(mPacket);
+}
+
+void Server::write(std::string const& username, std::string const& message)
+{
+    std::string e = (username == "") ? "[Server]" : username;
+    std::string line = ah::getTime("[%x][%X]") + " " + e + " : " + message;
+    std::cout << line << std::endl;
+    if (mFile.is_open())
+        mFile << line << std::endl;
 }
 
 void Server::setListening(bool enable)
@@ -187,7 +236,6 @@ void Server::handlePackets()
 	if (detectedTimeout)
 		handleDisconnections();
 
-    // Ping
     sf::Packet packet;
     packet << Server2Client::None;
     sendToAll(packet);
@@ -276,7 +324,4 @@ void Server::handleDisconnections()
 			++itr;
 		}
 	}
-
-	std::cout << "Debugged !" << std::endl;
-
 }

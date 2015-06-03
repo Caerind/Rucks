@@ -17,7 +17,6 @@ class Output
         void init(Server* server);
         void write(std::string const& emitter, std::string const& content);
 
-        static std::string getTime();
 
     protected:
         bool open(std::string const& filename);

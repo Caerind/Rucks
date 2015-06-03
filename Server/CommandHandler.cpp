@@ -8,14 +8,7 @@ CommandHandler::CommandHandler(Server& server)
 
 void CommandHandler::run()
 {
-    std::string line;
 
-    while (mServer.isRunning())
-    {
-        line.clear();
-        std::getline(std::cin, line);
-        handle(line);
-    }
 }
 
 CommandHandler::Arguments CommandHandler::splitArguments(std::string const& command)
@@ -35,21 +28,7 @@ void CommandHandler::handle(std::string const& command)
     Arguments args = splitArguments(command);
 
     // Return if no arguments
-    if (args.size() == 0)
-    {
-        return;
-    }
 
-    if (args[0] == "stop")
-        handleStop(args);
-    else if (args[0] == "list")
-        handleList(args);
-    else if (args[0] == "connected")
-        handleConnected(args);
-    else if (args[0] == "say")
-        handleSay(args);
-    else if (args[0] == "help")
-        handleHelp(args);
 }
 
 void CommandHandler::handleStop(Arguments args)
@@ -79,16 +58,16 @@ void CommandHandler::handleSay(Arguments args)
         }
     }
     sf::Packet packet;
-    mServer.getOutput().write("",str);
+    mServer.write("",str);
     packet << Server2Client::Message << "" << str;
     mServer.sendToAll(packet);
 }
 
 void CommandHandler::handleHelp(Arguments args)
 {
-    mServer.getOutput().write("","help : See the list of commands");
-    mServer.getOutput().write("","stop : Stop the server");
-    mServer.getOutput().write("","list : See the list of players");
-    mServer.getOutput().write("","connected : See the number of connected players");
-    mServer.getOutput().write("","say : Say something as Server");
+    mServer.write("","help : See the list of commands");
+    mServer.write("","stop : Stop the server");
+    mServer.write("","list : See the list of players");
+    mServer.write("","connected : See the number of connected players");
+    mServer.write("","say : Say something as Server");
 }
