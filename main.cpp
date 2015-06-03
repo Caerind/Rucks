@@ -8,7 +8,15 @@ int main()
     return 0;
 }
 
-#endif // RUCKS_SERVER
+#endif
+
+
+
+
+
+
+
+
 
 #ifdef RUCKS_SERVER
 
@@ -21,17 +29,17 @@ int main()
 	Output out;
 	GameServer server(&out);
 	CommandHandler command(&server);
-	
+
 	std::string line;
-	
+
 	while (server.isRunning())
 	{
 		line.clear();
 		std::getline(std::cin, line);
 		command.handle(line);
 	}
-	
+
 	return 0;
 }
 
-#endif // RUCKS_SERVER
+#endif
