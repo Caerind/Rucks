@@ -1,5 +1,6 @@
 #include "OnlineManager.hpp"
 #include "World.hpp"
+#include "App.hpp"
 
 OnlineManager::OnlineManager() : mWorld(nullptr)
 {
@@ -27,7 +28,7 @@ bool OnlineManager::connect(sf::IpAddress ip, int port)
 void OnlineManager::disconnect()
 {
     mSocket.setBlocking(true);
-    if (isOk())
+    if (mLinked)
     {
         sf::Packet packet;
         packet << Client2Server::Disconnect;
@@ -51,9 +52,19 @@ sf::Time OnlineManager::getTimeSinceLastPacket()
     return mTimeSinceLastPacket.getElapsedTime();
 }
 
+bool OnlineManager::timedOut()
+{
+    return mTimeSinceLastPacket.getElapsedTime() > sf::seconds(3);
+}
+
+void OnlineManager::resetTimeSinceLastPacket()
+{
+    mTimeSinceLastPacket.restart();
+}
+
 bool OnlineManager::isOk()
 {
-    return (mLinked && mConnected && mTimeSinceLastPacket.getElapsedTime() < sf::seconds(3));
+    return (mLinked && mConnected && !timedOut());
 }
 
 std::string OnlineManager::getUsername()
@@ -71,16 +82,15 @@ void OnlineManager::handlePackets()
             mTimeSinceLastPacket.restart();
             sf::Int32 type;
             packet >> type;
-            std::cout << type << std::endl;
             switch (type)
             {
                 case Server2Client::None: break;
-                case Server2Client::ClientJoined: break;
-                case Server2Client::ClientLeft: break;
-                case Server2Client::ServerStopped: break;
-                case Server2Client::Message: break;
-                case Server2Client::SendChunk: break;
-                case Server2Client::ModifyChunk: break;
+                case Server2Client::ClientJoined: clientJoined(packet); break;
+                case Server2Client::ClientLeft: clientLeft(packet); break;
+                case Server2Client::ServerStopped: serverStopped(packet); break;
+                case Server2Client::Message: receiveMessage(packet); break;
+                case Server2Client::SendChunk: receiveChunk(packet); break;
+                case Server2Client::ModifyChunk: modifyChunk(packet); break;
                 default: break;
             }
         }

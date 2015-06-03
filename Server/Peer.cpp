@@ -6,6 +6,9 @@ Peer::Peer()
 {
     mClientId = mIdCounter++;
     mSocket.setBlocking(false);
+    mReady = false;
+    mTimedOut = false;
+    mName = "Default";
 }
 
 sf::TcpSocket& Peer::getSocket()
@@ -40,12 +43,12 @@ sf::Time Peer::getLastPacketTime() const
 
 bool Peer::isReady() const
 {
-    return mReady;
+    return (mReady && !hasTimedOut());
 }
 
 bool Peer::isConnected() const
 {
-    return (mReady && mName != "");
+    return (isReady()&& mName != "");
 }
 
 bool Peer::hasTimedOut() const
@@ -62,7 +65,10 @@ void Peer::setReady(bool ready)
 {
     mReady = ready;
     if (mReady)
+    {
         mLastPacketTime.restart();
+        mTimedOut = false;
+    }
 }
 
 void Peer::setTimedOut(bool timedOut)

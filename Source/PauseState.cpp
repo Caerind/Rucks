@@ -98,6 +98,7 @@ void PauseState::toSettings()
 
 void PauseState::toEnd()
 {
+    App::instance().getOnlineManager().disconnect();
     requestClear();
     requestPush(EndState::getID());
 }

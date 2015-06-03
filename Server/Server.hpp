@@ -10,16 +10,18 @@
 
 #include "Message.hpp"
 #include "Output.hpp"
-#include "../Source/PacketType.hpp"
 #include "Peer.hpp"
 #include "Settings.hpp"
+#include "CommandHandler.hpp"
+
+#include "../Source/PacketType.hpp"
 
 #include "../Aharos/String.hpp"
 
 class Server
 {
     public:
-        Server(Output* output);
+        Server();
 
         void start();
         void stop();
@@ -29,10 +31,12 @@ class Server
         void sendToPeer(sf::Packet& packet, unsigned int peerId);
 
         Settings& getSettings();
-        Output* getOutput();
+        Output& getOutput();
 
         void list();
         void connected();
+
+        void broadcastMessage(std::string const& username, std::string const& message);
 
     protected:
         void setListening(bool enable);
@@ -47,7 +51,7 @@ class Server
         void handleDisconnections();
 
     protected:
-        Output* mOutput;
+        Output mOutput;
 
         sf::Thread mThread;
         bool mRunning;
@@ -66,7 +70,7 @@ class Server
 
         std::vector<Peer::Ptr> mPeers;
 
-
+        CommandHandler mCommandHandler;
 };
 
 #endif // SERVER_HPP

@@ -20,6 +20,16 @@ bool GameState::handleEvent(sf::Event const& event)
 bool GameState::update(sf::Time dt)
 {
     mWorld.update(dt);
+
+    if (!App::instance().getOnlineManager().isOk())
+    {
+        App::instance() << ah::to_string(App::instance().getOnlineManager().isLinked());
+        App::instance() << ah::to_string(App::instance().getOnlineManager().isConnected());
+        App::instance() << ah::to_string(App::instance().getOnlineManager().timedOut());
+
+        toEnd();
+    }
+
     return true;
 }
 
@@ -34,6 +44,8 @@ void GameState::onActivate()
 
     // Pause
     mConnections["pause"] = getApplication().getCallbackSystem().connect("pause",[&](thor::ActionContext<std::string> context){toPause();});
+
+    App::instance().getOnlineManager().resetTimeSinceLastPacket();
 }
 
 void GameState::onDeactivate()

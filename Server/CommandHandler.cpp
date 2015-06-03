@@ -1,9 +1,21 @@
 #include "CommandHandler.hpp"
+#include "Server.hpp"
 
-CommandHandler::CommandHandler(Server* server)
-: mServer(nullptr)
+CommandHandler::CommandHandler(Server& server)
+: mServer(server)
 {
-    mServer = server;
+}
+
+void CommandHandler::run()
+{
+    std::string line;
+
+    while (mServer.isRunning())
+    {
+        line.clear();
+        std::getline(std::cin, line);
+        handle(line);
+    }
 }
 
 CommandHandler::Arguments CommandHandler::splitArguments(std::string const& command)
@@ -42,20 +54,17 @@ void CommandHandler::handle(std::string const& command)
 
 void CommandHandler::handleStop(Arguments args)
 {
-    if (mServer != nullptr)
-        mServer->stop();
+    mServer.stop();
 }
 
 void CommandHandler::handleList(Arguments args)
 {
-    if (mServer != nullptr)
-        mServer->list();
+    mServer.list();
 }
 
 void CommandHandler::handleConnected(Arguments args)
 {
-    if (mServer != nullptr)
-        mServer->connected();
+    mServer.connected();
 }
 
 void CommandHandler::handleSay(Arguments args)
@@ -69,32 +78,17 @@ void CommandHandler::handleSay(Arguments args)
             str += " ";
         }
     }
-    if (mServer != nullptr)
-    {
-        Output* out = mServer->getOutput();
-        if (out != nullptr)
-        {
-            sf::Packet packet;
-            Message msg;
-            msg = out->write("",str);
-            packet << Server2Client::Message << msg.username << msg.message;
-            mServer->sendToAll(packet);
-        }
-    }
+    sf::Packet packet;
+    mServer.getOutput().write("",str);
+    packet << Server2Client::Message << "" << str;
+    mServer.sendToAll(packet);
 }
 
 void CommandHandler::handleHelp(Arguments args)
 {
-    if (mServer != nullptr)
-    {
-        Output* out = mServer->getOutput();
-        if (out != nullptr)
-        {
-            out->write("","help : See the list of commands");
-            out->write("","stop : Stop the server");
-            out->write("","list : See the list of players");
-            out->write("","connected : See the number of connected players");
-            out->write("","say : Say something as Server");
-        }
-    }
+    mServer.getOutput().write("","help : See the list of commands");
+    mServer.getOutput().write("","stop : Stop the server");
+    mServer.getOutput().write("","list : See the list of players");
+    mServer.getOutput().write("","connected : See the number of connected players");
+    mServer.getOutput().write("","say : Say something as Server");
 }

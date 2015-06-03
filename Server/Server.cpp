@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
-Server::Server(Output* output)
-: mOutput(output)
+Server::Server()
+: mOutput()
 , mThread(&Server::run,this)
 , mRunning(false)
 , mListener()
@@ -9,11 +9,9 @@ Server::Server(Output* output)
 , mSettings()
 , mConnectedPlayers(0)
 , mPeers(1)
+, mCommandHandler(*this)
 {
-    if (mOutput != nullptr)
-    {
-        mOutput->init(this);
-    }
+    mOutput.init(this);
 
     mMaxPlayers = mSettings.getInt("maxplayers");
     mPort = mSettings.getInt("port");
@@ -21,30 +19,29 @@ Server::Server(Output* output)
     mUpdateInterval = sf::seconds(mSettings.getFloat("update"));
 
     mListener.setBlocking(false);
-	mPeers[0].reset(new Peer());
+    mPeers[0].reset(new Peer());
 
-	output->write("","Game Server Version 0.1");
+	mOutput.write("","Game Server Version 0.1");
 
 	start();
+
+	mCommandHandler.run();
 }
 
 void Server::start()
 {
-    if (mOutput != nullptr)
-        mOutput->write("","Starting server...");
+    mOutput.write("","Starting server...");
 
     mRunning = true;
 
     mThread.launch();
 
-    if (mOutput != nullptr)
-        mOutput->write("","Server started !");
+    mOutput.write("","Server started !");
 }
 
 void Server::stop()
 {
-    if (mOutput != nullptr)
-        mOutput->write("","Stopping server...");
+    broadcastMessage("","Stopping server...");
 
     setListening(false);
 
@@ -56,8 +53,7 @@ void Server::stop()
 
     mThread.wait();
 
-    if (mOutput != nullptr)
-        mOutput->write("","Server stopped !");
+    mOutput.write("","Server stopped !");
 }
 
 bool Server::isRunning() const
@@ -69,7 +65,7 @@ void Server::sendToAll(sf::Packet& packet)
 {
     for (std::size_t i = 0; i < mPeers.size(); i++)
     {
-        if (mPeers[i]->isReady())
+        if (mPeers[i]->isReady() && !mPeers[i]->hasTimedOut())
         {
             mPeers[i]->send(packet);
         }
@@ -80,7 +76,7 @@ void Server::sendToPeer(sf::Packet& packet, unsigned int peerId)
 {
     for (std::size_t i = 0; i < mPeers.size(); i++)
     {
-        if (mPeers[i]->isReady() && mPeers[i]->getClientId() == peerId)
+        if (mPeers[i]->isReady() && mPeers[i]->getClientId() == peerId && !mPeers[i]->hasTimedOut())
         {
             mPeers[i]->send(packet);
         }
@@ -92,7 +88,7 @@ Settings& Server::getSettings()
     return mSettings;
 }
 
-Output* Server::getOutput()
+Output& Server::getOutput()
 {
     return mOutput;
 }
@@ -102,19 +98,25 @@ void Server::list()
     connected();
     for (unsigned int i = 0; i < mConnectedPlayers; i++)
     {
-        if (mPeers[i]->isConnected() && mOutput != nullptr)
+        if (mPeers[i]->isConnected())
         {
             std::string str = " - " + mPeers[i]->getName();
-            mOutput->write("",str);
+            mOutput.write("",str);
         }
     }
 }
 
 void Server::connected()
 {
-    std::string str = "Players : " + ah::to_string(mConnectedPlayers) + " / " + ah::to_string(mMaxPlayers);
-    if (mOutput != nullptr)
-        mOutput->write("",str);
+    mOutput.write("","Players : " + ah::to_string(mConnectedPlayers) + " / " + ah::to_string(mMaxPlayers));
+}
+
+void Server::broadcastMessage(std::string const& username, std::string const& message)
+{
+    mOutput.write(username,message);
+    sf::Packet mPacket;
+    mPacket << Server2Client::Message << username << message;
+    sendToAll(mPacket);
 }
 
 void Server::setListening(bool enable)
@@ -166,24 +168,29 @@ void Server::handlePackets()
 	for (unsigned int i = 0; i < mConnectedPlayers; i++)
 	{
 		if (mPeers[i]->isReady())
-		{
-			sf::Packet packet;
-			while (mPeers[i]->receive(packet) == sf::Socket::Done)
-			{
-                handlePacket(packet,*mPeers[i], detectedTimeout);
-				packet.clear();
-			}
+        {
+            sf::Packet packet;
+            while (mPeers[i]->receive(packet) == sf::Socket::Done)
+            {
+                handlePacket(packet, *mPeers[i], detectedTimeout);
+                packet.clear();
+            }
 
-			if (mPeers[i]->getLastPacketTime() > mClientTimeoutTime)
-			{
-				mPeers[i]->setTimedOut(true);
-				detectedTimeout = true;
-			}
-		}
+            if (mPeers[i]->getLastPacketTime() > mClientTimeoutTime)
+            {
+                mPeers[i]->setTimedOut(true);
+                detectedTimeout = true;
+            }
+        }
 	}
 
 	if (detectedTimeout)
 		handleDisconnections();
+
+    // Ping
+    sf::Packet packet;
+    packet << Server2Client::None;
+    sendToAll(packet);
 }
 
 void Server::handlePacket(sf::Packet& packet, Peer& peer, bool& detectedTimeout)
@@ -205,13 +212,7 @@ void Server::handlePacket(sf::Packet& packet, Peer& peer, bool& detectedTimeout)
                 newPacket << Server2Client::ClientJoined << username << peer.getClientId() << peer.getClientId();
                 sendToAll(newPacket);
 
-                if (mOutput != nullptr)
-                {
-                    Message msg = mOutput->write("",username + " joined the game");
-                    sf::Packet mPacket;
-                    mPacket << Server2Client::Message << msg.username << msg.message;
-                    sendToAll(mPacket);
-                }
+                broadcastMessage("",username + " joined the game");
             }
         } break;
 
@@ -225,14 +226,7 @@ void Server::handlePacket(sf::Packet& packet, Peer& peer, bool& detectedTimeout)
         {
             std::string username, message;
             packet >> username >> message;
-
-            if (mOutput != nullptr)
-            {
-                Message msg = mOutput->write(username,message);
-                sf::Packet newPacket;
-                newPacket << Server2Client::Message << msg.username << msg.message;
-                sendToAll(newPacket);
-            }
+            broadcastMessage(username,message);
         } break;
 
         default: break;
@@ -262,19 +256,12 @@ void Server::handleDisconnections()
 	{
 		if ((*itr)->hasTimedOut())
 		{
-            sf::Packet packet;
+			mConnectedPlayers--;
+
+			sf::Packet packet;
             packet << Server2Client::ClientLeft << (*itr)->getClientId();
             sendToAll(packet);
-
-            if (mOutput != nullptr)
-            {
-                Message msg = mOutput->write("",(*itr)->getName() + " left the game");
-                sf::Packet mPacket;
-                mPacket << Server2Client::Message << msg.username << msg.message;
-                sendToAll(mPacket);
-            }
-
-			mConnectedPlayers--;
+            broadcastMessage("",std::string((*itr)->getName() + " left the game"));
 
 			itr = mPeers.erase(itr);
 
@@ -283,10 +270,13 @@ void Server::handleDisconnections()
 				mPeers.push_back(Peer::Ptr(new Peer()));
 				setListening(true);
 			}
-        }
+		}
 		else
 		{
 			++itr;
 		}
 	}
+
+	std::cout << "Debugged !" << std::endl;
+
 }

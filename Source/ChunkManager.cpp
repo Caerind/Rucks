@@ -19,7 +19,6 @@ void ChunkManager::update()
     sf::Vector2i p = worldToChunk(mWorld.getView().getCenter());
     if (mChunks[1][1]->getPos() != p)
     {
-        // TODO : Improve algotrithm
         sf::Vector2i m;
         for (m.x = -1; m.x < 2; m.x++)
         {
@@ -42,7 +41,7 @@ void ChunkManager::update()
 void ChunkManager::handleChunk(sf::Packet& packet)
 {
     sf::Vector2i chunkPos;
-    packet >> chunkPos.x >> chunkPos.y;
+    packet >> chunkPos;
     auto c = getChunk(chunkPos);
     if (c != nullptr)
         c->loadFromPacket(packet);
@@ -52,10 +51,7 @@ void ChunkManager::handleChunkModification(sf::Packet& packet)
 {
     sf::Vector2i chunkPos, tilePos;
     unsigned int layer, id;
-    packet >> chunkPos.x >> chunkPos.y;
-    packet >> tilePos.x >> tilePos.y;
-    packet >> layer;
-    packet >> id;
+    packet >> chunkPos >> tilePos >> layer >> id;
     setId(chunkPos,tilePos,layer,id);
 }
 

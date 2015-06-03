@@ -3,13 +3,17 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <string>
 
-#include "Server.hpp"
+class Server;
 
 class CommandHandler
 {
     public:
-        CommandHandler(Server* server);
+        CommandHandler(Server& server);
+
+        void run();
 
         friend Server;
 
@@ -26,7 +30,7 @@ class CommandHandler
         void handleHelp(Arguments args);
 
     protected:
-        Server* mServer;
+        Server& mServer;
 };
 
 #endif // COMMANDHANDLER_HPP

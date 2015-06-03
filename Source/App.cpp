@@ -18,6 +18,9 @@ void App::loadData()
     ah::DataManager::setData("left",thor::toString(sf::Keyboard::Q));
     ah::DataManager::setData("down",thor::toString(sf::Keyboard::S));
     ah::DataManager::setData("right",thor::toString(sf::Keyboard::D));
+
+    ah::DataManager::setData("ip","localhost");
+    ah::DataManager::setData("port","4567");
 }
 
 void App::loadLog()

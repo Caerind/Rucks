@@ -8,6 +8,7 @@ World::World(ah::Application& application, bool online)
 , mEntityManager(*this)
 , mOnlineManager(App::instance().getOnlineManager())
 , mView(mApplication.getDefaultView())
+, mOnline(online)
 {
     if (mOnline)
     {

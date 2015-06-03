@@ -16,16 +16,22 @@ void Output::init(Server* server)
     {
         logfile = "Assets/Log/server.log";
     }
-    if(!mLog.open(logfile))
+    if(!open(logfile))
     {
         std::cout << "Error : Log file cannot be opened" << std::endl;
     }
 }
 
-Message Output::write(std::string const& emitter, std::string const& content)
+bool Output::open(std::string const& filename)
 {
-    Message msg;
+    if (mFile.is_open())
+        mFile.close();
+    mFile.open(filename,std::ios::app);
+    return mFile.is_open();
+}
 
+void Output::write(std::string const& emitter, std::string const& content)
+{
     std::string realEmitter = emitter;
     if (emitter == "")
     {
@@ -39,34 +45,20 @@ Message Output::write(std::string const& emitter, std::string const& content)
     line += content;
 
     std::cout << line << std::endl;
-    if (mLog.isOpen())
+    if (mFile.is_open())
     {
-        mLog.write(line);
+        mFile << line << std::endl;
     }
-
-    msg.username = emitter;
-    msg.message = content;
-
-    return msg;
 }
 
 std::string Output::getTime()
 {
-    std::string actualTime;
-
-    char hour[4];
-    char minute[4];
-    char second[4];
-
     time_t rawtime;
-    time(&rawtime);
-    struct tm* timeInfo;
-    timeInfo = localtime(&rawtime);
-    strftime(hour,5,"%H",timeInfo);
-    strftime(minute,5,"%M",timeInfo);
-    strftime(second,5,"%S",timeInfo);
-
-    actualTime = std::string(hour) + ":" + std::string(minute) + ":" + std::string(second);
-
-    return actualTime;
+    struct tm* timeinfo;
+    char buffer[80];
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+    std::string timeFormat = "[%x][%X]";
+    strftime(buffer,80,timeFormat.c_str(),timeinfo);
+    return std::string(buffer);
 }

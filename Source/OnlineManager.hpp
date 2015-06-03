@@ -24,6 +24,8 @@ class OnlineManager
         bool isLinked(); // Return if we are connected to the server
         bool isConnected(); // Return if we are connected as player
         sf::Time getTimeSinceLastPacket();
+        bool timedOut();
+        void resetTimeSinceLastPacket();
         bool isOk(); // Return if all is ok
         std::string getUsername();
 

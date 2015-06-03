@@ -40,10 +40,8 @@ bool LoadingState::update(sf::Time dt)
 
     if (mConnectingState == 0)
     {
-        getApplication() << "Linking to localhost ...";
-        if (mOnlineManager.connect("localhost",4567))
+        if (mOnlineManager.connect(getApplication().getData<std::string>("ip"),getApplication().getData<int>("port")))
         {
-            getApplication() << "Linked to localhost !";
             mConnectingState++;
             mOnlineManager.sendLogin("cmdu76","bla");
             mClock.restart();
@@ -57,15 +55,12 @@ bool LoadingState::update(sf::Time dt)
         if (mOnlineManager.isOk())
         {
             mConnectingState++;
-            getApplication() << "Connecting to the game !";
         }
     }
     if (mConnectingState == 2)
     {
         toGame();
     }
-
-    getApplication().setDebugInfo("Co",ah::to_string(mConnectingState));
 
     return true;
 }

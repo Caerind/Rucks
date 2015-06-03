@@ -4,9 +4,8 @@
 #include <ctime>
 #include <iostream>
 #include <string>
-
-#include "Log.hpp"
-#include "Message.hpp"
+#include <fstream>
+#include <string>
 
 class Server;
 
@@ -16,13 +15,15 @@ class Output
         Output();
 
         void init(Server* server);
+        void write(std::string const& emitter, std::string const& content);
 
-        Message write(std::string const& emitter, std::string const& content);
-
-        std::string getTime();
+        static std::string getTime();
 
     protected:
-        Log mLog;
+        bool open(std::string const& filename);
+
+    protected:
+        std::ofstream mFile;
 };
 
 #endif // OUTPUT_HPP
