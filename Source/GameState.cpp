@@ -52,6 +52,7 @@ void GameState::toPause()
 
 void GameState::toEnd()
 {
+    App::instance().getOnlineManager().disconnect();
     requestClear();
     requestPush(EndState::getID());
 }

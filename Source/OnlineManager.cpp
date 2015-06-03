@@ -3,7 +3,13 @@
 
 OnlineManager::OnlineManager() : mWorld(nullptr)
 {
-    mSocket.setBlocking(true);
+    mClientId = 0;
+    mSocket.setBlocking(false);
+}
+
+OnlineManager::~OnlineManager()
+{
+    disconnect();
 }
 
 void OnlineManager::setWorld(World* world)
@@ -14,12 +20,20 @@ void OnlineManager::setWorld(World* world)
 bool OnlineManager::connect(sf::IpAddress ip, int port)
 {
     updateLinked(mSocket.connect(ip,port));
-    if (mLinked)
-    {
-        mSocket.setBlocking(false);
-    }
     mTimeSinceLastPacket.restart();
     return mLinked;
+}
+
+void OnlineManager::disconnect()
+{
+    mSocket.setBlocking(true);
+    if (isOk())
+    {
+        sf::Packet packet;
+        packet << Client2Server::Disconnect;
+        updateLinked(mSocket.send(packet));
+    }
+    mSocket.disconnect();
 }
 
 bool OnlineManager::isLinked()
@@ -34,12 +48,12 @@ bool OnlineManager::isConnected()
 
 sf::Time OnlineManager::getTimeSinceLastPacket()
 {
-    return mClock.getElapsedTime();
+    return mTimeSinceLastPacket.getElapsedTime();
 }
 
 bool OnlineManager::isOk()
 {
-    return (mLinked && mConnected && mClock.getElapsedTime() < sf::seconds(3));
+    return (mLinked && mConnected && mTimeSinceLastPacket.getElapsedTime() < sf::seconds(3));
 }
 
 std::string OnlineManager::getUsername()
@@ -57,6 +71,7 @@ void OnlineManager::handlePackets()
             mTimeSinceLastPacket.restart();
             sf::Int32 type;
             packet >> type;
+            std::cout << type << std::endl;
             switch (type)
             {
                 case Server2Client::None: break;
@@ -148,10 +163,10 @@ void OnlineManager::modifyChunk(sf::Vector2i chunkPos, sf::Vector2i tilePos, uns
 
 void OnlineManager::clientJoined(sf::Packet& packet)
 {
-    std::string username;
-    unsigned int clientId;
-    unsigned int entityId;
-    packet >> username >> entityId;
+    std::string username = "";
+    unsigned int clientId = 0;
+    unsigned int entityId = 0;
+    packet >> username >> clientId >> entityId;
     if (username == mTempUsername)
     {
         mUsername = mTempUsername;
@@ -198,9 +213,18 @@ void OnlineManager::receiveMessage(sf::Packet& packet)
     std::string username;
     std::string message;
     packet >> username >> message;
+    if (username == "")
+    {
+        std::cout << message << std::endl;
+    }
+    else
+    {
+        std::cout << username << " : " << message << std::endl;
+    }
     if (mWorld != nullptr)
     {
         //mWorld->getChat().write(username,message);
+
     }
 }
 

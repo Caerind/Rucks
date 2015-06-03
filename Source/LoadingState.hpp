@@ -6,6 +6,8 @@
 
 #include "GameState.hpp"
 
+class OnlineManager;
+
 class LoadingState : public ah::State
 {
     public:
@@ -23,6 +25,10 @@ class LoadingState : public ah::State
     private:
         sg::Container mContainer;
         sg::Timer::Ptr mTimer;
+
+        OnlineManager& mOnlineManager;
+        sf::Clock mClock;
+        unsigned int mConnectingState;
 };
 
 #endif // LOADINGSTATE_HPP

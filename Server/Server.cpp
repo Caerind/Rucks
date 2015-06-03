@@ -22,6 +22,10 @@ Server::Server(Output* output)
 
     mListener.setBlocking(false);
 	mPeers[0].reset(new Peer());
+
+	output->write("","Game Server Version 0.1");
+
+	start();
 }
 
 void Server::start()
@@ -194,10 +198,21 @@ void Server::handlePacket(sf::Packet& packet, Peer& peer, bool& detectedTimeout)
             std::string username, password;
             packet >> username >> password;
 
-            // if ok
-            // - On lui envoit tout
-            // - On dit aux autres qu'il est la
-            // - On l'ecrit dans la console
+            if (true)
+            {
+                peer.setName(username);
+                sf::Packet newPacket;
+                newPacket << Server2Client::ClientJoined << username << peer.getClientId() << peer.getClientId();
+                sendToAll(newPacket);
+
+                if (mOutput != nullptr)
+                {
+                    Message msg = mOutput->write("",username + " joined the game");
+                    sf::Packet mPacket;
+                    mPacket << Server2Client::Message << msg.username << msg.message;
+                    sendToAll(mPacket);
+                }
+            }
         } break;
 
         case Client2Server::Disconnect:
@@ -247,8 +262,17 @@ void Server::handleDisconnections()
 	{
 		if ((*itr)->hasTimedOut())
 		{
-            // Un joueur s'est barré dans la console
-            // On envoit aussi un packet aux gens
+            sf::Packet packet;
+            packet << Server2Client::ClientLeft << (*itr)->getClientId();
+            sendToAll(packet);
+
+            if (mOutput != nullptr)
+            {
+                Message msg = mOutput->write("",(*itr)->getName() + " left the game");
+                sf::Packet mPacket;
+                mPacket << Server2Client::Message << msg.username << msg.message;
+                sendToAll(mPacket);
+            }
 
 			mConnectedPlayers--;
 

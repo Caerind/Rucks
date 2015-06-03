@@ -1,45 +1,32 @@
-#ifndef RUCKS_SERVER
-
 #include "Source/App.hpp"
-
-int main()
-{
-    App::instance().run();
-    return 0;
-}
-
-#endif
-
-
-
-
-
-
-
-
-
-#ifdef RUCKS_SERVER
 
 #include "Server/CommandHandler.hpp"
 #include "Server/Output.hpp"
-#include "Server/GameServer.hpp"
+#include "Server/Server.hpp"
 
 int main()
 {
-	Output out;
-	GameServer server(&out);
-	CommandHandler command(&server);
+    #ifndef RUCKS_SERVER
+        App::instance().run();
+    #endif
 
-	std::string line;
+    #ifdef RUCKS_SERVER
+        App::instance().close();
+        {
+            Output out;
+            Server server(&out);
+            CommandHandler command(&server);
 
-	while (server.isRunning())
-	{
-		line.clear();
-		std::getline(std::cin, line);
-		command.handle(line);
-	}
+            std::string line;
 
-	return 0;
+            while (server.isRunning())
+            {
+                line.clear();
+                std::getline(std::cin, line);
+                command.handle(line);
+            }
+        }
+    #endif
+
+    return 0;
 }
-
-#endif

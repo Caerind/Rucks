@@ -1,9 +1,13 @@
 #include "LoadingState.hpp"
 #include "App.hpp"
+#include "OnlineManager.hpp"
 
 LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
+, mOnlineManager(App::instance().getOnlineManager())
 {
     mType = LoadingState::getID();
+
+    mConnectingState = 0;
 
     mTimer = mContainer.create<sg::Timer>();
     mTimer->setSize(sf::Vector2f(600,50));
@@ -13,8 +17,10 @@ LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
     mTimer->setTextColor(sf::Color::White);
     mTimer->setCharacterSize(20);
     mTimer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
-    mTimer->restart(sf::seconds(1));
-    mTimer->setCallback([&](){toGame();},0);
+    mTimer->restart(sf::seconds(0.2));
+    mTimer->setCallback([&](){},0);
+
+    mClock.restart();
 }
 
 std::string LoadingState::getID()
@@ -31,6 +37,36 @@ bool LoadingState::handleEvent(sf::Event const& event)
 bool LoadingState::update(sf::Time dt)
 {
     mContainer.update();
+
+    if (mConnectingState == 0)
+    {
+        getApplication() << "Linking to localhost ...";
+        if (mOnlineManager.connect("localhost",4567))
+        {
+            getApplication() << "Linked to localhost !";
+            mConnectingState++;
+            mOnlineManager.sendLogin("cmdu76","bla");
+            mClock.restart();
+        }
+    }
+
+    if (mConnectingState == 1)
+    {
+        mOnlineManager.handlePackets();
+
+        if (mOnlineManager.isOk())
+        {
+            mConnectingState++;
+            getApplication() << "Connecting to the game !";
+        }
+    }
+    if (mConnectingState == 2)
+    {
+        toGame();
+    }
+
+    getApplication().setDebugInfo("Co",ah::to_string(mConnectingState));
+
     return true;
 }
 

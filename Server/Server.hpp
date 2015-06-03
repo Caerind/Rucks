@@ -10,7 +10,7 @@
 
 #include "Message.hpp"
 #include "Output.hpp"
-#include "PacketType.hpp"
+#include "../Source/PacketType.hpp"
 #include "Peer.hpp"
 #include "Settings.hpp"
 

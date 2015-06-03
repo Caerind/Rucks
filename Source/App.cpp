@@ -23,6 +23,7 @@ void App::loadData()
 void App::loadLog()
 {
     ah::Log::openLog("Assets/Log/0.log");
+    ah::Log::useConsole(true);
 }
 
 void App::loadLang()
@@ -50,7 +51,7 @@ void App::loadActionMap()
 {
     // Close
     mActionMap["close"] = thor::Action(sf::Event::Closed);
-    mCallbackSystem.connect("close",[&](thor::ActionContext<std::string> context){close();});
+    mCallbackSystem.connect("close",[&](thor::ActionContext<std::string> context){instance().getOnlineManager().disconnect();close();});
 
     // DebugScreen
     mActionMap["toggledebugscreen"] = thor::Action(sf::Keyboard::F2, thor::Action::PressOnce);
