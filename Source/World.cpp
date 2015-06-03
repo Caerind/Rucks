@@ -28,7 +28,7 @@ void World::update(sf::Time dt)
 {
     if (isOnline())
     {
-        mOnlineManager.handlePacket();
+        mOnlineManager.handlePackets();
     }
     mEntityManager.update(dt);
     mChunkManager.update();
