@@ -41,11 +41,11 @@ void Chunk::loadFromPacket(sf::Packet& packet)
     // packet >> mPos.x >> mPos.y;   has already been read by the manager
 
     sf::Vector2i p;
-    for (p.x = (int)getChunkSizeTile() - 1; p.x >= 0; p.x--)
+    for (p.x = 0; p.x < (int)getChunkSizeTile(); p.x++)
     {
-        for (p.y = (int)getChunkSizeTile() - 1; p.y >= 0; p.y--)
+        for (p.y = 0; p.y < (int)getChunkSizeTile(); p.y++)
         {
-            for (int k = 2; k >= 0; k--)
+            for (int k = 0; k < 3; k++)
             {
                 unsigned int id;
                 packet >> id;

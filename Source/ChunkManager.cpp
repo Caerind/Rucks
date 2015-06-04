@@ -44,7 +44,9 @@ void ChunkManager::handleChunk(sf::Packet& packet)
     packet >> chunkPos;
     auto c = getChunk(chunkPos);
     if (c != nullptr)
+    {
         c->loadFromPacket(packet);
+    }
 }
 
 void ChunkManager::handleChunkModification(sf::Packet& packet)
