@@ -11,7 +11,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
-#include "../SimpleGui/SimpleGui.hpp"
+#include "../../Lib/SimpleGui/SimpleGui.hpp"
 
 class World;
 

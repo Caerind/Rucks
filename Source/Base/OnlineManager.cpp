@@ -1,5 +1,5 @@
 #include "OnlineManager.hpp"
-#include "World.hpp"
+#include "../Game/World.hpp"
 #include "App.hpp"
 
 OnlineManager::OnlineManager() : mWorld(nullptr)

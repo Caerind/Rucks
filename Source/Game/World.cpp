@@ -1,6 +1,6 @@
 #include "World.hpp"
-#include "App.hpp"
-#include "OnlineManager.hpp"
+#include "../Base/App.hpp"
+#include "../Base/OnlineManager.hpp"
 
 World::World(ah::Application& application, bool online)
 : mApplication(application)
@@ -34,9 +34,29 @@ void World::update(sf::Time dt)
     {
         mOnlineManager.handlePackets();
     }
+
     mEntityManager.update(dt);
     mChunkManager.update();
     mChat.update(dt);
+
+    sf::Vector2f mvt;
+    if (getApplication().isActionActive("up"))
+        mvt.y--;
+    if (getApplication().isActionActive("down"))
+        mvt.y++;
+    if (getApplication().isActionActive("left"))
+        mvt.x--;
+    if (getApplication().isActionActive("right"))
+        mvt.x++;
+    mView.move(mvt * 500.f * dt.asSeconds());
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        sf::Vector2f m = getApplication().getMousePositionView(mView);
+        sf::Vector2i c = ChunkManager::worldToChunk(m);
+        sf::Vector2i t = ChunkManager::worldToTile(m);
+        mOnlineManager.modifyChunk(c,t,0,800);
+    }
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const

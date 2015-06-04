@@ -6,7 +6,7 @@
 #include <SFML/System/Clock.hpp>
 #include <vector>
 
-#include "../Sfml-Helper/Packet.hpp"
+#include "../../Lib/Sfml-Helper/Packet.hpp"
 #include "PacketType.hpp"
 
 class World;

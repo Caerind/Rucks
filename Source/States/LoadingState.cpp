@@ -1,6 +1,6 @@
 #include "LoadingState.hpp"
-#include "App.hpp"
-#include "OnlineManager.hpp"
+#include "../Base/App.hpp"
+#include "../Base/OnlineManager.hpp"
 
 LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
 , mOnlineManager(App::instance().getOnlineManager())

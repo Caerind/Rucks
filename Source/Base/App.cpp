@@ -21,15 +21,12 @@ void App::loadData()
             std::string temp;
 
             std::getline(file,temp);
-            *this << temp;
             ah::DataManager::setData("ip",temp);
 
             std::getline(file,temp);
-            *this << temp;
             ah::DataManager::setData("username",temp);
 
             std::getline(file,temp);
-            *this << temp;
             ah::DataManager::setData("port",temp);
         }
         file.close();

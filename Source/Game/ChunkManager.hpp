@@ -5,8 +5,8 @@
 #include <array>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "../Sfml-Helper/Camera.hpp"
-#include "../Sfml-Helper/Packet.hpp"
+#include "../../Lib/Sfml-Helper/Camera.hpp"
+#include "../../Lib/Sfml-Helper/Packet.hpp"
 
 class World;
 

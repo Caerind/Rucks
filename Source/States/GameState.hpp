@@ -1,7 +1,7 @@
 #ifndef GAMESTATE_HPP
 #define GAMESTATE_HPP
 
-#include "../Aharos/State.hpp"
+#include "../../Lib/Aharos/State.hpp"
 
 #include <map>
 #include <Thor/Input/Connection.hpp>
@@ -9,12 +9,14 @@
 #include "PauseState.hpp"
 #include "EndState.hpp"
 
-#include "World.hpp"
+#include "../Game/World.hpp"
 
 class GameState : public ah::State
 {
     public:
         GameState(ah::StateManager& manager);
+
+        typedef thor::ActionContext<std::string> tContext;
 
         static std::string getID();
 

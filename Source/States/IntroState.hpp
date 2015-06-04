@@ -1,17 +1,15 @@
-#ifndef ENDSTATE_HPP
-#define ENDSTATE_HPP
+#ifndef INTROSTATE_HPP
+#define INTROSTATE_HPP
 
-#include "../Aharos/State.hpp"
-#include "../SimpleGui/SimpleGui.hpp"
-
-#include <SFML/Graphics/RectangleShape.hpp>
+#include "../../Lib/Aharos/State.hpp"
+#include "../../Lib/SimpleGui/SimpleGui.hpp"
 
 #include "MenuState.hpp"
 
-class EndState : public ah::State
+class IntroState : public ah::State
 {
     public:
-        EndState(ah::StateManager& manager);
+        IntroState(ah::StateManager& manager);
 
         static std::string getID();
 
@@ -23,11 +21,8 @@ class EndState : public ah::State
         void toMenu();
 
     private:
-        sf::RectangleShape mShape;
-
         sg::Container mContainer;
-        sg::Box::Ptr mMenu;
+        sg::Timer::Ptr mTimer;
 };
 
-
-#endif // ENDSTATE_HPP
+#endif // INTROSTATE_HPP

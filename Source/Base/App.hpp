@@ -1,19 +1,20 @@
 #ifndef APP_HPP
 #define APP_HPP
 
-#include "../Aharos/Application.hpp"
+#include "../../Lib/Aharos/Application.hpp"
+
+#include "../States/IntroState.hpp"
+#include "../States/MenuState.hpp"
+#include "../States/SettingsState.hpp"
+#include "../States/PreGameState.hpp"
+#include "../States/LoadingState.hpp"
+#include "../States/GameState.hpp"
+#include "../States/PauseState.hpp"
+#include "../States/EndState.hpp"
+
+#include "../../Lib/Tools/gzstream.hpp"
+
 #include "OnlineManager.hpp"
-
-#include "IntroState.hpp"
-#include "MenuState.hpp"
-#include "SettingsState.hpp"
-#include "PreGameState.hpp"
-#include "LoadingState.hpp"
-#include "GameState.hpp"
-#include "PauseState.hpp"
-#include "EndState.hpp"
-
-#include "../Tools/gzstream.hpp"
 
 class App : public ah::Application
 {

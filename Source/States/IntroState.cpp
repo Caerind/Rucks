@@ -1,5 +1,5 @@
 #include "IntroState.hpp"
-#include "App.hpp"
+#include "../Base/App.hpp"
 
 IntroState::IntroState(ah::StateManager& manager) : ah::State(manager)
 {

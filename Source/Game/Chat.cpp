@@ -1,6 +1,6 @@
 #include "Chat.hpp"
 #include "World.hpp"
-#include "OnlineManager.hpp"
+#include "../Base/OnlineManager.hpp"
 
 Chat::Chat(World& world) : mWorld(world)
 {

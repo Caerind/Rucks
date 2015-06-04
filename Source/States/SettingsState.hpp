@@ -1,8 +1,8 @@
 #ifndef SETTINGSSTATE_HPP
 #define SETTINGSSTATE_HPP
 
-#include "../Aharos/State.hpp"
-#include "../SimpleGui/SimpleGui.hpp"
+#include "../../Lib/Aharos/State.hpp"
+#include "../../Lib/SimpleGui/SimpleGui.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 

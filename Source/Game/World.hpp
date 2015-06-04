@@ -1,9 +1,9 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
-#include "../Aharos/Application.hpp"
+#include "../../Lib/Aharos/Application.hpp"
 
-#include "../Sfml-Helper/Event.hpp"
+#include "../../Lib/Sfml-Helper/Event.hpp"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>

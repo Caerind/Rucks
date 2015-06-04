@@ -1,18 +1,17 @@
-#ifndef PREGAMESTATE_HPP
-#define PREGAMESTATE_HPP
+#ifndef ENDSTATE_HPP
+#define ENDSTATE_HPP
 
-#include "../Aharos/State.hpp"
-#include "../SimpleGui/SimpleGui.hpp"
+#include "../../Lib/Aharos/State.hpp"
+#include "../../Lib/SimpleGui/SimpleGui.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include "MenuState.hpp"
-#include "LoadingState.hpp"
 
-class PreGameState : public ah::State
+class EndState : public ah::State
 {
     public:
-        PreGameState(ah::StateManager& manager);
+        EndState(ah::StateManager& manager);
 
         static std::string getID();
 
@@ -21,17 +20,14 @@ class PreGameState : public ah::State
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     private:
-        void toLoading();
         void toMenu();
 
     private:
         sf::RectangleShape mShape;
 
         sg::Container mContainer;
-        sg::TextField::Ptr mAddress;
-        sg::TextField::Ptr mUsername;
-        sg::Box::Ptr mLoading;
         sg::Box::Ptr mMenu;
 };
 
-#endif // PREGAMESTATE_HPP
+
+#endif // ENDSTATE_HPP

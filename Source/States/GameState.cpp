@@ -1,5 +1,5 @@
 #include "GameState.hpp"
-#include "App.hpp"
+#include "../Base/App.hpp"
 
 GameState::GameState(ah::StateManager& manager) : ah::State(manager), mWorld(manager.getApplication(),true)
 {
@@ -22,13 +22,7 @@ bool GameState::update(sf::Time dt)
     mWorld.update(dt);
 
     if (!App::instance().getOnlineManager().isOk())
-    {
-        App::instance() << ah::to_string(App::instance().getOnlineManager().isLinked());
-        App::instance() << ah::to_string(App::instance().getOnlineManager().isConnected());
-        App::instance() << ah::to_string(App::instance().getOnlineManager().timedOut());
-
         toEnd();
-    }
 
     return true;
 }
@@ -42,9 +36,9 @@ void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void GameState::onActivate()
 {
     mConnections.clear();
-    mConnections["pause"] = getApplication().getCallbackSystem().connect("pause",[&](thor::ActionContext<std::string> context){toPause();});
-    mConnections["writing"] = getApplication().getCallbackSystem().connect("writing",[&](thor::ActionContext<std::string> context){if (!mWorld.getChat().isWriting()) mWorld.getChat().write(true);});
-    mConnections["sendMessage"] = getApplication().getCallbackSystem().connect("sendMessage",[&](thor::ActionContext<std::string> context){if (mWorld.getChat().isWriting()) mWorld.getChat().send();});
+    mConnections["pause"] = getApplication().getCallbackSystem().connect("pause",[&](tContext context){toPause();});
+    mConnections["writing"] = getApplication().getCallbackSystem().connect("writing",[&](tContext context){if (!mWorld.getChat().isWriting()) mWorld.getChat().write(true);});
+    mConnections["sendMessage"] = getApplication().getCallbackSystem().connect("sendMessage",[&](tContext context){if (mWorld.getChat().isWriting()) mWorld.getChat().send();});
 
     App::instance().getOnlineManager().resetTimeSinceLastPacket();
 }

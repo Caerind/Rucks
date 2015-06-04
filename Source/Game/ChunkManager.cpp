@@ -1,6 +1,6 @@
 #include "ChunkManager.hpp"
 #include "World.hpp"
-#include "OnlineManager.hpp"
+#include "../Base/OnlineManager.hpp"
 
 ChunkManager::ChunkManager(World& world) : mWorld(world)
 {
@@ -105,8 +105,16 @@ sf::Vector2i ChunkManager::worldToChunk(sf::Vector2f pos)
 sf::Vector2i ChunkManager::worldToTile(sf::Vector2f pos)
 {
     sf::Vector2i p;
-    p.x = (pos.x / Chunk::getChunkSizeTile());
-    p.y = (pos.y / Chunk::getChunkSizeTile());
+    p.x = (pos.x / Chunk::getTileSize());
+    p.y = (pos.y / Chunk::getTileSize());
+    if (pos.x < 0)
+    {
+        p.x--;
+    }
+    if (pos.y < 0)
+    {
+        p.y--;
+    }
     p.x %= Chunk::getChunkSizeTile();
     p.y %= Chunk::getChunkSizeTile();
     return p;

@@ -1,8 +1,8 @@
 #ifndef LOADINGSTATE_HPP
 #define LOADINGSTATE_HPP
 
-#include "../Aharos/State.hpp"
-#include "../SimpleGui/SimpleGui.hpp"
+#include "../../Lib/Aharos/State.hpp"
+#include "../../Lib/SimpleGui/SimpleGui.hpp"
 
 #include "GameState.hpp"
 #include "EndState.hpp"

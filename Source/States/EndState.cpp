@@ -1,5 +1,5 @@
 #include "EndState.hpp"
-#include "App.hpp"
+#include "../Base/App.hpp"
 
 EndState::EndState(ah::StateManager& manager) : ah::State(manager)
 {
