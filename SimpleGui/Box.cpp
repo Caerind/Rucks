@@ -177,6 +177,16 @@ void Box::setCallback(std::function<void()> callback, std::size_t id)
     }
 }
 
+sf::RectangleShape& Box::getShape()
+{
+    return mShape;
+}
+
+sf::Text& Box::getText()
+{
+    return mText;
+}
+
 void Box::updateShape()
 {
     if (mUsingSprite)

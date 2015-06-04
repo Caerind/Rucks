@@ -5,6 +5,7 @@
 #include "../SimpleGui/SimpleGui.hpp"
 
 #include "GameState.hpp"
+#include "EndState.hpp"
 
 class OnlineManager;
 
@@ -21,6 +22,7 @@ class LoadingState : public ah::State
 
     private:
         void toGame();
+        void toEnd();
 
     private:
         sg::Container mContainer;

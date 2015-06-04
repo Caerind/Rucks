@@ -7,17 +7,17 @@ LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
 {
     mType = LoadingState::getID();
 
+    // Load Resources
+    getApplication().getTexture("Assets/Textures/tileset.png");
+
     mConnectingState = 0;
 
     mTimer = mContainer.create<sg::Timer>();
     mTimer->setSize(sf::Vector2f(600,50));
     mTimer->setPosition(100,400);
     mTimer->setFillColor(sf::Color(36, 44, 102));
-    mTimer->setFont(getApplication().getFont("Assets/Fonts/sansation.ttf"));
-    mTimer->setTextColor(sf::Color::White);
-    mTimer->setCharacterSize(20);
     mTimer->getShapeTop().setFillColor(sf::Color(36, 44, 168));
-    mTimer->restart(sf::seconds(0.2));
+    mTimer->restart(sf::seconds(10));
     mTimer->setCallback([&](){},0);
 
     mClock.restart();
@@ -43,7 +43,7 @@ bool LoadingState::update(sf::Time dt)
         if (mOnlineManager.connect(getApplication().getData<std::string>("ip"),getApplication().getData<int>("port")))
         {
             mConnectingState++;
-            mOnlineManager.sendLogin("cmdu76","bla");
+            mOnlineManager.sendLogin(getApplication().getData<std::string>("username"),"bla");
             mClock.restart();
         }
     }
@@ -55,11 +55,18 @@ bool LoadingState::update(sf::Time dt)
         if (mOnlineManager.isOk())
         {
             mConnectingState++;
+            mClock.restart();
         }
     }
     if (mConnectingState == 2)
     {
         toGame();
+    }
+
+    if (mConnectingState < 2 && mClock.getElapsedTime() > sf::seconds(10))
+    {
+        App::instance().getOnlineManager().disconnect();
+        toEnd();
     }
 
     return true;
@@ -75,4 +82,10 @@ void LoadingState::toGame()
 {
     requestClear();
     requestPush(GameState::getID());
+}
+
+void LoadingState::toEnd()
+{
+    requestClear();
+    requestPush(EndState::getID());
 }

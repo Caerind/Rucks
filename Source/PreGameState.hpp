@@ -28,6 +28,8 @@ class PreGameState : public ah::State
         sf::RectangleShape mShape;
 
         sg::Container mContainer;
+        sg::TextField::Ptr mAddress;
+        sg::TextField::Ptr mUsername;
         sg::Box::Ptr mLoading;
         sg::Box::Ptr mMenu;
 };

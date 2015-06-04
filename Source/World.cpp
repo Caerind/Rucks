@@ -25,6 +25,7 @@ void World::handleEvent(sf::Event const& event)
 {
     mEntityManager.handleEvent(event);
     mChat.handleEvent(event);
+    sfh::handleZoom(event,mView,0.2f);
 }
 
 void World::update(sf::Time dt)
@@ -40,12 +41,16 @@ void World::update(sf::Time dt)
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    target.setView(mView);
+
     mChunkManager.render(target,0);
     mChunkManager.render(target,1);
 
     target.draw(mEntityManager,states);
 
     mChunkManager.render(target,2);
+
+    target.setView(target.getDefaultView());
 
     target.draw(mChat,states);
 }

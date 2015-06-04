@@ -7,6 +7,7 @@ TextField::TextField() : Box()
 {
     mFocused = false;
     mCallbacks.resize(1);
+    mMaxSize = 999;
 }
 
 TextField::TextField(Widget* parent) : Box(parent)
@@ -89,13 +90,16 @@ void TextField::update(sf::Event const& event, sf::Vector2f mousePosition)
 				}
 				else
 				{
-					std::string str = mText.getString();
-                    std::size_t pos = str.find('|');
-                    if (pos != std::string::npos)
+					if (getString().size() < mMaxSize)
                     {
-                        str.insert(pos, 1, (char)event.text.unicode);
+                        std::string str = mText.getString();
+                        std::size_t pos = str.find('|');
+                        if (pos != std::string::npos)
+                        {
+                            str.insert(pos, 1, (char)event.text.unicode);
+                        }
+                        mText.setString(str);
                     }
-                    mText.setString(str);
 				}
             }
         }
@@ -121,6 +125,11 @@ std::string TextField::getString()
         str.erase(pos, 1);
     }
     return str;
+}
+
+void TextField::setStringMaxSize(unsigned int maxSize)
+{
+    mMaxSize = maxSize;
 }
 
 void TextField::gainFocus()

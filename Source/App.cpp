@@ -14,13 +14,26 @@ OnlineManager& App::getOnlineManager()
 
 void App::loadData()
 {
-    ah::DataManager::setData("up",thor::toString(sf::Keyboard::Z));
-    ah::DataManager::setData("left",thor::toString(sf::Keyboard::Q));
-    ah::DataManager::setData("down",thor::toString(sf::Keyboard::S));
-    ah::DataManager::setData("right",thor::toString(sf::Keyboard::D));
+    {
+        igzstream file("Assets/Data/network.properties");
+        if (file)
+        {
+            std::string temp;
 
-    ah::DataManager::setData("ip","localhost");
-    ah::DataManager::setData("port","4567");
+            std::getline(file,temp);
+            *this << temp;
+            ah::DataManager::setData("ip",temp);
+
+            std::getline(file,temp);
+            *this << temp;
+            ah::DataManager::setData("username",temp);
+
+            std::getline(file,temp);
+            *this << temp;
+            ah::DataManager::setData("port",temp);
+        }
+        file.close();
+    }
 }
 
 void App::loadLog()
@@ -52,12 +65,21 @@ void App::loadDebugScreen()
 
 void App::loadActionMap()
 {
-    // Close
     mActionMap["close"] = thor::Action(sf::Event::Closed);
+    mActionMap["toggledebugscreen"] = thor::Action(sf::Keyboard::F2,thor::Action::PressOnce);
+    mActionMap["screenshot"] = thor::Action(sf::Keyboard::F1,thor::Action::PressOnce);
+    mActionMap["pause"] = thor::Action(sf::Keyboard::Escape,thor::Action::PressOnce);
+    mActionMap["writing"] = thor::Action(sf::Keyboard::T,thor::Action::PressOnce);
+    mActionMap["sendMessage"] = thor::Action(sf::Keyboard::Return,thor::Action::PressOnce);
+    mActionMap["up"] = thor::Action(sf::Keyboard::Z,thor::Action::Hold);
+    mActionMap["left"] = thor::Action(sf::Keyboard::Q,thor::Action::Hold);
+    mActionMap["down"] = thor::Action(sf::Keyboard::S,thor::Action::Hold);
+    mActionMap["right"] = thor::Action(sf::Keyboard::D,thor::Action::Hold);
+
+    // Close
     mCallbackSystem.connect("close",[&](thor::ActionContext<std::string> context){instance().getOnlineManager().disconnect();close();});
 
     // DebugScreen
-    mActionMap["toggledebugscreen"] = thor::Action(sf::Keyboard::F2, thor::Action::PressOnce);
     mCallbackSystem.connect("toggledebugscreen",[&](thor::ActionContext<std::string> context){
         if (isDebugScreenVisible())
         {
@@ -70,13 +92,10 @@ void App::loadActionMap()
     });
 
     // Screenshot
-    mActionMap["screenshot"] = thor::Action(sf::Keyboard::F1, thor::Action::PressOnce);
     mCallbackSystem.connect("screenshot",[&](thor::ActionContext<std::string> context){
-        capture().saveToFile("Assets/Screenshots/" + ah::getTime("%d-%m-%y_%H-%M-%S") + ".png");
+        App::instance().capture().saveToFile("Assets/Screenshots/" + ah::getTime("%d-%m-%y_%H-%M-%S") + ".png");
+        App::instance() << "Screenshot saved !";
     });
-
-    // Pause
-    mActionMap["pause"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce);
 }
 
 void App::loadStateManager()
@@ -95,8 +114,8 @@ void App::loadStateManager()
 
 App::App() : ah::Application()
 {
-    loadData();
     loadLog();
+    loadData();
     loadLang();
     loadWindow();
     loadDebugScreen();
@@ -106,4 +125,14 @@ App::App() : ah::Application()
 
 App::~App()
 {
+    {
+        ogzstream file("Assets/Data/network.properties");
+        if (file)
+        {
+            file << ah::DataManager::getData<std::string>("ip") << std::endl;
+            file << ah::DataManager::getData<std::string>("username") << std::endl;
+            file << ah::DataManager::getData<std::string>("port") << std::endl;
+        }
+        file.close();
+    }
 }

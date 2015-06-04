@@ -50,6 +50,9 @@ class Box : public Widget
 
         void setCallback(std::function<void()> callback, std::size_t id = 0);
 
+        sf::RectangleShape& getShape();
+        sf::Text& getText();
+
     protected:
         virtual void updateShape();
         virtual void updateText();

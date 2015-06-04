@@ -225,18 +225,9 @@ void OnlineManager::receiveMessage(sf::Packet& packet)
     std::string username;
     std::string message;
     packet >> username >> message;
-    if (username == "")
-    {
-        std::cout << message << std::endl;
-    }
-    else
-    {
-        std::cout << username << " : " << message << std::endl;
-    }
     if (mWorld != nullptr)
     {
         mWorld->getChat().add(username,message);
-
     }
 }
 

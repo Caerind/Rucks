@@ -42,19 +42,9 @@ void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void GameState::onActivate()
 {
     mConnections.clear();
-
-    // Pause
     mConnections["pause"] = getApplication().getCallbackSystem().connect("pause",[&](thor::ActionContext<std::string> context){toPause();});
-
-
-    // Write message
-    getApplication().setAction("writing",thor::Action(sf::Keyboard::T,thor::Action::PressOnce));
     mConnections["writing"] = getApplication().getCallbackSystem().connect("writing",[&](thor::ActionContext<std::string> context){if (!mWorld.getChat().isWriting()) mWorld.getChat().write(true);});
-
-    // Send message
-    getApplication().setAction("sendMessage",thor::Action(sf::Keyboard::Return,thor::Action::PressOnce));
     mConnections["sendMessage"] = getApplication().getCallbackSystem().connect("sendMessage",[&](thor::ActionContext<std::string> context){if (mWorld.getChat().isWriting()) mWorld.getChat().send();});
-
 
     App::instance().getOnlineManager().resetTimeSinceLastPacket();
 }

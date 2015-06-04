@@ -13,6 +13,8 @@
 #include "PauseState.hpp"
 #include "EndState.hpp"
 
+#include "../Tools/gzstream.hpp"
+
 class App : public ah::Application
 {
     public:

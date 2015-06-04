@@ -20,11 +20,15 @@ class TextField : public Box
 
         std::string getString();
 
+        void setStringMaxSize(unsigned int maxSize);
+
         void gainFocus();
         void lostFocus();
 
     protected:
         bool mFocused;
+
+        unsigned int mMaxSize;
 };
 
 }

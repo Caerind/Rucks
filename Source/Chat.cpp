@@ -4,14 +4,25 @@
 
 Chat::Chat(World& world) : mWorld(world)
 {
+    setPosition(0,550);
+
     mTextField = mContainer.create<sg::TextField>();
-    mTextField->setSize(sf::Vector2f(300,50));
-    mTextField->setFillColor(sf::Color(95,95,95));
-    mTextField->setFont(mWorld.getApplication().getFont("Assets/Fonts/aniron.ttf"));
+    mTextField->setSize(sf::Vector2f(300,35));
+    mTextField->setPosition(1.f,-mTextField->getSize().y);
+    mTextField->setFillColor(sf::Color(95,95,95,175));
+    mTextField->setOutlineColor(sf::Color(0,0,0,175));
+    mTextField->setOutlineThickness(1.f);
+    mTextField->setFont(mWorld.getApplication().getFont("Assets/Fonts/sansation.ttf"));
     mTextField->setTextColor(sf::Color::White);
     mTextField->setCharacterSize(18);
     mTextField->setTextAlign(sg::TextField::Left);
     mTextField->setCallback([&](){},0);
+    mTextField->setStringMaxSize(28);
+    mTextField->getText().move(0,-8.f);
+
+    mShape.setFillColor(sf::Color(95,95,95,175));
+    mShape.setOutlineColor(sf::Color(0,0,0,175));
+    mShape.setOutlineThickness(1.f);
 
     mWriting = false;
 }
@@ -43,6 +54,10 @@ void Chat::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(mContainer,states);
     }
+    if (mTexts.size() > 0)
+    {
+        target.draw(mShape,states);
+    }
     for (unsigned int i = 0; i < mTexts.size(); i++)
     {
         target.draw(mTexts[i].first,states);
@@ -54,14 +69,22 @@ void Chat::add(std::string const& username, std::string const& message)
     mTexts.push_back(std::make_pair<sf::Text,sf::Clock>(sf::Text(),sf::Clock()));
     mTexts.back().first.setFont(mWorld.getApplication().getFont("Assets/Fonts/sansation.ttf"));
     mTexts.back().first.setCharacterSize(18);
-    mTexts.back().first.setString(username + " : " + message);
-    mTexts.back().first.setColor(sf::Color(175,175,175));
+    if (username == "")
+    {
+        mTexts.back().first.setString(message);
+    }
+    else
+    {
+        mTexts.back().first.setString(username + " : " + message);
+    }
+    mTexts.back().first.setColor(sf::Color::White);
 
     if (mTexts.size() >= 5)
     {
         mTexts.erase(mTexts.begin());
-        update();
     }
+
+    update();
 }
 
 void Chat::write(bool writing)
@@ -71,8 +94,8 @@ void Chat::write(bool writing)
     {
         mTextField->setString("");
         mTextField->gainFocus();
-        update();
     }
+    update();
 }
 
 bool Chat::isWriting() const
@@ -89,9 +112,28 @@ void Chat::send()
         mTextField->lostFocus();
     }
     mWriting = false;
+    update();
 }
 
 void Chat::update()
 {
+    float pos = 5.f;
+    sf::Vector2f size = sf::Vector2f(300.f,15.f);
 
+    if (mWriting)
+    {
+        pos += 46.f;
+    }
+
+    for (auto itr = mTexts.rbegin(); itr != mTexts.rend(); itr++)
+    {
+        pos += itr->first.getGlobalBounds().height;
+        itr->first.setPosition(sf::Vector2f(5.f,-pos));
+        pos += 10.f;
+        size.y += itr->first.getGlobalBounds().height + 10.f;
+        size.x = std::max(10.f + itr->first.getGlobalBounds().width,size.x);
+    }
+
+    mShape.setSize(size);
+    mShape.setPosition(1,-pos);
 }

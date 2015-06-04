@@ -36,6 +36,8 @@ class Chat : public sf::Drawable, public sf::Transformable
     private:
         World& mWorld;
 
+        sf::RectangleShape mShape;
+
         sg::Container mContainer;
         sg::TextField::Ptr mTextField;
 
