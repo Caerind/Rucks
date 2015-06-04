@@ -20,7 +20,6 @@ class TextField : public Box
 
         std::string getString();
 
-    protected:
         void gainFocus();
         void lostFocus();
 

@@ -12,6 +12,7 @@
 
 #include "ChunkManager.hpp"
 #include "EntityManager.hpp"
+#include "Chat.hpp"
 
 class OnlineManager;
 
@@ -29,6 +30,7 @@ class World : public sf::Drawable
         ChunkManager& getChunkManager();
         EntityManager& getEntityManager();
         OnlineManager& getOnlineManager();
+        Chat& getChat();
         sf::View& getView();
 
         bool isOnline();
@@ -38,6 +40,7 @@ class World : public sf::Drawable
         ChunkManager mChunkManager;
         EntityManager mEntityManager;
         OnlineManager& mOnlineManager;
+        Chat mChat;
         sf::View mView;
         bool mOnline;
 };

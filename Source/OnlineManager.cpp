@@ -235,7 +235,7 @@ void OnlineManager::receiveMessage(sf::Packet& packet)
     }
     if (mWorld != nullptr)
     {
-        //mWorld->getChat().write(username,message);
+        mWorld->getChat().add(username,message);
 
     }
 }

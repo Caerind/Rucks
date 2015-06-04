@@ -7,6 +7,7 @@ World::World(ah::Application& application, bool online)
 , mChunkManager(*this)
 , mEntityManager(*this)
 , mOnlineManager(App::instance().getOnlineManager())
+, mChat(*this)
 , mView(mApplication.getDefaultView())
 , mOnline(online)
 {
@@ -23,6 +24,7 @@ World::~World()
 void World::handleEvent(sf::Event const& event)
 {
     mEntityManager.handleEvent(event);
+    mChat.handleEvent(event);
 }
 
 void World::update(sf::Time dt)
@@ -33,6 +35,7 @@ void World::update(sf::Time dt)
     }
     mEntityManager.update(dt);
     mChunkManager.update();
+    mChat.update(dt);
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -43,6 +46,8 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(mEntityManager,states);
 
     mChunkManager.render(target,2);
+
+    target.draw(mChat,states);
 }
 
 ah::Application& World::getApplication()
@@ -63,6 +68,11 @@ EntityManager& World::getEntityManager()
 OnlineManager& World::getOnlineManager()
 {
     return mOnlineManager;
+}
+
+Chat& World::getChat()
+{
+    return mChat;
 }
 
 sf::View& World::getView()
