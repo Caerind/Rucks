@@ -13,7 +13,7 @@
 #include <SFML/Graphics/View.hpp>
 
 #include "ChunkManager.hpp"
-#include "EntityManager.hpp"
+#include "ObjectManager.hpp"
 #include "Chat.hpp"
 
 class OnlineManager;
@@ -30,7 +30,7 @@ class World : public sf::Drawable
 
         ah::Application& getApplication();
         ChunkManager& getChunkManager();
-        EntityManager& getEntityManager();
+        ObjectManager& getObjectManager();
         OnlineManager& getOnlineManager();
         Chat& getChat();
         sf::View& getView();
@@ -40,7 +40,7 @@ class World : public sf::Drawable
     private:
         ah::Application& mApplication;
         ChunkManager mChunkManager;
-        EntityManager mEntityManager;
+        ObjectManager mObjectManager;
         OnlineManager& mOnlineManager;
         Chat mChat;
         sf::View mView;

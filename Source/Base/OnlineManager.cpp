@@ -93,6 +93,9 @@ void OnlineManager::handlePackets()
                 case Server2Client::Message: receiveMessage(packet); break;
                 case Server2Client::SendChunk: receiveChunk(packet); break;
                 case Server2Client::ModifyChunk: modifyChunk(packet); break;
+                case Server2Client::ObjectAddition: objectAddition(packet); break;
+                case Server2Client::ObjectDeletion: objectDeletion(packet); break;
+                case Server2Client::ObjectUpdate: objectUpdate(packet); break;
                 default: break;
             }
         }
@@ -167,6 +170,24 @@ void OnlineManager::modifyChunk(sf::Vector2i chunkPos, sf::Vector2i tilePos, uns
     }
 }
 
+void OnlineManager::sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt)
+{
+    if (isOk() && mWorld != nullptr)
+    {
+        if (mWorld.getObjectManager().getPlayer() != nullptr)
+        {
+            if (mWorld.getObjectManager().getPlayer()->isValid())
+            {
+                sf::Packet packet;
+                packet << Client2Server::PlayerUpdate << Player::getTypeId();
+                packet << mWorld.getObjectManager().getPlayer()->getId();
+                packet << mvt << lookAt;
+                updateLinked(mSocket.send(packet));
+            }
+        }
+    }
+}
+
 ////////////////////////////////////////
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -187,12 +208,8 @@ void OnlineManager::clientJoined(sf::Packet& packet)
         mClientId = clientId;
         if (mWorld != nullptr)
         {
-            //mWorld->getPlayer()->setId(entityId);
+            mWorld->getObjectManager().setPlayerId(entityId);
         }
-    }
-    else
-    {
-        //mFriends.push_back(Friend(username,clientId,entityId));
     }
 }
 
@@ -205,13 +222,6 @@ void OnlineManager::clientLeft(sf::Packet& packet)
         mConnected = false;
         mLinked = false;
     }
-    /*
-    if (mFriends.contains(clientId))
-    {
-        remove(friend);
-        remove(entity_linked_to_friend);
-    }
-    */
 }
 
 void OnlineManager::serverStopped(sf::Packet& packet)
@@ -244,6 +254,63 @@ void OnlineManager::modifyChunk(sf::Packet& packet)
     if (mWorld != nullptr)
     {
         mWorld->getChunkManager().handleChunkModification(packet);
+    }
+}
+
+void OnlineManager::objectAddition(sf::Packet& packet)
+{
+    unsigned int id, typeId;
+    sf::Vector2f pos, origin;
+    std::string name, texture;
+    sf::IntRect tRect;
+    packet >> id >> typeId >> pos >> origin >> name >> texture >> tRect;
+    if (mWorld != nullptr)
+    {
+        if (typeId == 1)
+        {
+            auto e = mWorld->getObjectManager().create<Entity>(id, typeId);
+            unsigned int life, lifeMax;
+            packet >> life >> lifeMax;
+            e->setLife(life);
+            e->setLifeMax(lifeMax);
+        }
+        else if (typeId == 2)
+        {
+            auto p = mWorld->getObjectManager().create<Player>(id, typeId);
+        }
+        else
+        {
+            mWorld->getObjectManager().create<GameObject>(id);
+        }
+
+        auto go = mWorld->getObjectManager().getFromId(id);
+        go->setPosition(pos);
+        go->setOrigin(origin);
+        go->setName(name);
+        go->setTexture(texture);
+        go->setTextureRect(tRect);
+    }
+}
+
+void OnlineManager::objectDeletion(sf::Packet& packet)
+{
+    packet >> id;
+    if (mWorld != nullptr)
+    {
+        mWorld->getObjectManager().remove(id);
+    }
+}
+
+void OnlineManager::objectUpdate(sf::Packet& packet)
+{
+    if (mWorld != nullptr)
+    {
+        auto g = mWorld->getObjectManager().getFromId(id);
+        if (g != nullptr)
+        {
+            g->setPosition(pos);
+            g->setTextureRect(tRect);
+        }
     }
 }
 

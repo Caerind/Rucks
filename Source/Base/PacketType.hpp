@@ -13,6 +13,10 @@ namespace Server2Client
         //
         SendChunk,
         ModifyChunk,
+        //
+        ObjectAddition,
+        ObjectDeletion,
+        ObjectUpdate,
     };
 }
 
@@ -27,6 +31,8 @@ namespace Client2Server
         //
         AskChunk,
         ModifyChunk,
+        //
+        PlayerUpdate,
     };
 }
 

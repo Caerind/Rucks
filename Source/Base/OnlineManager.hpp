@@ -35,6 +35,7 @@ class OnlineManager
         void sendMessage(std::string const& message);
         void askChunk(sf::Vector2i chunkPos);
         void modifyChunk(sf::Vector2i chunkPos, sf::Vector2i tilePos, unsigned int layer, unsigned int id);
+        void sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt);
 
         void handlePackets();
 
@@ -45,7 +46,9 @@ class OnlineManager
         void receiveMessage(sf::Packet& packet);
         void receiveChunk(sf::Packet& packet);
         void modifyChunk(sf::Packet& packet);
-
+        void objectAddition(sf::Packet& packet);
+        void objectDeletion(sf::Packet& packet);
+        void objectUpdate(sf::Packet& packet);
 
         void updateLinked(sf::Socket::Status status);
 

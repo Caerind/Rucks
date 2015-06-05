@@ -5,7 +5,7 @@
 World::World(ah::Application& application, bool online)
 : mApplication(application)
 , mChunkManager(*this)
-, mEntityManager(*this)
+, mObjectManager(*this)
 , mOnlineManager(App::instance().getOnlineManager())
 , mChat(*this)
 , mView(mApplication.getDefaultView())
@@ -23,7 +23,7 @@ World::~World()
 
 void World::handleEvent(sf::Event const& event)
 {
-    mEntityManager.handleEvent(event);
+    mObjectManager.handleEvent(event);
     mChat.handleEvent(event);
     sfh::handleZoom(event,mView,0.2f);
 }
@@ -35,7 +35,7 @@ void World::update(sf::Time dt)
         mOnlineManager.handlePackets();
     }
 
-    mEntityManager.update(dt);
+    mObjectManager.update(dt);
     mChunkManager.update();
     mChat.update(dt);
 
@@ -48,7 +48,7 @@ void World::update(sf::Time dt)
         mvt.x--;
     if (getApplication().isActionActive("right"))
         mvt.x++;
-    mView.move(mvt * 500.f * dt.asSeconds());
+    mOnlineManager.sendPlayerUpdate(mvt,getApplication().getMousePositionView(mView));
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -66,7 +66,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
     mChunkManager.render(target,0);
     mChunkManager.render(target,1);
 
-    target.draw(mEntityManager,states);
+    target.draw(mObjectManager,states);
 
     mChunkManager.render(target,2);
 
@@ -85,9 +85,9 @@ ChunkManager& World::getChunkManager()
     return mChunkManager;
 }
 
-EntityManager& World::getEntityManager()
+ObjectManager& World::getObjectManager()
 {
-    return mEntityManager;
+    return mObjectManager;
 }
 
 OnlineManager& World::getOnlineManager()
