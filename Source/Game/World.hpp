@@ -21,7 +21,7 @@ class OnlineManager;
 class World : public sf::Drawable
 {
     public:
-        World(ah::Application& application, bool online);
+        World(bool online);
         ~World();
 
         void handleEvent(sf::Event const& event);
@@ -38,7 +38,6 @@ class World : public sf::Drawable
         bool isOnline();
 
     private:
-        ah::Application& mApplication;
         ChunkManager mChunkManager;
         ObjectManager mObjectManager;
         OnlineManager& mOnlineManager;

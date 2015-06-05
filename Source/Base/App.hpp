@@ -22,6 +22,7 @@ class App : public ah::Application
         static App& instance();
 
         OnlineManager& getOnlineManager();
+        World& getWorld();
 
     private:
         void loadData();
@@ -38,6 +39,7 @@ class App : public ah::Application
         static App mInstance;
 
         OnlineManager mOnlineManager;
+        World mWorld;
 };
 
 #endif // APP_HPP

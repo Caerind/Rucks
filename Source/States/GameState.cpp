@@ -1,7 +1,7 @@
 #include "GameState.hpp"
 #include "../Base/App.hpp"
 
-GameState::GameState(ah::StateManager& manager) : ah::State(manager), mWorld(manager.getApplication(),true)
+GameState::GameState(ah::StateManager& manager) : ah::State(manager), mWorld(App::instance().getWorld())
 {
     mType = GameState::getID();
 }

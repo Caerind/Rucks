@@ -2,13 +2,12 @@
 #include "../Base/App.hpp"
 #include "../Base/OnlineManager.hpp"
 
-World::World(ah::Application& application, bool online)
-: mApplication(application)
-, mChunkManager(*this)
+World::World(bool online)
+: mChunkManager(*this)
 , mObjectManager(*this)
 , mOnlineManager(App::instance().getOnlineManager())
 , mChat(*this)
-, mView(mApplication.getDefaultView())
+, mView(App::instance().getDefaultView())
 , mOnline(online)
 {
     if (mOnline)
@@ -48,7 +47,13 @@ void World::update(sf::Time dt)
         mvt.x--;
     if (getApplication().isActionActive("right"))
         mvt.x++;
+    App::instance() << ah::to_string(mvt.x) + " " + ah::to_string(mvt.y);
     mOnlineManager.sendPlayerUpdate(mvt,getApplication().getMousePositionView(mView));
+
+    if (mObjectManager.getPlayer() != nullptr)
+    {
+        mView.setCenter(mObjectManager.getPlayer()->getPosition());
+    }
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -77,7 +82,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 ah::Application& World::getApplication()
 {
-    return mApplication;
+    return App::instance();
 }
 
 ChunkManager& World::getChunkManager()

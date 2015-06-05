@@ -95,7 +95,7 @@ void OnlineManager::handlePackets()
                 case Server2Client::ModifyChunk: modifyChunk(packet); break;
                 case Server2Client::ObjectAddition: objectAddition(packet); break;
                 case Server2Client::ObjectDeletion: objectDeletion(packet); break;
-                case Server2Client::ObjectUpdate: objectUpdate(packet); break;
+                //case Server2Client::ObjectUpdate: objectUpdate(packet); break;
                 default: break;
             }
         }
@@ -174,13 +174,13 @@ void OnlineManager::sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt)
 {
     if (isOk() && mWorld != nullptr)
     {
-        if (mWorld.getObjectManager().getPlayer() != nullptr)
+        if (mWorld->getObjectManager().getPlayer() != nullptr)
         {
-            if (mWorld.getObjectManager().getPlayer()->isValid())
+            if (mWorld->getObjectManager().getPlayer()->isValid())
             {
                 sf::Packet packet;
                 packet << Client2Server::PlayerUpdate << Player::getTypeId();
-                packet << mWorld.getObjectManager().getPlayer()->getId();
+                packet << mWorld->getObjectManager().getPlayer()->getId();
                 packet << mvt << lookAt;
                 updateLinked(mSocket.send(packet));
             }
@@ -198,8 +198,8 @@ void OnlineManager::clientJoined(sf::Packet& packet)
 {
     std::string username = "";
     unsigned int clientId = 0;
-    unsigned int entityId = 0;
-    packet >> username >> clientId >> entityId;
+    unsigned int objectId = 0;
+    packet >> username >> clientId >> objectId;
     if (username == mTempUsername)
     {
         mUsername = mTempUsername;
@@ -208,7 +208,7 @@ void OnlineManager::clientJoined(sf::Packet& packet)
         mClientId = clientId;
         if (mWorld != nullptr)
         {
-            mWorld->getObjectManager().setPlayerId(entityId);
+            mWorld->getObjectManager().setPlayerId(objectId);
         }
     }
 }
@@ -268,7 +268,7 @@ void OnlineManager::objectAddition(sf::Packet& packet)
     {
         if (typeId == 1)
         {
-            auto e = mWorld->getObjectManager().create<Entity>(id, typeId);
+            auto e = mWorld->getObjectManager().createEntity(id);
             unsigned int life, lifeMax;
             packet >> life >> lifeMax;
             e->setLife(life);
@@ -276,14 +276,18 @@ void OnlineManager::objectAddition(sf::Packet& packet)
         }
         else if (typeId == 2)
         {
-            auto p = mWorld->getObjectManager().create<Player>(id, typeId);
+            auto p = mWorld->getObjectManager().createPlayer(id);
+            unsigned int life, lifeMax;
+            packet >> life >> lifeMax;
+            p->setLife(life);
+            p->setLifeMax(lifeMax);
         }
         else
         {
-            mWorld->getObjectManager().create<GameObject>(id);
+            mWorld->getObjectManager().createGameObject(id);
         }
 
-        auto go = mWorld->getObjectManager().getFromId(id);
+        auto go = mWorld->getObjectManager().getGameObject(id);
         go->setPosition(pos);
         go->setOrigin(origin);
         go->setName(name);
@@ -294,6 +298,7 @@ void OnlineManager::objectAddition(sf::Packet& packet)
 
 void OnlineManager::objectDeletion(sf::Packet& packet)
 {
+    unsigned int id;
     packet >> id;
     if (mWorld != nullptr)
     {
@@ -303,9 +308,13 @@ void OnlineManager::objectDeletion(sf::Packet& packet)
 
 void OnlineManager::objectUpdate(sf::Packet& packet)
 {
+    unsigned int id;
+    sf::Vector2f pos;
+    sf::IntRect tRect;
+    packet >> id >> pos >> tRect;
     if (mWorld != nullptr)
     {
-        auto g = mWorld->getObjectManager().getFromId(id);
+        auto g = mWorld->getObjectManager().getGameObject(id);
         if (g != nullptr)
         {
             g->setPosition(pos);

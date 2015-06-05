@@ -12,6 +12,11 @@ OnlineManager& App::getOnlineManager()
     return mOnlineManager;
 }
 
+World& App::getWorld()
+{
+    return mWorld;
+}
+
 void App::loadData()
 {
     {
@@ -109,7 +114,7 @@ void App::loadStateManager()
     pushState(IntroState::getID());
 }
 
-App::App() : ah::Application()
+App::App() : ah::Application(), mWorld(true)
 {
     loadLog();
     loadData();

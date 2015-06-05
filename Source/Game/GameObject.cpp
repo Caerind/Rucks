@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include "World.hpp"
 
 GameObject::GameObject(World& world) : mWorld(world), mId(0), mName("")
 {
@@ -31,7 +32,7 @@ std::string GameObject::getName() const
 
 void GameObject::setTexture(std::string const& filename)
 {
-    Sprite.setTexture(mWorld.getApplication().getTexture("Assets/Textures/"+filename));
+    mSprite.setTexture(mWorld.getApplication().getTexture("Assets/Textures/"+filename));
 }
 
 void GameObject::setTextureRect(sf::IntRect rect)

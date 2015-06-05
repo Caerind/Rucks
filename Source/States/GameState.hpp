@@ -32,7 +32,7 @@ class GameState : public ah::State
         void toEnd();
 
     private:
-        World mWorld;
+        World& mWorld;
         std::map<std::string,thor::Connection> mConnections;
 };
 
