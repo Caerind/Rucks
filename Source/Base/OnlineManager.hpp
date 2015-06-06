@@ -8,6 +8,7 @@
 
 #include "../../Lib/Sfml-Helper/Packet.hpp"
 #include "PacketType.hpp"
+#include "Friend.hpp"
 
 class World;
 
@@ -61,7 +62,7 @@ class OnlineManager
         std::string mUsername;
         std::string mTempUsername;
         unsigned int mClientId;
-        //std::vector<Friend> mFriends;
+        std::vector<Friend> mFriends;
 };
 
 #endif // ONLINEMANAGER_HPP

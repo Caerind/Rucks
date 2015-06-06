@@ -79,11 +79,6 @@ void Chat::add(std::string const& username, std::string const& message)
     }
     mTexts.back().first.setColor(sf::Color::White);
 
-    if (mTexts.size() >= 5)
-    {
-        mTexts.erase(mTexts.begin());
-    }
-
     update();
 }
 

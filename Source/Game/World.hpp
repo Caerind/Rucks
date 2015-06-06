@@ -14,7 +14,7 @@
 
 #include "ChunkManager.hpp"
 #include "ObjectManager.hpp"
-#include "Chat.hpp"
+#include "../Base/Chat.hpp"
 
 class OnlineManager;
 

@@ -57,6 +57,7 @@ void TextField::update(sf::Event const& event, sf::Vector2f mousePosition)
                     str.insert(pos, "|");
                     mText.setString(str);
                 }
+                updateText();
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right)
             {
@@ -69,6 +70,7 @@ void TextField::update(sf::Event const& event, sf::Vector2f mousePosition)
                     str.insert(pos, "|");
                     mText.setString(str);
                 }
+                updateText();
             }
             if (event.type == sf::Event::TextEntered)
             {
@@ -101,6 +103,7 @@ void TextField::update(sf::Event const& event, sf::Vector2f mousePosition)
                         mText.setString(str);
                     }
 				}
+				updateText();
             }
         }
     }

@@ -211,6 +211,14 @@ void OnlineManager::clientJoined(sf::Packet& packet)
             mWorld->getObjectManager().setPlayerId(objectId);
         }
     }
+    else
+    {
+        Friend f;
+        f.setUsername(username);
+        f.setClientId(clientId);
+        f.setPlayerId(objectId);
+        mFriends.push_back(f);
+    }
 }
 
 void OnlineManager::clientLeft(sf::Packet& packet)
