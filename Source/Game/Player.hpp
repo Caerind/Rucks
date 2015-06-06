@@ -16,7 +16,11 @@ class Player : public Entity
         void update(sf::Time dt);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+        void setRange(float range);
+        float getRange() const;
+
     protected:
+        float mRange;
         //Armor worn
         //Weapon worn
 };

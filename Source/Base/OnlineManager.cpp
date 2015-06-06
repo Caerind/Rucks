@@ -188,6 +188,16 @@ void OnlineManager::sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt)
     }
 }
 
+void OnlineManager::sendAttack(unsigned int id)
+{
+    if (isOk())
+    {
+        sf::Packet packet;
+        packet << Client2Server::SendAttack << mPlayerId << id;
+        updateLinked(mSocket.send(packet));
+    }
+}
+
 ////////////////////////////////////////
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -206,6 +216,7 @@ void OnlineManager::clientJoined(sf::Packet& packet)
         mTempUsername = "";
         mConnected = true;
         mClientId = clientId;
+        mPlayerId = objectId;
         if (mWorld != nullptr)
         {
             mWorld->getObjectManager().setPlayerId(objectId);
@@ -267,7 +278,7 @@ void OnlineManager::modifyChunk(sf::Packet& packet)
 
 void OnlineManager::objectAddition(sf::Packet& packet)
 {
-    unsigned int id, typeId;
+    unsigned int id, typeId, life, lifeMax;
     sf::Vector2f pos, origin;
     std::string name, texture;
     sf::IntRect tRect;
@@ -277,18 +288,13 @@ void OnlineManager::objectAddition(sf::Packet& packet)
         if (typeId == 1)
         {
             auto e = mWorld->getObjectManager().createEntity(id);
-            unsigned int life, lifeMax;
-            packet >> life >> lifeMax;
-            e->setLife(life);
-            e->setLifeMax(lifeMax);
         }
         else if (typeId == 2)
         {
             auto p = mWorld->getObjectManager().createPlayer(id);
-            unsigned int life, lifeMax;
-            packet >> life >> lifeMax;
-            p->setLife(life);
-            p->setLifeMax(lifeMax);
+            float range;
+            packet >> range;
+            p->setRange(range);
         }
         else
         {
@@ -301,6 +307,8 @@ void OnlineManager::objectAddition(sf::Packet& packet)
         go->setName(name);
         go->setTexture(texture);
         go->setTextureRect(tRect);
+        go->setLife(life);
+        go->setLifeMax(lifeMax);
     }
 }
 

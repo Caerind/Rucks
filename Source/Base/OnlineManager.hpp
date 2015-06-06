@@ -37,6 +37,7 @@ class OnlineManager
         void askChunk(sf::Vector2i chunkPos);
         void modifyChunk(sf::Vector2i chunkPos, sf::Vector2i tilePos, unsigned int layer, unsigned int id);
         void sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt);
+        void sendAttack(unsigned int id);
 
         void handlePackets();
 
@@ -62,6 +63,7 @@ class OnlineManager
         std::string mUsername;
         std::string mTempUsername;
         unsigned int mClientId;
+        unsigned int mPlayerId;
         std::vector<Friend> mFriends;
 };
 
