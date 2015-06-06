@@ -95,7 +95,7 @@ void OnlineManager::handlePackets()
                 case Server2Client::ModifyChunk: modifyChunk(packet); break;
                 case Server2Client::ObjectAddition: objectAddition(packet); break;
                 case Server2Client::ObjectDeletion: objectDeletion(packet); break;
-                //case Server2Client::ObjectUpdate: objectUpdate(packet); break;
+                case Server2Client::ObjectUpdate: objectUpdate(packet); break;
                 default: break;
             }
         }
@@ -179,8 +179,8 @@ void OnlineManager::sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt)
             if (mWorld->getObjectManager().getPlayer()->isValid())
             {
                 sf::Packet packet;
-                packet << Client2Server::PlayerUpdate << Player::getTypeId();
-                packet << mWorld->getObjectManager().getPlayer()->getId();
+                packet << Client2Server::PlayerUpdate;
+                packet << mWorld->getObjectManager().getPlayerId();
                 packet << mvt << lookAt;
                 updateLinked(mSocket.send(packet));
             }
@@ -308,10 +308,10 @@ void OnlineManager::objectDeletion(sf::Packet& packet)
 
 void OnlineManager::objectUpdate(sf::Packet& packet)
 {
-    unsigned int id;
+    unsigned int typeId, id;
     sf::Vector2f pos;
     sf::IntRect tRect;
-    packet >> id >> pos >> tRect;
+    packet >> typeId >> id >> pos >> tRect;
     if (mWorld != nullptr)
     {
         auto g = mWorld->getObjectManager().getGameObject(id);

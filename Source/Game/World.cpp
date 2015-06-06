@@ -39,15 +39,14 @@ void World::update(sf::Time dt)
     mChat.update(dt);
 
     sf::Vector2f mvt;
-    if (getApplication().isActionActive("up"))
+    if (getApplication().isActionActive("up") && !mChat.isWriting())
         mvt.y--;
-    if (getApplication().isActionActive("down"))
+    if (getApplication().isActionActive("down") && !mChat.isWriting())
         mvt.y++;
-    if (getApplication().isActionActive("left"))
+    if (getApplication().isActionActive("left") && !mChat.isWriting())
         mvt.x--;
-    if (getApplication().isActionActive("right"))
+    if (getApplication().isActionActive("right") && !mChat.isWriting())
         mvt.x++;
-    App::instance() << ah::to_string(mvt.x) + " " + ah::to_string(mvt.y);
     mOnlineManager.sendPlayerUpdate(mvt,getApplication().getMousePositionView(mView));
 
     if (mObjectManager.getPlayer() != nullptr)
@@ -62,6 +61,7 @@ void World::update(sf::Time dt)
         sf::Vector2i t = ChunkManager::worldToTile(m);
         mOnlineManager.modifyChunk(c,t,0,800);
     }
+
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
