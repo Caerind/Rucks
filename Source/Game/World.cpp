@@ -52,6 +52,7 @@ void World::update(sf::Time dt)
     if (mObjectManager.getPlayer() != nullptr)
     {
         mView.setCenter(mObjectManager.getPlayer()->getPosition());
+        getApplication().setDebugInfo("Pos",ah::to_string(mObjectManager.getPlayer()->getPosition().x) + "," + ah::to_string(mObjectManager.getPlayer()->getPosition().y));
     }
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))

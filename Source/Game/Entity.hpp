@@ -12,15 +12,7 @@ class Entity : public GameObject
 
         static unsigned int getTypeId();
 
-        void setLife(unsigned int life);
-        unsigned int getLife() const;
-
-        void setLifeMax(unsigned int lifeMax);
-        unsigned int getLifeMax() const;
-
     protected:
-        unsigned int mLife;
-        unsigned int mLifeMax;
 };
 
 #endif // ENTITY_HPP

@@ -311,7 +311,8 @@ void OnlineManager::objectUpdate(sf::Packet& packet)
     unsigned int typeId, id;
     sf::Vector2f pos;
     sf::IntRect tRect;
-    packet >> typeId >> id >> pos >> tRect;
+    unsigned int life;
+    packet >> typeId >> id >> pos >> tRect >> life;
     if (mWorld != nullptr)
     {
         auto g = mWorld->getObjectManager().getGameObject(id);
@@ -319,6 +320,7 @@ void OnlineManager::objectUpdate(sf::Packet& packet)
         {
             g->setPosition(pos);
             g->setTextureRect(tRect);
+            g->setLife(life);
         }
     }
 }

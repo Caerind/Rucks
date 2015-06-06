@@ -52,6 +52,7 @@ void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(mSprite,states);
+    renderLifeBar(target,states);
 }
 
 World& GameObject::getWorld()
@@ -62,4 +63,44 @@ World& GameObject::getWorld()
 bool GameObject::isValid()
 {
     return mId != 0;
+}
+
+void GameObject::setLife(unsigned int life)
+{
+    mLife = life;
+}
+
+unsigned int GameObject::getLife() const
+{
+    return mLife;
+}
+
+void GameObject::setLifeMax(unsigned int lifeMax)
+{
+    mLifeMax = lifeMax;
+}
+
+unsigned int GameObject::getLifeMax() const
+{
+    return mLifeMax;
+}
+
+void GameObject::renderLifeBar(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    if (mLife < mLifeMax)
+    {
+        sf::RectangleShape bg;
+        bg.setSize(sf::Vector2f(30,7));
+        bg.setPosition(sf::Vector2f(-15,-105));
+        bg.setFillColor(sf::Color::Red);
+        bg.setOutlineThickness(1);
+        bg.setOutlineColor(sf::Color::Black);
+        target.draw(bg,states);
+
+        sf::RectangleShape l;
+        l.setSize(sf::Vector2f(30.f * static_cast<float>(mLife) / static_cast<float>(mLifeMax),7));
+        l.setPosition(sf::Vector2f(-15,-105));
+        l.setFillColor(sf::Color::Green);
+        target.draw(l,states);
+    }
 }

@@ -40,6 +40,14 @@ class GameObject : public sf::Transformable, public sf::Drawable
 
         bool isValid();
 
+        void setLife(unsigned int life);
+        unsigned int getLife() const;
+
+        void setLifeMax(unsigned int lifeMax);
+        unsigned int getLifeMax() const;
+
+        virtual void renderLifeBar(sf::RenderTarget& target, sf::RenderStates states) const;
+
     protected:
         World& mWorld;
 
@@ -47,6 +55,9 @@ class GameObject : public sf::Transformable, public sf::Drawable
 
         unsigned int mId;
         std::string mName;
+
+        unsigned int mLife;
+        unsigned int mLifeMax;
 };
 
 #endif // GAMEOBJECT_HPP
