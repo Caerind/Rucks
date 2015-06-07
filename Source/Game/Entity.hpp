@@ -11,8 +11,6 @@ class Entity : public GameObject
         Entity(World& world);
 
         static unsigned int getTypeId();
-
-    protected:
 };
 
 #endif // ENTITY_HPP

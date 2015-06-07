@@ -188,16 +188,6 @@ void OnlineManager::sendPlayerUpdate(sf::Vector2f mvt, sf::Vector2f lookAt)
     }
 }
 
-void OnlineManager::sendAttack(unsigned int id)
-{
-    if (isOk())
-    {
-        sf::Packet packet;
-        packet << Client2Server::SendAttack << mPlayerId << id;
-        updateLinked(mSocket.send(packet));
-    }
-}
-
 ////////////////////////////////////////
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -283,18 +273,16 @@ void OnlineManager::objectAddition(sf::Packet& packet)
     std::string name, texture;
     sf::IntRect tRect;
     packet >> id >> typeId >> pos >> origin >> name >> texture >> tRect;
+    packet >> life >> lifeMax;
     if (mWorld != nullptr)
     {
-        if (typeId == 1)
+        if (typeId == Entity::getTypeId())
         {
             auto e = mWorld->getObjectManager().createEntity(id);
         }
-        else if (typeId == 2)
+        else if (typeId == Player::getTypeId())
         {
             auto p = mWorld->getObjectManager().createPlayer(id);
-            float range;
-            packet >> range;
-            p->setRange(range);
         }
         else
         {

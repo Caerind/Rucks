@@ -23,14 +23,14 @@ class GameObject : public sf::Transformable, public sf::Drawable
 
         static unsigned int getTypeId();
 
-        void setId(unsigned int id);
-        unsigned int getId() const;
+        virtual void setId(unsigned int id);
+        virtual unsigned int getId() const;
 
-        void setName(std::string const& name);
-        std::string getName() const;
+        virtual void setName(std::string const& name);
+        virtual std::string getName() const;
 
-        void setTexture(std::string const& filename);
-        void setTextureRect(sf::IntRect rect);
+        virtual void setTexture(std::string const& filename);
+        virtual void setTextureRect(sf::IntRect rect);
 
         virtual void handleEvent(sf::Event const& event);
         virtual void update(sf::Time dt);
@@ -38,13 +38,13 @@ class GameObject : public sf::Transformable, public sf::Drawable
 
         World& getWorld();
 
-        bool isValid();
+        virtual bool isValid();
 
-        void setLife(unsigned int life);
-        unsigned int getLife() const;
+        virtual void setLife(unsigned int life);
+        virtual unsigned int getLife() const;
 
-        void setLifeMax(unsigned int lifeMax);
-        unsigned int getLifeMax() const;
+        virtual void setLifeMax(unsigned int lifeMax);
+        virtual unsigned int getLifeMax() const;
 
         virtual void renderLifeBar(sf::RenderTarget& target, sf::RenderStates states) const;
 

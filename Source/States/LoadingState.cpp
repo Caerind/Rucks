@@ -9,7 +9,7 @@ LoadingState::LoadingState(ah::StateManager& manager) : ah::State(manager)
 
     // Load Resources
     getApplication().getTexture("Assets/Textures/tileset.png");
-    getApplication().getTexture("Assets/Textures/soldier1.png");
+    getApplication().getTexture("Assets/Textures/soldier1.png").setSmooth(true);
 
     mConnectingState = 0;
 

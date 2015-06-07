@@ -24,7 +24,20 @@ void World::handleEvent(sf::Event const& event)
 {
     mObjectManager.handleEvent(event);
     mChat.handleEvent(event);
-    sfh::handleZoom(event,mView,0.2f);
+
+    if (event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+    {
+        if (event.mouseWheelScroll.delta < 1)
+        {
+            if (mView.getSize().x < 1024.f)
+                mView.zoom(1.2f);
+        }
+        else
+        {
+            if (mView.getSize().x > 320.f)
+                mView.zoom(0.8f);
+        }
+    }
 }
 
 void World::update(sf::Time dt)
@@ -109,6 +122,11 @@ Chat& World::getChat()
 sf::View& World::getView()
 {
     return mView;
+}
+
+Player::Ptr World::getPlayer()
+{
+    return mObjectManager.getPlayer();
 }
 
 bool World::isOnline()

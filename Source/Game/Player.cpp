@@ -4,6 +4,8 @@
 
 Player::Player(World& world) : Entity(world)
 {
+    mTextName.setCharacterSize(10);
+    mTextName.setFont(mWorld.getApplication().getFont("Assets/Fonts/aniron.ttf"));
 }
 
 unsigned int Player::getTypeId()
@@ -11,46 +13,19 @@ unsigned int Player::getTypeId()
     return 2;
 }
 
-void Player::handleEvent(sf::Event const& event)
-{
-    if (event.type == sf::Event::MouseButtonPressed
-    && event.mouseButton.button == sf::Mouse::Left
-    && mSprite.getGlobalBounds().contains(mWorld.getApplication().getMousePositionView(mWorld.getView()))
-    && mWorld.getObjectManager().getPlayer() != nullptr)
-    {
-        float dx = mWorld.getObjectManager().getPlayer()->getPosition().x - getPosition().x;
-        float dy = mWorld.getObjectManager().getPlayer()->getPosition().y - getPosition().y;
-        float d = std::sqrt(dx * dx + dy * dy);
-        if (d < mWorld.getObjectManager().getPlayer()->getRange())
-        {
-            mWorld.getOnlineManager().sendAttack(mId);
-        }
-    }
-}
-
-void Player::update(sf::Time dt)
-{
-}
-
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(mSprite,states);
-    /*
-    if (!mainPlayer)
-    {
-        renderName(target,states);
-    }
-    */
+    if (mWorld.getObjectManager().getPlayer() != nullptr)
+        if (mWorld.getObjectManager().getPlayer()->getId() != mId)
+            target.draw(mTextName,states);
     renderLifeBar(target,states);
 }
 
-void Player::setRange(float range)
+void Player::setName(std::string const& name)
 {
-    mRange = range;
-}
-
-float Player::getRange() const
-{
-    return mRange;
+    mName = name;
+    mTextName.setString(name);
+    mTextName.setPosition(-mTextName.getGlobalBounds().width/2 + getOrigin().x,-20);
 }

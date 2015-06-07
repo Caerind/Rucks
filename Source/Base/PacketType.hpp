@@ -33,7 +33,6 @@ namespace Client2Server
         ModifyChunk,
         //
         PlayerUpdate,
-        SendAttack,
     };
 }
 

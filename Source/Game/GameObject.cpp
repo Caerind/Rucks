@@ -90,16 +90,16 @@ void GameObject::renderLifeBar(sf::RenderTarget& target, sf::RenderStates states
     if (mLife < mLifeMax)
     {
         sf::RectangleShape bg;
-        bg.setSize(sf::Vector2f(30,7));
-        bg.setPosition(sf::Vector2f(-15,-105));
+        bg.setSize(sf::Vector2f(32,7));
+        bg.setPosition(-16 + getOrigin().x,-7-3);
         bg.setFillColor(sf::Color::Red);
         bg.setOutlineThickness(1);
         bg.setOutlineColor(sf::Color::Black);
         target.draw(bg,states);
 
         sf::RectangleShape l;
-        l.setSize(sf::Vector2f(30.f * static_cast<float>(mLife) / static_cast<float>(mLifeMax),7));
-        l.setPosition(sf::Vector2f(-15,-105));
+        l.setSize(sf::Vector2f(32.f * static_cast<float>(mLife) / static_cast<float>(mLifeMax),7));
+        l.setPosition(-16 + getOrigin().x,-7-3);
         l.setFillColor(sf::Color::Green);
         target.draw(l,states);
     }

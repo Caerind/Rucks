@@ -1,6 +1,8 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <SFML/Graphics/Text.hpp>
+
 #include "Entity.hpp"
 
 class Player : public Entity
@@ -12,17 +14,12 @@ class Player : public Entity
 
         static unsigned int getTypeId();
 
-        void handleEvent(sf::Event const& event);
-        void update(sf::Time dt);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-        void setRange(float range);
-        float getRange() const;
+        void setName(std::string const& name);
 
     protected:
-        float mRange;
-        //Armor worn
-        //Weapon worn
+        sf::Text mTextName;
 };
 
 #endif // PLAYER_HPP

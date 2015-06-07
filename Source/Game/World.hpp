@@ -3,8 +3,6 @@
 
 #include "../../Lib/Aharos/Application.hpp"
 
-#include "../../Lib/Sfml-Helper/Event.hpp"
-
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -34,6 +32,7 @@ class World : public sf::Drawable
         OnlineManager& getOnlineManager();
         Chat& getChat();
         sf::View& getView();
+        Player::Ptr getPlayer();
 
         bool isOnline();
 

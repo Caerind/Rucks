@@ -7,9 +7,9 @@ namespace sfh
 
 void handleZoom(sf::Event const& event, sf::View& view, float delta)
 {
-    if (event.type == sf::Event::MouseWheelMoved)
+    if (event.type == sf::Event::MouseWheelScrolled)
     {
-        if (event.mouseWheel.delta < 1)
+        if (event.mouseWheelScroll.delta < 1)
         {
             view.zoom(1.f + delta);
         }
