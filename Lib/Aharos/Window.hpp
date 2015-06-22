@@ -37,7 +37,7 @@ class Window : public sf::RenderWindow
         void setKeyRepeatEnabled(bool enabled);
         bool isKeyRepeatEnabled();
 
-    protected: // Icon
+    public: // Icon
         void setIcon(std::string const& filename);
 
 

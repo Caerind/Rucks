@@ -1,11 +1,17 @@
-#include "Lib/Aharos/Application.hpp"
+#include "Configuration.hpp"
+#include "../Lib/Aharos/Application.hpp"
 
-#include "Game/States/GameState.hpp"
+#include "States/GameState.hpp"
 
 int main()
 {
+    // Load Config
+    Configuration::instance().initialize();
+    Configuration::instance().loadFromFile("Assets/Data/settings.conf");
+
     // Window Config
     ah::Application::instance().create(sf::VideoMode(800,600),"Rucks");
+    ah::Application::instance().setIcon("Assets/Textures/icon.png");
 
     // ...
 
@@ -21,5 +27,10 @@ int main()
     // Run
     ah::Application::instance().pushState(GameState::getID());
     ah::Application::instance().run();
+
+    // Save Config
+    Configuration::instance().saveToFile("Data/settings.conf");
+    Configuration::instance().terminate();
+
     return EXIT_SUCCESS;
 }
