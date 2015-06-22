@@ -3,12 +3,11 @@
 namespace ah
 {
 
-Application::Application() : mStates(*this), mFpsFrames(0)
-{
-}
+Application Application::mInstance;
 
-Application::~Application()
+Application& Application::instance()
 {
+    return mInstance;
 }
 
 void Application::run()
@@ -20,6 +19,8 @@ void Application::run()
 	{
 		sf::Time dt = clock.restart();
 		timeSinceLastUpdate += dt;
+		bool repaint = false;
+
 		while (timeSinceLastUpdate > TimePerFrame)
 		{
 			timeSinceLastUpdate -= TimePerFrame;
@@ -31,30 +32,13 @@ void Application::run()
                 close();
 
 			std::cout << std::flush;
+
+			repaint = true;
 		}
 
-		render();
+        if (repaint)
+            render();
 	}
-}
-
-Application::ActionMap& Application::getActionMap()
-{
-    return mActionMap;
-}
-
-Application::CallbackSystem& Application::getCallbackSystem()
-{
-    return mCallbackSystem;
-}
-
-void Application::setAction(std::string const& id, thor::Action action)
-{
-    mActionMap[id] = action;
-}
-
-bool Application::isActionActive(std::string const& id)
-{
-    return mActionMap.isActive(id);
 }
 
 void Application::pushState(std::string const& stateId)
@@ -62,14 +46,21 @@ void Application::pushState(std::string const& stateId)
     mStates.pushState(stateId);
 }
 
+
+Application::Application() : mStates(*this), mFpsFrames(0)
+{
+}
+
+Application::~Application()
+{
+}
+
 void Application::handleEvents()
 {
-    mActionMap.clearEvents();
-
     sf::Event event;
     while (Window::pollEvent(event))
     {
-        mActionMap.pushEvent(event);
+        ActionTarget::handleEvent(event);
         mStates.handleEvent(event);
     }
 }
@@ -78,7 +69,7 @@ void Application::update(sf::Time dt)
 {
     mStates.update(dt);
 
-    mActionMap.invokeCallbacks(mCallbackSystem,this);
+    ActionTarget::update();
 
     mFpsTimer += dt;
     mFpsFrames++;
@@ -89,14 +80,14 @@ void Application::update(sf::Time dt)
         mFpsFrames = 0;
     }
 
-    MusicManager::updateMusicManager();
+    am::AudioManager::update();
 }
 
 void Application::render()
 {
     Window::clear();
     Window::draw(mStates);
-    Window::draw(*this);
+    Window::draw(*this); // Draw DebugScreen
     Window::display();
 }
 

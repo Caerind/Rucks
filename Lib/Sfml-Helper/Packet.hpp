@@ -6,6 +6,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 // Vector2
 
@@ -27,6 +28,11 @@ template<typename T>
 sf::Packet& operator <<(sf::Packet& packet, const sf::Rect<T>& r);
 template<typename T>
 sf::Packet& operator >>(sf::Packet& packet, sf::Rect<T>& r);
+
+// Color
+
+sf::Packet& operator <<(sf::Packet& packet, const sf::Color& c);
+sf::Packet& operator >>(sf::Packet& packet, sf::Color& c);
 
 
 
