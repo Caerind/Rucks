@@ -2,12 +2,14 @@
 #define SFH_UTILITY_HPP_INCLUDED
 
 #include <SFML/Graphics/Rect.hpp>
-
+#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <array>
 
 namespace sfh
 {
+
+sf::FloatRect getViewRect(sf::View const& v);
 
 template<typename T>
 void centerOrigin(T& t);
