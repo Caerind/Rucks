@@ -19,6 +19,7 @@ class CollisionManager : public sf::Drawable
         void remove(CollisionShape::Ptr shape);
 
         bool intersect(CollisionShape::Ptr shape);
+        bool intersect(CollisionShape& shape);
         bool contains(sf::Vector2f point);
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;

@@ -7,6 +7,15 @@ CollisionShape::CollisionShape()
 {
 }
 
+CollisionShape::CollisionShape(sf::FloatRect const& rect)
+{
+    mPoints.resize(4);
+    mPoints[0] = sf::Vector2f(-rect.width * 0.5f, -rect.height * 0.5f);
+    mPoints[1] = sf::Vector2f(rect.width * 0.5f, -rect.height * 0.5f);
+    mPoints[2] = sf::Vector2f(rect.width * 0.5f, rect.height * 0.5f);
+    mPoints[3] = sf::Vector2f(-rect.width * 0.5f, rect.height * 0.5f);
+}
+
 void CollisionShape::setPointCount(unsigned int count)
 {
     mPoints.resize(count);

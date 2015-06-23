@@ -59,6 +59,25 @@ void ChunkManager::setId(sf::Vector2f pos, unsigned int layer, unsigned int id)
     }
 }
 
+unsigned int ChunkManager::getId(sf::Vector2i cPos, sf::Vector2i tPos, unsigned int layer)
+{
+    for (unsigned int i = 0; i < mChunks.size(); i++)
+    {
+        if (cPos == mChunks[i].getPos())
+        {
+            return mChunks[i].getId(tPos,layer);
+        }
+    }
+    return 0;
+}
+
+unsigned int ChunkManager::getId(sf::Vector2f pos, unsigned int layer)
+{
+    sf::Vector2i cPos = worldToChunk(pos);
+    sf::Vector2i tPos = worldToTile(pos);
+    return getId(cPos,tPos,layer);
+}
+
 void ChunkManager::update(sf::View const& view)
 {
     sf::FloatRect vRect = sfh::getViewRect(view);
@@ -107,6 +126,31 @@ void ChunkManager::draw(sf::RenderTarget& target, sf::View const& view, unsigned
     {
         mChunks[i].draw(target, vRect, layer);
     }
+}
+
+bool ChunkManager::collision(sf::FloatRect const& rect)
+{
+    sf::FloatRect r = sf::FloatRect(rect.left - 1.f, rect.top - 1.f, rect.width + 2.f, rect.height + 2.f);
+    std::array<sf::Vector2f,4> array = sfh::getPoint<float>(r);
+    sf::Vector2i cPos, tPos;
+    sf::Vector2f pos;
+    for (pos.x = array[0].x; pos.x <= array[2].x; pos.x += Chunk::getTileSize().x)
+    {
+        for (pos.y = array[0].y; pos.y <= array[2].y; pos.y += Chunk::getTileSize().y)
+        {
+            cPos = worldToChunk(pos);
+            tPos = worldToTile(pos);
+            if (Chunk::isCollide(getId(cPos,tPos,0)) || Chunk::isCollide(getId(cPos,tPos,1)))
+            {
+                sf::Vector2f p = toWorldPos(cPos,tPos);
+                if (sf::FloatRect(p.x,p.y,Chunk::getTileSize().x,Chunk::getTileSize().y).intersects(rect))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 bool ChunkManager::contains(sf::Vector2i chunkPos)
@@ -162,4 +206,9 @@ sf::Vector2i ChunkManager::worldToTile(sf::Vector2f pos)
     p.x %= Chunk::getChunkSizeTile().x;
     p.y %= Chunk::getChunkSizeTile().y;
     return p;
+}
+
+sf::Vector2f ChunkManager::toWorldPos(sf::Vector2i cPos, sf::Vector2i tPos)
+{
+    return sf::Vector2f(cPos.x * Chunk::getChunkSize().x, cPos.y * Chunk::getChunkSize().y) + sf::Vector2f(tPos.x * Chunk::getTileSize().x, tPos.y * Chunk::getTileSize().y);
 }

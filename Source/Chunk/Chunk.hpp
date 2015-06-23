@@ -2,7 +2,7 @@
 #define CHUNK_HPP
 
 #include <array>
-#include <fstream> // TODO : json ?
+#include <fstream>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -50,12 +50,17 @@ class Chunk
         sf::Vector2f idToTexCoords(unsigned int id);
         unsigned int getTilesPerLine();
 
+        static std::vector<unsigned int> initializeCollisions();
+        static bool isCollide(unsigned int id);
+
     private:
         sf::Clock mClock;
         sf::RenderStates mStates;
         sf::Vector2i mPos;
         std::array<sf::VertexArray,3> mLayers;
         sf::Vector2u mTextureSize;
+
+        static std::vector<unsigned int> mCollisionIds;
 };
 
 #endif // CHUNK_HPP

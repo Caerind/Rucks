@@ -19,6 +19,7 @@ class CollisionShape : public sf::Drawable
         typedef std::shared_ptr<CollisionShape> Ptr;
 
         CollisionShape();
+        CollisionShape(sf::FloatRect const& rect);
 
         void setPointCount(unsigned int count);
         unsigned int getPointCount() const;

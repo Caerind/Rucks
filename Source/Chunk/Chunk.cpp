@@ -2,6 +2,8 @@
 #include "../World.hpp"
 #include <Thor/Math/Random.hpp>
 
+std::vector<unsigned int> Chunk::mCollisionIds = Chunk::initializeCollisions();
+
 Chunk::Chunk(sf::Vector2i pos)
 {
     mPos = pos;
@@ -29,7 +31,7 @@ Chunk::Chunk(sf::Vector2i pos)
     }
     else
     {
-        // TODO : send the packet to require the chunk
+        // TODO : Send Packet Require Chunk
     }
 }
 
@@ -91,7 +93,23 @@ void Chunk::generate()
     {
         for (p.y = 0; p.y < getChunkSizeTile().y; p.y++)
         {
-            setId(p,0,thor::random(0,10));
+            std::vector<unsigned int> ids;
+            ids.push_back(181);
+            ids.push_back(182);
+            ids.push_back(183);
+            ids.push_back(118);
+            ids.push_back(310);
+            ids.push_back(373);
+            ids.push_back(374);
+            ids.push_back(375);
+            ids.push_back(800);
+            ids.push_back(801);
+            ids.push_back(802);
+            ids.push_back(803);
+            ids.push_back(804);
+            int e = ids.size()-1;
+            unsigned int id = ids[thor::random(0,e)];
+            setId(p, 0, id);
         }
     }
 
@@ -170,8 +188,6 @@ void Chunk::setId(sf::Vector2i tPos, unsigned int layer, unsigned int id)
         quad[1].texCoords = sf::Vector2f(texCoords.x + getTileSize().x, texCoords.y);
         quad[2].texCoords = sf::Vector2f(texCoords.x + getTileSize().x, texCoords.y + getTileSize().y);
         quad[3].texCoords = sf::Vector2f(texCoords.x, texCoords.y + getTileSize().y);
-
-        // TODO : Collisions
     }
 }
 
@@ -241,4 +257,23 @@ sf::Vector2f Chunk::idToTexCoords(unsigned int id)
 unsigned int Chunk::getTilesPerLine()
 {
     return mTextureSize.x / getTileSize().x;
+}
+
+std::vector<unsigned int> Chunk::initializeCollisions()
+{
+    std::vector<unsigned int> collisions;
+    //collisions.push_back();
+    return collisions;
+}
+
+bool Chunk::isCollide(unsigned int id)
+{
+    for (unsigned int i = 0; i < mCollisionIds.size(); i++)
+    {
+        if (id == mCollisionIds[i])
+        {
+            return true;
+        }
+    }
+    return false;
 }

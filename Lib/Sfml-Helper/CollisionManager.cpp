@@ -34,6 +34,14 @@ bool CollisionManager::intersect(CollisionShape::Ptr shape)
     return false;
 }
 
+bool CollisionManager::intersect(CollisionShape& shape)
+{
+    for (unsigned int i = 0; i < mCollisions.size(); i++)
+        if (shape.intersect(mCollisions[i]))
+            return true;
+    return false;
+}
+
 bool CollisionManager::contains(sf::Vector2f point)
 {
     for (unsigned int i = 0; i < mCollisions.size(); i++)
