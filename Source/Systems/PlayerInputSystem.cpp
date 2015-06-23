@@ -8,6 +8,8 @@ PlayerInputSystem::PlayerInputSystem()
 , ah::ActionTarget(Configuration::instance().getPlayerInput())
 {
     mFilter.push_back(TransformComponent::getId());
+    mFilter.push_back(SpriteComponent::getId());
+    mFilter.push_back(CollisionComponent::getId());
     mFilter.push_back(MovementComponent::getId());
     mFilter.push_back(PlayerInputComponent::getId());
 
@@ -42,10 +44,14 @@ void PlayerInputSystem::update(sf::Time dt)
 {
     ah::ActionTarget::update();
 
+
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
+        sf::Vector2f ePos = mEntities[i]->getComponent<TransformComponent>().getPosition() + mEntities[i]->getComponent<SpriteComponent>().getOrigin();
         sf::Vector2f mvt = mMovement * dt.asSeconds() * mEntities[i]->getComponent<MovementComponent>().getSpeed();
-        // TODO : Check Collisions
+        CollisionComponent& c = mEntities[i]->getComponent<CollisionComponent>();
+        c.setCenter(ePos);
+        collision(c.getBounds(), mvt);
         mEntities[i]->getComponent<TransformComponent>().move(mvt);
         mEntities[i]->getComponent<MovementComponent>().setLastMovement(mvt);
         mEntities[i]->getComponent<MovementComponent>().setLookAt(ah::Application::instance().getMousePositionView(World::instance().getView()));

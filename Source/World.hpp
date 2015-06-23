@@ -25,6 +25,8 @@
 #include "Components/LifeComponent.hpp"
 #include "Components/AIComponent.hpp"
 
+#include "Prefab.hpp"
+
 class World
 {
     public:

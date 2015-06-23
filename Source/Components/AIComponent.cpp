@@ -27,7 +27,6 @@ void AIComponent::setTarget(es::Entity::Ptr target)
 
 es::Entity::Ptr AIComponent::getTarget()
 {
-    hasTarget();
     return mTarget;
 }
 
@@ -65,6 +64,16 @@ void AIComponent::setMonster(bool monster)
 bool AIComponent::isMonster() const
 {
     return mIsMonster;
+}
+
+void AIComponent::setFighter(bool fighter)
+{
+    mIsFighter = fighter;
+}
+
+bool AIComponent::isFighter() const
+{
+    return mIsFighter;
 }
 
 void AIComponent::setViewDistance(float distance)

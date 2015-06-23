@@ -25,6 +25,9 @@ class AIComponent : public es::Component
         void setMonster(bool monster);
         bool isMonster() const;
 
+        void setFighter(bool fighter);
+        bool isFighter() const;
+
         void setViewDistance(float distance);
         float getViewDistance() const;
 
@@ -34,6 +37,7 @@ class AIComponent : public es::Component
     private:
         es::Entity::Ptr mTarget;
         bool mIsMonster;
+        bool mIsFighter;
         float mViewDistance;
         float mOutOfView;
 };

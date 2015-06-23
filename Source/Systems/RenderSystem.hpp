@@ -9,6 +9,7 @@
 
 #include "../Components/TransformComponent.hpp"
 #include "../Components/SpriteComponent.hpp"
+#include "../Components/CollisionComponent.hpp"
 
 class RenderSystem : public es::System
 {

@@ -8,6 +8,7 @@
 
 #include "../Components/TransformComponent.hpp"
 #include "../Components/MovementComponent.hpp"
+#include "../Components/CollisionComponent.hpp"
 #include "../Components/PlayerInputComponent.hpp"
 
 class PlayerInputSystem : public es::System, public ah::ActionTarget

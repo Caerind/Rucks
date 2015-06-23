@@ -18,6 +18,10 @@ void World::initialize()
     mResources.getTexture("soldier1").setSmooth(true);
     mResources.loadTexture("soldier2","Assets/Textures/soldier2.png");
     mResources.getTexture("soldier2").setSmooth(true);
+    mResources.loadTexture("princess","Assets/Textures/princess.png");
+    mResources.getTexture("princess").setSmooth(true);
+    mResources.loadTexture("bat","Assets/Textures/bat.png");
+    mResources.getTexture("bat").setSmooth(true);
 
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
@@ -25,22 +29,11 @@ void World::initialize()
     mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
     mEntities.addSystem<AnimationSystem>(new AnimationSystem());
 
-    auto e = mEntities.create("player");
-    e->addComponent<TransformComponent>(new TransformComponent(100,100));
-    e->addComponent<SpriteComponent>(new SpriteComponent("soldier1",sf::Vector2i(64,64)));
-    e->addComponent<MovementComponent>(new MovementComponent(200));
-    e->addComponent<LifeComponent>(new LifeComponent(100,100));
-    e->addComponent<PlayerInputComponent>(new PlayerInputComponent());
-
-    auto m = mEntities.create();
-    m->addComponent<TransformComponent>(new TransformComponent(400,400));
-    m->addComponent<SpriteComponent>(new SpriteComponent("soldier2",sf::Vector2i(64,64)));
-    m->addComponent<MovementComponent>(new MovementComponent(100));
-    m->addComponent<LifeComponent>(new LifeComponent(50,50));
-    m->addComponent<AIComponent>(new AIComponent());
-    m->getComponent<AIComponent>().setMonster(true);
-    m->getComponent<AIComponent>().setViewDistance(200);
-    m->getComponent<AIComponent>().setOutOfView(400);
+    Prefab prefab(mEntities);
+    prefab.createPlayer(sf::Vector2f(100,100));
+    prefab.createMonster(sf::Vector2f(400,400));
+    prefab.createPacific(sf::Vector2f(50,50));
+    prefab.createFighter(sf::Vector2f(50,200));
 }
 
 void World::terminate()
@@ -52,6 +45,8 @@ void World::terminate()
     mResources.releaseTexture("tileset");
     mResources.releaseTexture("soldier1");
     mResources.releaseTexture("soldier2");
+    mResources.releaseTexture("princess");
+    mResources.releaseTexture("bat");
 }
 
 bool World::loadFromFile(std::string const& filename)

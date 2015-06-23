@@ -7,6 +7,7 @@
 #include "../Components/MovementComponent.hpp"
 #include "../Components/SpriteComponent.hpp"
 #include "../Components/AIComponent.hpp"
+#include "../Components/CollisionComponent.hpp"
 #include "../Components/LifeComponent.hpp"
 
 #include <Thor/Vectors/VectorAlgebra2D.hpp>
@@ -21,6 +22,8 @@ class AIControllerSystem : public es::System
         void update(sf::Time dt);
 
         void handleMonster(es::Entity::Ptr e, sf::Time dt);
+        void handleFighter(es::Entity::Ptr e, sf::Time dt);
+        void handlePacific(es::Entity::Ptr e, sf::Time dt);
 };
 
 #endif // AICONTROLLERSYSTEM_HPP
