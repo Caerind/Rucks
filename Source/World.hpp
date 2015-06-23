@@ -1,10 +1,6 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
-#include <iostream>
-
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Time.hpp>
@@ -17,7 +13,15 @@
 
 #include "Server/Server.hpp"
 
-class World : public sf::Drawable
+#include "Systems/RenderSystem.hpp"
+#include "Systems/PlayerInputSystem.hpp"
+
+#include "Components/TransformComponent.hpp"
+#include "Components/SpriteComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PlayerInputComponent.hpp"
+
+class World
 {
     public:
         static World& instance();
@@ -30,7 +34,7 @@ class World : public sf::Drawable
 
         void handleEvent(sf::Event const& event);
         void update(sf::Time dt);
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        void render(sf::RenderTarget& target);
 
         ah::ResourceHolder& getResources();
         sf::View& getView();

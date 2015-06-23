@@ -26,7 +26,7 @@ bool GameState::update(sf::Time dt)
 
 void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(World::instance());
+    World::instance().render(target);
 }
 
 void GameState::onActivate()

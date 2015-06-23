@@ -8,21 +8,13 @@ System::System()
 {
 }
 
-System::System(EntityManager* manager)
-: mManager(manager)
-{
-    if (mManager != nullptr)
-    {
-        mManager->addSystem(this);
-    }
-}
-
 System::~System()
 {
-    if (mManager != nullptr)
-    {
-        mManager->removeSystem(this);
-    }
+}
+
+std::string System::getId()
+{
+    return "System";
 }
 
 void System::add(Entity::Ptr e)
@@ -67,6 +59,11 @@ bool System::hasRequiredComponents(Entity::Ptr e)
 System::EntityArray System::getEntities()
 {
     return mEntities;
+}
+
+void System::setManager(EntityManager* manager)
+{
+    mManager = manager;
 }
 
 }

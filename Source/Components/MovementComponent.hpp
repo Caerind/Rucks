@@ -6,7 +6,7 @@
 class MovementComponent : public es::Component
 {
     public:
-        MovementComponent();
+        MovementComponent(float speed = 100.f);
 
         static std::string getId();
 

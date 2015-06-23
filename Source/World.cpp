@@ -14,15 +14,31 @@ void World::initialize()
 
     // Load resources
     mResources.loadTexture("tileset","Assets/Textures/tileset.png");
+    mResources.loadTexture("soldier1","Assets/Textures/soldier1.png");
+    mResources.getTexture("soldier1").setSmooth(true);
+    mResources.loadTexture("soldier2","Assets/Textures/soldier2.png");
+    mResources.getTexture("soldier2").setSmooth(true);
+
+    // Attach Systems
+    mEntities.addSystem<RenderSystem>(new RenderSystem());
+    mEntities.addSystem<PlayerInputSystem>(new PlayerInputSystem());
+
+    auto e = mEntities.create("player");
+    e->addComponent<TransformComponent>(new TransformComponent(100,100));
+    e->addComponent<SpriteComponent>(new SpriteComponent("soldier1"));
+    e->addComponent<MovementComponent>(new MovementComponent(200));
+    e->addComponent<PlayerInputComponent>(new PlayerInputComponent());
 }
 
 void World::terminate()
 {
-    // Release resources
-    mResources.releaseTexture("tileset");
-
     mChunks.clear();
     mEntities.removeAll();
+
+    // Release resources
+    mResources.releaseTexture("tileset");
+    mResources.releaseTexture("soldier1");
+    mResources.releaseTexture("soldier2");
 }
 
 bool World::loadFromFile(std::string const& filename)
@@ -37,6 +53,8 @@ bool World::saveToFile(std::string const& filename)
 
 void World::handleEvent(sf::Event const& event)
 {
+    mEntities.getSystem<PlayerInputSystem>().handleEvent(event);
+
     // Zoom
     if (event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
     {
@@ -55,10 +73,12 @@ void World::handleEvent(sf::Event const& event)
 
 void World::update(sf::Time dt)
 {
+    mEntities.getSystem<PlayerInputSystem>().update(dt);
+
     mChunks.update(mView);
 }
 
-void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void World::render(sf::RenderTarget& target)
 {
     sf::View defaultView = target.getView();
 
@@ -66,6 +86,9 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     mChunks.draw(target, mView, 0);
     mChunks.draw(target, mView, 1);
+
+    mEntities.getSystem<RenderSystem>().render(target);
+
     mChunks.draw(target, mView, 2);
 
     target.setView(defaultView);

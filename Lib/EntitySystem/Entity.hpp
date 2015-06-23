@@ -78,7 +78,7 @@ void Entity::removeComponent()
 {
     if (hasComponent<T>())
     {
-        mComponents.erase(mComponents.find(T::getType()));
+        mComponents.erase(mComponents.find(T::getId()));
         if (mManager != nullptr)
         {
             mManager->update(mId);

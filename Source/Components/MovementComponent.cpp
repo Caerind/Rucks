@@ -1,8 +1,8 @@
 #include "MovementComponent.hpp"
 
-MovementComponent::MovementComponent()
+MovementComponent::MovementComponent(float speed)
 {
-    mSpeed = 100.f;
+    mSpeed = speed;
 }
 
 std::string MovementComponent::getId()

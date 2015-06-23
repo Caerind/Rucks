@@ -8,3 +8,4 @@ std::string PlayerInputComponent::getId()
 {
     return "PlayerInputComponent";
 }
+

@@ -14,6 +14,8 @@ int main()
     // Window Config
     ah::Application::instance().create(sf::VideoMode(800,600),"Rucks");
     ah::Application::instance().setIcon("Assets/Textures/icon.png");
+    ah::Application::instance().setMouseCursorTexture("Assets/Textures/cursor.png");
+    ah::Application::instance().useCustomMouseCursor();
 
     // Load Application
 

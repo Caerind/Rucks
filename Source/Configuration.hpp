@@ -14,6 +14,8 @@ class Configuration
         bool loadFromFile(std::string const& filename);
         bool saveToFile(std::string const& filename);
 
+        ah::ActionTarget::ActionMapPtr getPlayerInput();
+
     private:
         Configuration();
         ~Configuration();

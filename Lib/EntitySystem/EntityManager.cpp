@@ -86,11 +86,11 @@ void EntityManager::remove(Entity::Ptr e)
         mEntities.end(),
         [&](Entity::Ptr entity){return entity == e;}),
         mEntities.end());
-    for (unsigned int i = 0; i < mSystems.size(); i++)
+    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
     {
-        if (mSystems[i]->contains(e))
+        if (itr->second->contains(e))
         {
-            mSystems[i]->remove(e);
+            itr->second->remove(e);
         }
     }
 }
@@ -104,11 +104,11 @@ void EntityManager::remove(std::size_t id)
             mEntities.end(),
             [&](Entity::Ptr entity){return entity->getId() == id;}),
             mEntities.end());
-        for (unsigned int i = 0; i < mSystems.size(); i++)
+        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
         {
-            if (mSystems[i]->contains(e))
+            if (itr->second->contains(e))
             {
-                mSystems[i]->remove(e);
+                itr->second->remove(e);
             }
         }
     }
@@ -130,11 +130,11 @@ void EntityManager::removeByName(std::string const& name)
         mEntities.end());
     for (unsigned int j = 0; j < e.size(); j++)
     {
-        for (unsigned int i = 0; i < mSystems.size(); i++)
+        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
         {
-            if (mSystems[i]->contains(e[j]))
+            if (itr->second->contains(e[j]))
             {
-                mSystems[i]->remove(e[j]);
+                itr->second->remove(e[j]);
             }
         }
     }
@@ -149,11 +149,11 @@ void EntityManager::removeByType(std::string const& type)
         mEntities.end());
     for (unsigned int j = 0; j < e.size(); j++)
     {
-        for (unsigned int i = 0; i < mSystems.size(); i++)
+        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
         {
-            if (mSystems[i]->contains(e[j]))
+            if (itr->second->contains(e[j]))
             {
-                mSystems[i]->remove(e[j]);
+                itr->second->remove(e[j]);
             }
         }
     }
@@ -168,11 +168,11 @@ void EntityManager::removeByTag(std::string const& tag)
         mEntities.end());
     for (unsigned int j = 0; j < e.size(); j++)
     {
-        for (unsigned int i = 0; i < mSystems.size(); i++)
+        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
         {
-            if (mSystems[i]->contains(e[j]))
+            if (itr->second->contains(e[j]))
             {
-                mSystems[i]->remove(e[j]);
+                itr->second->remove(e[j]);
             }
         }
     }
@@ -180,27 +180,19 @@ void EntityManager::removeByTag(std::string const& tag)
 
 void EntityManager::removeAll()
 {
-    for (unsigned int i = 0; i < mSystems.size(); i++)
-    {
-        mSystems[i]->removeAll();
-        mSystems[i] = nullptr;
-    }
+    removeAllSystems();
     mEntities.clear();
 }
 
-void EntityManager::addSystem(System* system)
+bool EntityManager::hasSystem(std::string const& type)
 {
-    mSystems.push_back(system);
-    updateAll();
+    return mSystems.find(type) != mSystems.end();
 }
 
-void EntityManager::removeSystem(System* system)
+void EntityManager::removeAllSystems()
 {
-    mSystems.erase(std::remove_if(mSystems.begin(),
-        mSystems.end(),
-        [&](System* s){return s == system;}),
-        mSystems.end());
-   updateAll();
+    mSystems.clear();
+    updateAll();
 }
 
 std::size_t EntityManager::getEntitiesCount() const
@@ -231,15 +223,15 @@ void EntityManager::updateAll()
 void EntityManager::update(std::size_t id)
 {
     Entity::Ptr e = get(id);
-    for (unsigned int i = 0; i < mSystems.size(); i++)
+    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
     {
-        if (!mSystems[i]->contains(e) && mSystems[i]->hasRequiredComponents(e))
+        if (!itr->second->contains(e) && itr->second->hasRequiredComponents(e))
         {
-            mSystems[i]->add(e);
+            itr->second->add(e);
         }
-        if (mSystems[i]->contains(e) && !mSystems[i]->hasRequiredComponents(e))
+        if (itr->second->contains(e) && !itr->second->hasRequiredComponents(e))
         {
-            mSystems[i]->remove(e);
+            itr->second->remove(e);
         }
     }
 }
