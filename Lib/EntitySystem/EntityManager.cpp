@@ -80,6 +80,19 @@ EntityManager::EntityArray EntityManager::getByTag(std::string const& tag)
     return array;
 }
 
+EntityManager::EntityArray EntityManager::getByFilter(ComponentFilter const& filter)
+{
+    EntityArray array;
+    for (unsigned int i = 0; i < mEntities.size(); i++)
+    {
+        if (mEntities[i]->hasComponents(filter))
+        {
+            array.push_back(mEntities[i]);
+        }
+    }
+    return array;
+}
+
 void EntityManager::remove(Entity::Ptr e)
 {
     mEntities.erase(std::remove_if(mEntities.begin(),

@@ -59,6 +59,7 @@ class Entity
 template<typename T>
 T& Entity::addComponent(T* component)
 {
+    component->setIdAttachedTo(mId);
     mComponents[T::getId()] = component;
     if (mManager != nullptr)
     {

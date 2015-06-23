@@ -1,8 +1,9 @@
 #include "SpriteComponent.hpp"
 #include "../World.hpp"
 
-SpriteComponent::SpriteComponent(std::string const& id)
+SpriteComponent::SpriteComponent(std::string const& id, sf::Vector2i sheetSize)
 {
+    mSheetSize = sheetSize;
     if (id != "")
     {
         setTexture(id);
@@ -17,19 +18,42 @@ std::string SpriteComponent::getId()
 void SpriteComponent::setTexture(sf::Texture& texture)
 {
     mSprite.setTexture(texture);
-    mSprite.setOrigin(mSprite.getGlobalBounds().width/2,mSprite.getGlobalBounds().height/2);
+    mTextureSize = static_cast<sf::Vector2i>(mSprite.getTexture()->getSize());
+    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
 }
 
 void SpriteComponent::setTexture(std::string const& id)
 {
     mSprite.setTexture(World::instance().getResources().getTexture(id));
-    mSprite.setOrigin(mSprite.getGlobalBounds().width/2,mSprite.getGlobalBounds().height/2);
+    mTextureSize = static_cast<sf::Vector2i>(mSprite.getTexture()->getSize());
+    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
 }
 
 void SpriteComponent::setTextureRect(sf::IntRect const& rect)
 {
     mSprite.setTextureRect(rect);
-    mSprite.setOrigin(mSprite.getGlobalBounds().width/2,mSprite.getGlobalBounds().height/2);
+    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
+}
+
+void SpriteComponent::setSheetSize(sf::Vector2i sheetSize)
+{
+    mSheetSize = sheetSize;
+    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
+}
+
+sf::Vector2i SpriteComponent::getSheetSize() const
+{
+    return mSheetSize;
+}
+
+sf::Vector2i SpriteComponent::getTextureSize() const
+{
+    return mTextureSize;
+}
+
+sf::Vector2f SpriteComponent::getOrigin() const
+{
+    return mSprite.getOrigin();
 }
 
 void SpriteComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const

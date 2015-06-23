@@ -22,12 +22,25 @@ void World::initialize()
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
     mEntities.addSystem<PlayerInputSystem>(new PlayerInputSystem());
+    mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
+    mEntities.addSystem<AnimationSystem>(new AnimationSystem());
 
     auto e = mEntities.create("player");
     e->addComponent<TransformComponent>(new TransformComponent(100,100));
-    e->addComponent<SpriteComponent>(new SpriteComponent("soldier1"));
+    e->addComponent<SpriteComponent>(new SpriteComponent("soldier1",sf::Vector2i(64,64)));
     e->addComponent<MovementComponent>(new MovementComponent(200));
+    e->addComponent<LifeComponent>(new LifeComponent(100,100));
     e->addComponent<PlayerInputComponent>(new PlayerInputComponent());
+
+    auto m = mEntities.create();
+    m->addComponent<TransformComponent>(new TransformComponent(400,400));
+    m->addComponent<SpriteComponent>(new SpriteComponent("soldier2",sf::Vector2i(64,64)));
+    m->addComponent<MovementComponent>(new MovementComponent(100));
+    m->addComponent<LifeComponent>(new LifeComponent(50,50));
+    m->addComponent<AIComponent>(new AIComponent());
+    m->getComponent<AIComponent>().setMonster(true);
+    m->getComponent<AIComponent>().setViewDistance(200);
+    m->getComponent<AIComponent>().setOutOfView(400);
 }
 
 void World::terminate()
@@ -74,6 +87,8 @@ void World::handleEvent(sf::Event const& event)
 void World::update(sf::Time dt)
 {
     mEntities.getSystem<PlayerInputSystem>().update(dt);
+    mEntities.getSystem<AIControllerSystem>().update(dt);
+    mEntities.getSystem<AnimationSystem>().update(dt);
 
     mChunks.update(mView);
 }
@@ -81,16 +96,11 @@ void World::update(sf::Time dt)
 void World::render(sf::RenderTarget& target)
 {
     sf::View defaultView = target.getView();
-
     target.setView(mView);
-
     mChunks.draw(target, mView, 0);
     mChunks.draw(target, mView, 1);
-
     mEntities.getSystem<RenderSystem>().render(target);
-
     mChunks.draw(target, mView, 2);
-
     target.setView(defaultView);
 }
 

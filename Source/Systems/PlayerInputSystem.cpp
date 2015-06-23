@@ -1,12 +1,14 @@
 #include "PlayerInputSystem.hpp"
 #include "../Configuration.hpp"
 #include "../World.hpp"
+#include "../../Lib/Aharos/Application.hpp"
 
 PlayerInputSystem::PlayerInputSystem()
 : es::System()
 , ah::ActionTarget(Configuration::instance().getPlayerInput())
 {
     mFilter.push_back(TransformComponent::getId());
+    mFilter.push_back(MovementComponent::getId());
     mFilter.push_back(PlayerInputComponent::getId());
 
     bind("up",[&](ah::ActionTarget::Context context)
@@ -45,6 +47,8 @@ void PlayerInputSystem::update(sf::Time dt)
         sf::Vector2f mvt = mMovement * dt.asSeconds() * mEntities[i]->getComponent<MovementComponent>().getSpeed();
         // TODO : Check Collisions
         mEntities[i]->getComponent<TransformComponent>().move(mvt);
+        mEntities[i]->getComponent<MovementComponent>().setLastMovement(mvt);
+        mEntities[i]->getComponent<MovementComponent>().setLookAt(ah::Application::instance().getMousePositionView(World::instance().getView()));
     }
 
     if (mEntities.size() == 1)

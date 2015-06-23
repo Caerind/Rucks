@@ -5,6 +5,8 @@
 #include <map>
 #include <memory>
 
+#include "Component.hpp"
+
 namespace es
 {
 
@@ -31,6 +33,7 @@ class EntityManager
         EntityPtr getByName(std::string const& name);
         EntityArray getByType(std::string const& type);
         EntityArray getByTag(std::string const& tag);
+        EntityArray getByFilter(ComponentFilter const& filter);
 
         void remove(EntityPtr e);
         void remove(std::size_t id);

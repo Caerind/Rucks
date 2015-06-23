@@ -15,11 +15,15 @@
 
 #include "Systems/RenderSystem.hpp"
 #include "Systems/PlayerInputSystem.hpp"
+#include "Systems/AnimationSystem.hpp"
+#include "Systems/AIControllerSystem.hpp"
 
 #include "Components/TransformComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/MovementComponent.hpp"
 #include "Components/PlayerInputComponent.hpp"
+#include "Components/LifeComponent.hpp"
+#include "Components/AIComponent.hpp"
 
 class World
 {

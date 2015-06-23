@@ -20,6 +20,19 @@ void RenderSystem::render(sf::RenderTarget& target)
         sf::RenderStates states;
         states.transform *= mEntities[i]->getComponent<TransformComponent>().getTransform();
         target.draw(mEntities[i]->getComponent<SpriteComponent>(),states);
+
+        /*
+        if (mEntities[i]->hasComponent<LifeComponent>())
+        {
+            ...
+        }
+        */
+        /*
+        if (mEntities[i]->hasComponent<CollisionComponent>())
+        {
+            ...
+        }
+        */
     }
 }
 
