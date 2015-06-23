@@ -16,7 +16,7 @@ class Entity
     public:
         friend class EntityManager;
 
-        Entity(EntityManager* manager, std::string const& name = "");
+        Entity(EntityManager* manager, std::string const& name = "", std::size_t id = 0);
 
         typedef std::shared_ptr<Entity> Ptr;
 

@@ -24,6 +24,7 @@ class EntityManager
         EntityManager();
 
         EntityPtr create(std::string const& name = "");
+        EntityPtr create(std::size_t id, std::string const& name = "");
 
         EntityPtr get(std::size_t id);
         EntityPtr getByName(std::string const& name);
@@ -40,6 +41,8 @@ class EntityManager
         void removeSystem(System* system);
 
         std::size_t getEntitiesCount() const;
+
+        bool idExist(std::size_t id) const;
 
     private:
         void updateAll();

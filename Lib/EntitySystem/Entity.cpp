@@ -5,10 +5,17 @@ namespace es
 
 std::size_t Entity::gIdCounter = 0;
 
-Entity::Entity(EntityManager* manager, std::string const& name)
+Entity::Entity(EntityManager* manager, std::string const& name, std::size_t id)
 : mManager(manager)
 {
-    mId = gIdCounter++;
+    if (id != 0)
+    {
+        mId = id;
+    }
+    else
+    {
+        mId = gIdCounter++;
+    }
     mName = name;
     mType = "Entity";
     mTag = "Nothing";

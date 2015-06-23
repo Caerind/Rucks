@@ -16,6 +16,20 @@ Entity::Ptr EntityManager::create(std::string const& name)
     return mEntities.back();
 }
 
+Entity::Ptr EntityManager::create(std::size_t id, std::string const& name)
+{
+    if (!idExist(id))
+    {
+        mEntities.push_back(std::make_shared<Entity>(this,name,id));
+    }
+    else
+    {
+        mEntities.push_back(std::make_shared<Entity>(this,name));
+    }
+    update(mEntities.back()->getId());
+    return mEntities.back();
+}
+
 Entity::Ptr EntityManager::get(std::size_t id)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
@@ -182,6 +196,18 @@ void EntityManager::removeSystem(System* system)
 std::size_t EntityManager::getEntitiesCount() const
 {
     return mEntities.size();
+}
+
+bool EntityManager::idExist(std::size_t id) const
+{
+    for (unsigned int i = 0; i < mEntities.size(); i++)
+    {
+        if (id == mEntities[i]->getId())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void EntityManager::updateAll()
