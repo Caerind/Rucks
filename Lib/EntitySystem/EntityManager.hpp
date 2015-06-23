@@ -36,6 +36,7 @@ class EntityManager
         void removeByName(std::string const& name);
         void removeByType(std::string const& type);
         void removeByTag(std::string const& tag);
+        void removeAll();
 
         void addSystem(System* system);
         void removeSystem(System* system);

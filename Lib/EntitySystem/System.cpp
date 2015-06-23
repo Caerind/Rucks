@@ -38,6 +38,11 @@ void System::remove(Entity::Ptr e)
         mEntities.end());
 }
 
+void System::removeAll()
+{
+    mEntities.clear();
+}
+
 bool System::contains(Entity::Ptr e)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)

@@ -178,6 +178,16 @@ void EntityManager::removeByTag(std::string const& tag)
     }
 }
 
+void EntityManager::removeAll()
+{
+    for (unsigned int i = 0; i < mSystems.size(); i++)
+    {
+        mSystems[i]->removeAll();
+        mSystems[i] = nullptr;
+    }
+    mEntities.clear();
+}
+
 void EntityManager::addSystem(System* system)
 {
     mSystems.push_back(system);

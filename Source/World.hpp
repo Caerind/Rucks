@@ -11,6 +11,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include "../Lib/Aharos/ResourceHolder.hpp"
+#include "../Lib/EntitySystem/EntitySystem.hpp"
 
 #include "Chunk/ChunkManager.hpp"
 
@@ -34,6 +35,7 @@ class World : public sf::Drawable
         ah::ResourceHolder& getResources();
         sf::View& getView();
         ChunkManager& getChunks();
+        es::EntityManager& getEntities();
 
         bool isOnline() const;
         bool isServer() const;
@@ -47,6 +49,7 @@ class World : public sf::Drawable
         ah::ResourceHolder mResources;
         sf::View mView;
         ChunkManager mChunks;
+        es::EntityManager mEntities;
 
         bool mIsOnline;
         bool mIsServer;

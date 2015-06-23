@@ -22,6 +22,7 @@ void World::terminate()
     mResources.releaseTexture("tileset");
 
     mChunks.clear();
+    mEntities.removeAll();
 }
 
 bool World::loadFromFile(std::string const& filename)
@@ -83,6 +84,11 @@ sf::View& World::getView()
 ChunkManager& World::getChunks()
 {
     return mChunks;
+}
+
+es::EntityManager& World::getEntities()
+{
+    return mEntities;
 }
 
 bool World::isOnline() const

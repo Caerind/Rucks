@@ -23,6 +23,7 @@ class System
 
         void add(Entity::Ptr e);
         void remove(Entity::Ptr e);
+        void removeAll();
         bool contains(Entity::Ptr e);
         bool hasRequiredComponents(Entity::Ptr e);
         EntityArray getEntities();
