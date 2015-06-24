@@ -64,6 +64,7 @@ bool AIComponent::hasTarget()
             sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition();
             if (mTarget->getComponent<LifeComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)
             {
+                resetBoredTime();
                 return true;
             }
             else
@@ -97,4 +98,14 @@ void AIComponent::setOutOfView(float distance)
 float AIComponent::getOutOfView() const
 {
     return mOutOfView;
+}
+
+void AIComponent::resetBoredTime()
+{
+    mBoredTime.restart();
+}
+
+sf::Time AIComponent::getBoredTime() const
+{
+    return mBoredTime.getElapsedTime();
 }

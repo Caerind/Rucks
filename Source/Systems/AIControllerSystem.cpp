@@ -1,4 +1,6 @@
 #include "AIControllerSystem.hpp"
+#include "../World.hpp"
+#include <Thor/Math/Random.hpp>
 
 AIControllerSystem::AIControllerSystem()
 {
@@ -24,251 +26,92 @@ void AIControllerSystem::update(sf::Time dt)
         }
         else // isAlive
         {
-            if (mEntities[i]->hasComponent<MonsterComponent>())
+            if (!mEntities[i]->getComponent<AIComponent>().hasTarget() && mManager != nullptr)
             {
-                handleMonster(mEntities[i],dt);
-                handleAttack(mEntities[i]);
+                findTarget(mEntities[i]);
             }
-            else
+
+            if (mEntities[i]->getComponent<AIComponent>().hasTarget())
             {
                 if (mEntities[i]->getComponent<AIComponent>().isFighter())
                 {
-                    handleFighter(mEntities[i],dt);
+                    handleGoToTarget(mEntities[i],dt);
                     handleAttack(mEntities[i]);
                 }
                 else
                 {
-                    handlePacific(mEntities[i],dt);
+                    handleEscapeTarget(mEntities[i],dt);
                 }
+            }
+            else
+            {
+                handleNoTarget(mEntities[i],dt);
             }
         }
     }
 }
 
-void AIControllerSystem::handleMonster(es::Entity::Ptr e, sf::Time dt)
+void AIControllerSystem::findTarget(es::Entity::Ptr e)
 {
-    AIComponent& a = e->getComponent<AIComponent>();
-    MovementComponent& m = e->getComponent<MovementComponent>();
-    sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
-
-    if (!a.hasTarget() && mManager != nullptr)
+    es::EntityManager::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
+    es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
+    sf::Vector2f tPos, ePos = e->getComponent<TransformComponent>().getPosition();
+    for (unsigned int i = 0; i < targetList.size(); i++)
     {
-        es::EntityManager::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
-        es::Entity::Ptr target = nullptr;
-        sf::Vector2f tPos;
-        for (unsigned int i = 0; i < targetList.size(); i++)
+        if (targetList[i] != nullptr)
         {
-            if (targetList[i] != nullptr)
+            sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
+            if (targetList[i]->getId() != e->getId()
+            && targetList[i]->getComponent<LifeComponent>().isAlive()
+            && thor::length(ePos - tePos) < e->getComponent<AIComponent>().getViewDistance())
             {
-                sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
-                if (targetList[i]->getId() != e->getId()
-                && targetList[i]->getComponent<LifeComponent>().isAlive()
-                && thor::length(ePos - tePos)
-                < a.getViewDistance())
+                if (targetList[i]->hasComponent<MonsterComponent>() != e->hasComponent<MonsterComponent>())
                 {
-                    if (targetList[i]->hasComponent<AIComponent>())
+                    if (target == nullptr)
                     {
-                        if (!targetList[i]->hasComponent<MonsterComponent>())
-                        {
-                            if (target == nullptr)
-                            {
-                                target = targetList[i];
-                            }
-                            else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
-                            {
-                                target = targetList[i];
-                            }
-                        }
+                        target = targetList[i];
                     }
-                    else
+                    else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
                     {
-                        if (target == nullptr)
-                        {
-                            target = targetList[i];
-                        }
-                        else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
-                        {
-                            target = targetList[i];
-                        }
+                        target = targetList[i];
                     }
                 }
             }
-            if (target != nullptr)
-            {
-                tPos = target->getComponent<TransformComponent>().getPosition();
-            }
         }
-        a.setTarget(target);
+        if (target != nullptr)
+        {
+            tPos = target->getComponent<TransformComponent>().getPosition();
+        }
     }
-    if (a.hasTarget())
+    e->getComponent<AIComponent>().setTarget(target);
+}
+
+void AIControllerSystem::handleGoToTarget(es::Entity::Ptr e, sf::Time dt)
+{
+    if (e->getComponent<AIComponent>().hasTarget())
     {
-        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f tPos = e->getComponent<AIComponent>().getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
         sf::Vector2f diff = tPos - ePos;
         sf::Vector2f mvt;
-        if (thor::length(diff) > e->getComponent<WeaponComponent>().getRange() - 16.f)
+
+        float dist = 32.f;
+        if (e->hasComponent<WeaponComponent>())
         {
-            mvt = thor::unitVector<float>(diff) * dt.asSeconds() * m.getSpeed();
-            CollisionComponent& c = e->getComponent<CollisionComponent>();
-            c.setCenter(ePos + mvt);
-            if (collision(c.getCollisionBox(), mvt, e->getId()))
+            dist = e->getComponent<WeaponComponent>().getRange() - 16.f;
+        }
+
+        if (thor::length(diff) > dist)
+        {
+            mvt = thor::unitVector<float>(diff) * dt.asSeconds() * e->getComponent<MovementComponent>().getSpeed();
+            if (World::instance().getEntities().getSystem<CollisionSystem>().handle(e,mvt))
             {
-                a.setTarget(nullptr);
+                e->getComponent<AIComponent>().setTarget(nullptr);
             }
-            e->getComponent<TransformComponent>().move(mvt);
-            c.setCenter(e->getComponent<TransformComponent>().getPosition());
         }
 
         // For Animation
         e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos);
-    }
-    else
-    {
-        e->getComponent<MovementComponent>().stopWalking();
-        // TODO (#3#): Lambda Movement
-    }
-}
-
-void AIControllerSystem::handleFighter(es::Entity::Ptr e, sf::Time dt)
-{
-    AIComponent& a = e->getComponent<AIComponent>();
-    MovementComponent& m = e->getComponent<MovementComponent>();
-    sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
-
-    if (!a.hasTarget() && mManager != nullptr)
-    {
-        es::EntityManager::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
-        es::Entity::Ptr target = nullptr;
-        sf::Vector2f tPos;
-        for (unsigned int i = 0; i < targetList.size(); i++)
-        {
-            if (targetList[i] != nullptr)
-            {
-                sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
-                if (targetList[i]->getId() != e->getId()
-                && targetList[i]->getComponent<LifeComponent>().isAlive()
-                && thor::length(ePos - tePos)
-                < a.getViewDistance())
-                {
-                    if (targetList[i]->hasComponent<AIComponent>())
-                    {
-                        if (targetList[i]->hasComponent<MonsterComponent>())
-                        {
-                            if (target == nullptr)
-                            {
-                                target = targetList[i];
-                            }
-                            else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
-                            {
-                                target = targetList[i];
-                            }
-                        }
-                    }
-                }
-            }
-            if (target != nullptr)
-            {
-                tPos = target->getComponent<TransformComponent>().getPosition();
-            }
-        }
-        a.setTarget(target);
-    }
-    if (a.hasTarget())
-    {
-        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
-        sf::Vector2f diff = tPos - ePos;
-        sf::Vector2f mvt;
-        if (thor::length(diff) > e->getComponent<WeaponComponent>().getRange() - 16.f)
-        {
-            mvt = thor::unitVector<float>(diff) * dt.asSeconds() * m.getSpeed();
-            CollisionComponent& c = e->getComponent<CollisionComponent>();
-            c.setCenter(ePos + mvt);
-            if (collision(c.getCollisionBox(), mvt, e->getId()))
-            {
-                a.setTarget(nullptr);
-            }
-            e->getComponent<TransformComponent>().move(mvt);
-            c.setCenter(e->getComponent<TransformComponent>().getPosition());
-        }
-
-        // For Animation
-        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos);
-    }
-    else
-    {
-        e->getComponent<MovementComponent>().stopWalking();
-        // TODO (#3#): Lambda Movement
-    }
-}
-
-void AIControllerSystem::handlePacific(es::Entity::Ptr e, sf::Time dt)
-{
-    AIComponent& a = e->getComponent<AIComponent>();
-    MovementComponent& m = e->getComponent<MovementComponent>();
-    sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
-
-    if (!a.hasTarget() && mManager != nullptr)
-    {
-        es::EntityManager::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
-        es::Entity::Ptr target = nullptr;
-        sf::Vector2f tPos;
-        for (unsigned int i = 0; i < targetList.size(); i++)
-        {
-            if (targetList[i] != nullptr)
-            {
-                sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
-                if (targetList[i]->getId() != e->getId()
-                && targetList[i]->getComponent<LifeComponent>().isAlive()
-                && thor::length(ePos - tePos)
-                < a.getViewDistance())
-                {
-                    if (targetList[i]->hasComponent<AIComponent>())
-                    {
-                        if (targetList[i]->hasComponent<MonsterComponent>())
-                        {
-                            if (target == nullptr)
-                            {
-                                target = targetList[i];
-                            }
-                            else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
-                            {
-                                target = targetList[i];
-                            }
-                        }
-                    }
-                }
-            }
-            if (target != nullptr)
-            {
-                tPos = target->getComponent<TransformComponent>().getPosition();
-            }
-        }
-        a.setTarget(target);
-    }
-    if (a.hasTarget())
-    {
-        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
-        sf::Vector2f diff = tPos - ePos;
-        sf::Vector2f mvt;
-        if (thor::length(diff) > 0.f)
-        {
-            mvt = thor::unitVector<float>(-diff) * dt.asSeconds() * m.getSpeed();
-            CollisionComponent& c = e->getComponent<CollisionComponent>();
-            c.setCenter(ePos + mvt);
-            if (collision(c.getCollisionBox(), mvt, e->getId()))
-            {
-                a.setTarget(nullptr);
-            }
-            e->getComponent<TransformComponent>().move(mvt);
-            c.setCenter(e->getComponent<TransformComponent>().getPosition());
-        }
-
-        // For Animation
-        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos - diff - diff);
-    }
-    else
-    {
-        e->getComponent<MovementComponent>().stopWalking();
-        // TODO (#3#): Lambda Movement
     }
 }
 
@@ -285,4 +128,50 @@ void AIControllerSystem::handleAttack(es::Entity::Ptr e)
             w.attack();
         }
     }
+}
+
+void AIControllerSystem::handleEscapeTarget(es::Entity::Ptr e, sf::Time dt)
+{
+    if (e->getComponent<AIComponent>().hasTarget())
+    {
+        sf::Vector2f tPos = e->getComponent<AIComponent>().getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f diff = tPos - ePos;
+        sf::Vector2f mvt;
+
+        if (thor::length(diff) > 0.f)
+        {
+            mvt = thor::unitVector<float>(-diff) * dt.asSeconds() * e->getComponent<MovementComponent>().getSpeed();
+
+            if (World::instance().getEntities().getSystem<CollisionSystem>().handle(e,mvt))
+            {
+                e->getComponent<AIComponent>().setTarget(nullptr);
+            }
+        }
+
+        // For Animation
+        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos - diff - diff);
+    }
+}
+
+void AIControllerSystem::handleNoTarget(es::Entity::Ptr e, sf::Time dt)
+{
+    sf::Time bored = e->getComponent<AIComponent>().getBoredTime();
+
+    if (bored > sf::seconds(3.f))
+    {
+        e->getComponent<AIComponent>().resetBoredTime();
+        bored = sf::Time::Zero;
+        e->getComponent<MovementComponent>().setDirection(static_cast<MovementComponent::Direction>(thor::random(0,3)));
+        // TODO (#7#): Influence the direction to get them as near from the home as possible
+    }
+
+    sf::Vector2f mvt = sf::Vector2f(0.f,0.f);
+    if (bored > sf::seconds(1.4f) && bored < sf::seconds(1.6f))
+    {
+        mvt = dt.asSeconds() * e->getComponent<MovementComponent>().getSpeed() * MovementComponent::getMovementFromDirection(e->getComponent<MovementComponent>().getDirection());
+        World::instance().getEntities().getSystem<CollisionSystem>().handle(e,mvt);
+    }
+
+    e->getComponent<MovementComponent>().lastMovement(mvt,dt);
 }

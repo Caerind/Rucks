@@ -9,12 +9,25 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-class WeaponComponent : public es::Component
+class WeaponComponent : public es::Component, public sf::Transformable, public sf::Drawable
 {
     public:
+        enum Type
+        {
+            None,
+            Sword,
+            // TODO (#7#): More Weapons !
+        };
+
+        WeaponComponent(Type type = Type::None);
         WeaponComponent(float range, unsigned int damage, sf::Time cooldown);
 
         static std::string getId();
+
+        void setType(Type type);
+        Type getType() const;
+
+        bool isLongRange() const;
 
         void setRange(float range);
         float getRange() const;
@@ -28,12 +41,25 @@ class WeaponComponent : public es::Component
         void attack();
         bool canAttack();
 
-        void renderWeapon(sf::RenderTarget& target, sf::RenderStates states);
+        void setWeaponTransform(sf::Vector2f const& position, float rotation);
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+        static float getRange(Type type);
+        static unsigned int getDamage(Type type);
+        static sf::Time getCooldown(Type type);
+        static std::string getTextureId(Type type);
+        static sf::IntRect getTextureRect(Type type);
+
+        static void loadWeaponTextures();
+        static void releaseWeaponTextures();
 
     private:
+        Type mType;
+
         float mRange;
         unsigned int mDamage;
         sf::Time mCooldown;
+
         sf::Clock mTimeSinceLastAttack;
 
         sf::Sprite mWeaponSprite;

@@ -37,6 +37,8 @@ class MovementComponent : public es::Component
 
         void update(sf::Time dt, sf::Vector2f const& movement, sf::Vector2f const& position, sf::Vector2f const& lookAt);
 
+        static sf::Vector2f getMovementFromDirection(Direction d);
+
     private:
         float mSpeed;
         Direction mDirection;

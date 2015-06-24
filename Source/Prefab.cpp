@@ -13,7 +13,7 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->addComponent<MovementComponent>(new MovementComponent(200));
     e->addComponent<LifeComponent>(new LifeComponent(200,200));
     e->addComponent<PlayerComponent>(new PlayerComponent());
-    e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
+    e->addComponent<WeaponComponent>(new WeaponComponent());
     return e;
 }
 
@@ -27,7 +27,7 @@ es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterCompo
     e->addComponent<LifeComponent>(new LifeComponent(MonsterComponent::getLife(type),MonsterComponent::getLife(type)));
     e->addComponent<AIComponent>(new AIComponent(MonsterComponent::getViewDistance(type),MonsterComponent::getOutOfView(type)));
     e->addComponent<MonsterComponent>(new MonsterComponent(type));
-    e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
+    e->addComponent<WeaponComponent>(new WeaponComponent(MonsterComponent::getRange(type),MonsterComponent::getDamage(type),MonsterComponent::getCooldown(type)));
     return e;
 }
 
@@ -52,7 +52,7 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     e->addComponent<MovementComponent>(new MovementComponent(100));
     e->addComponent<LifeComponent>(new LifeComponent(100,100));
     e->addComponent<AIComponent>(new AIComponent(300,500));
-    e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
+    e->addComponent<WeaponComponent>(new WeaponComponent());
     return e;
 }
 

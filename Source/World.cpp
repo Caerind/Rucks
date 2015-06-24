@@ -21,12 +21,14 @@ void World::initialize()
     mResources.loadTexture("princess","Assets/Textures/princess.png");
     mResources.getTexture("princess").setSmooth(true);
     MonsterComponent::loadMonsterTextures();
+    WeaponComponent::loadWeaponTextures();
 
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
     mEntities.addSystem<PlayerControllerSystem>(new PlayerControllerSystem());
     mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
     mEntities.addSystem<AnimationSystem>(new AnimationSystem());
+    mEntities.addSystem<CollisionSystem>(new CollisionSystem(mChunks));
 
     Prefab prefab(mEntities);
     prefab.createPlayer(sf::Vector2f(100,100));
@@ -47,6 +49,7 @@ void World::terminate()
     mResources.releaseTexture("soldier2");
     mResources.releaseTexture("princess");
     MonsterComponent::releaseMonsterTextures();
+    WeaponComponent::releaseWeaponTextures();
 }
 
 bool World::loadFromFile(std::string const& filename)

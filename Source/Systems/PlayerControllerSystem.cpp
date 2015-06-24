@@ -46,24 +46,17 @@ void PlayerControllerSystem::update(sf::Time dt)
     mMap->invokeCallbacks(mSystem,&(ah::Application::instance()));
 
     sf::Vector2f mPos = ah::Application::instance().getMousePositionView(World::instance().getView());
+
     es::ComponentFilter filterMonster;
-    filterMonster.push_back(TransformComponent::getId()),
-    filterMonster.push_back(AIComponent::getId());
-    filterMonster.push_back(LifeComponent::getId());
     filterMonster.push_back(MonsterComponent::getId());
+
     es::EntityManager::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
         sf::Vector2f ePos = mEntities[i]->getComponent<TransformComponent>().getPosition();
         sf::Vector2f mvt = mMovement * dt.asSeconds() * mEntities[i]->getComponent<MovementComponent>().getSpeed();
-
-        // Handle Movement & Collision
-        CollisionComponent& c = mEntities[i]->getComponent<CollisionComponent>();
-        c.setCenter(ePos + mvt);
-        collision(c.getCollisionBox(), mvt, mEntities[i]->getId());
-        mEntities[i]->getComponent<TransformComponent>().move(mvt);
-        c.setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());
+        World::instance().getEntities().getSystem<CollisionSystem>().handle(mEntities[i],mvt);
 
         // Update Animation
         mEntities[i]->getComponent<MovementComponent>().update(dt,mvt,ePos,mPos);

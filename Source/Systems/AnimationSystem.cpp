@@ -15,14 +15,19 @@ void AnimationSystem::update(sf::Time dt)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        MovementComponent& m = mEntities[i]->getComponent<MovementComponent>();
-        SpriteComponent& s = mEntities[i]->getComponent<SpriteComponent>();
+        sf::Vector2i sheetSize = mEntities[i]->getComponent<SpriteComponent>().getSheetSize();
 
-        sf::IntRect tRect;
-        tRect.width = s.getSheetSize().x;
-        tRect.height = s.getSheetSize().y;
-        tRect.left = static_cast<int>(m.getWalkTime().asSeconds() * (s.getTextureSize().x / s.getSheetSize().x)) * s.getSheetSize().x;
-        tRect.top = m.getDirection() * s.getSheetSize().y;
-        s.setTextureRect(tRect);
+        // Calc X & Y of the Sheet on the Texture
+        unsigned int col = static_cast<unsigned int>(mEntities[i]->getComponent<MovementComponent>().getWalkTime().asSeconds() * (mEntities[i]->getComponent<SpriteComponent>().getTextureSize().x / sheetSize.x));
+        unsigned int dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
+
+        // Update TextureRect
+        mEntities[i]->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(col * sheetSize.x, dir * sheetSize.y, sheetSize.x, sheetSize.y));
+
+        // Update The Weapon Animation
+        if (mEntities[i]->hasComponent<WeaponComponent>() && !mEntities[i]->hasComponent<MonsterComponent>())
+        {
+            // TODO (#3#): Weapon Animation
+        }
     }
 }

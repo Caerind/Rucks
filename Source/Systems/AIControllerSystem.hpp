@@ -16,11 +16,11 @@ class AIControllerSystem : public es::System
 
         void update(sf::Time dt);
 
-        void handleMonster(es::Entity::Ptr e, sf::Time dt);
-        void handleFighter(es::Entity::Ptr e, sf::Time dt);
-        void handlePacific(es::Entity::Ptr e, sf::Time dt);
-
+        void findTarget(es::Entity::Ptr e);
+        void handleGoToTarget(es::Entity::Ptr e, sf::Time dt);
         void handleAttack(es::Entity::Ptr e);
+        void handleEscapeTarget(es::Entity::Ptr e, sf::Time dt);
+        void handleNoTarget(es::Entity::Ptr e, sf::Time dt);
 };
 
 #endif // AICONTROLLERSYSTEM_HPP

@@ -23,13 +23,34 @@ void RenderSystem::render(sf::RenderTarget& target)
     {
         sf::RenderStates states;
         states.transform *= mEntities[i]->getComponent<TransformComponent>().getTransform();
-        target.draw(mEntities[i]->getComponent<SpriteComponent>(),states);
-        if (mEntities[i]->hasComponent<WeaponComponent>())
+
+        // Weapon
+        if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
-            mEntities[i]->getComponent<WeaponComponent>().renderWeapon(target,states);
+            MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
+            if (dir == MovementComponent::Direction::E || dir == MovementComponent::Direction::N)
+            {
+                target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
+            }
         }
+
+        // Sprite
+        target.draw(mEntities[i]->getComponent<SpriteComponent>(),states);
+
+        // Weapon
+        if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
+        {
+            MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
+            if (dir == MovementComponent::Direction::S || dir == MovementComponent::Direction::W)
+            {
+                target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
+            }
+        }
+
+        // Life
         if (mEntities[i]->hasComponent<LifeComponent>())
         {
+            // TODO (#5#): Life Bar Position
             mEntities[i]->getComponent<LifeComponent>().renderLifeBar(target,states);
         }
 

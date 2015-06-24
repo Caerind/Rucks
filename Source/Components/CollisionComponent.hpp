@@ -28,6 +28,4 @@ class CollisionComponent : public es::Component
         sf::Vector2f mPosition;
 };
 
-bool collision(sf::FloatRect const& rect, sf::Vector2f& movement, std::size_t id);
-
 #endif // COLLISIONCOMPONENT_HPP

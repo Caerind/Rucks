@@ -5,6 +5,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Time.hpp>
 
 class MonsterComponent : public es::Component
 {
@@ -13,6 +14,7 @@ class MonsterComponent : public es::Component
         {
             Bat,
             Bee,
+            // TODO (#7#): Add Monsters
         };
 
         MonsterComponent(Type type = Type::Bat);
@@ -27,6 +29,9 @@ class MonsterComponent : public es::Component
         static unsigned int getLife(Type type);
         static float getViewDistance(Type type);
         static float getOutOfView(Type type);
+        static float getRange(Type type);
+        static unsigned int getDamage(Type type);
+        static sf::Time getCooldown(Type type);
 
         static void loadMonsterTextures();
         static void releaseMonsterTextures();

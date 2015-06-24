@@ -5,5 +5,6 @@
 #include "AIControllerSystem.hpp"
 #include "PlayerControllerSystem.hpp"
 #include "AnimationSystem.hpp"
+#include "CollisionSystem.hpp"
 
 #endif // SYSTEMS_HPP_INCLUDED

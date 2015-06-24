@@ -1,8 +1,10 @@
 #include "MovementComponent.hpp"
+#include <Thor/Math/Random.hpp>
 
 MovementComponent::MovementComponent(float speed)
 {
     mSpeed = speed;
+    mDirection = static_cast<MovementComponent::Direction>(thor::random(0,3));
 }
 
 std::string MovementComponent::getId()
@@ -79,4 +81,16 @@ void MovementComponent::update(sf::Time dt, sf::Vector2f const& movement, sf::Ve
 {
     lastMovement(movement,dt);
     setDirection(position,lookAt);
+}
+
+sf::Vector2f MovementComponent::getMovementFromDirection(Direction d)
+{
+    switch (d)
+    {
+        case MovementComponent::Direction::N: return sf::Vector2f(0.f,-1.f); break;
+        case MovementComponent::Direction::W: return sf::Vector2f(-1.f,0.f); break;
+        case MovementComponent::Direction::S: return sf::Vector2f(0.f,1.f); break;
+        case MovementComponent::Direction::E: return sf::Vector2f(1.f,0.f); break;
+    }
+    return sf::Vector2f(0.f,0.f);
 }

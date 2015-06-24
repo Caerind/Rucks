@@ -42,29 +42,3 @@ void CollisionComponent::renderCollisionBox(sf::RenderTarget& target)
     target.draw(r);
 }
 
-bool collision(sf::FloatRect const& rect, sf::Vector2f& movement, std::size_t id)
-{
-    std::vector<sf::FloatRect> rects;
-
-    World::instance().getChunks().collision(rect,rects);
-
-    es::ComponentFilter filter;
-    filter.push_back(CollisionComponent::getId());
-    es::EntityManager::EntityArray entities = World::instance().getEntities().getByFilter(filter);
-    for (unsigned int i = 0; i < entities.size(); i++)
-    {
-        if (entities[i]->getId() != id && entities[i]->getComponent<CollisionComponent>().getCollisionBox().intersects(rect))
-        {
-            rects.push_back(entities[i]->getComponent<CollisionComponent>().getCollisionBox());
-        }
-    }
-
-    if (rects.size() > 0)
-    {
-        // TODO (#7#): Better Collision Handling
-        movement = sf::Vector2f(0,0);
-        return true;
-    }
-    return false;
-}
-

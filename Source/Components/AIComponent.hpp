@@ -8,6 +8,8 @@
 #include "SpriteComponent.hpp"
 #include "LifeComponent.hpp"
 
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Clock.hpp>
 #include <Thor/Vectors/VectorAlgebra2D.hpp>
 
 class AIComponent : public es::Component
@@ -39,11 +41,15 @@ class AIComponent : public es::Component
         void setOutOfView(float distance);
         float getOutOfView() const;
 
+        void resetBoredTime();
+        sf::Time getBoredTime() const;
+
     private:
         Type mType;
         es::Entity::Ptr mTarget;
         float mViewDistance;
         float mOutOfView;
+        sf::Clock mBoredTime;
 };
 
 #endif // AICOMPONENT_HPP
