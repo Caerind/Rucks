@@ -1,8 +1,11 @@
 #include "AIComponent.hpp"
 #include "../World.hpp"
 
-AIComponent::AIComponent()
+AIComponent::AIComponent(float view, float out, Type type)
 {
+    setViewDistance(view);
+    setOutOfView(out);
+    setType(type);
 }
 
 std::string AIComponent::getId()
@@ -17,6 +20,26 @@ es::ComponentFilter AIComponent::getTargetFilter()
     filter.push_back(SpriteComponent::getId());
     filter.push_back(LifeComponent::getId());
     return filter;
+}
+
+void AIComponent::setType(AIComponent::Type type)
+{
+    mType = type;
+}
+
+AIComponent::Type AIComponent::getType() const
+{
+    return mType;
+}
+
+bool AIComponent::isFighter() const
+{
+    return mType == AIComponent::Type::Fighter;
+}
+
+bool AIComponent::isPacific() const
+{
+    return mType == AIComponent::Type::Pacific;
 }
 
 void AIComponent::setTarget(es::Entity::Ptr target)
@@ -54,26 +77,6 @@ bool AIComponent::hasTarget()
         }
     }
     return false;
-}
-
-void AIComponent::setMonster(bool monster)
-{
-    mIsMonster = monster;
-}
-
-bool AIComponent::isMonster() const
-{
-    return mIsMonster;
-}
-
-void AIComponent::setFighter(bool fighter)
-{
-    mIsFighter = fighter;
-}
-
-bool AIComponent::isFighter() const
-{
-    return mIsFighter;
 }
 
 void AIComponent::setViewDistance(float distance)

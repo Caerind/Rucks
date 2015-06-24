@@ -44,6 +44,18 @@ MovementComponent::Direction MovementComponent::getDirection() const
     return mDirection;
 }
 
+void MovementComponent::lastMovement(sf::Vector2f const& movement, sf::Time dt)
+{
+    if (movement != sf::Vector2f(0.f,0.f))
+    {
+        walking(dt);
+    }
+    else
+    {
+        stopWalking();
+    }
+}
+
 void MovementComponent::stopWalking()
 {
     mWalkTime = sf::Time::Zero;
@@ -61,4 +73,10 @@ void MovementComponent::walking(sf::Time dt)
 sf::Time MovementComponent::getWalkTime() const
 {
     return mWalkTime;
+}
+
+void MovementComponent::update(sf::Time dt, sf::Vector2f const& movement, sf::Vector2f const& position, sf::Vector2f const& lookAt)
+{
+    lastMovement(movement,dt);
+    setDirection(position,lookAt);
 }

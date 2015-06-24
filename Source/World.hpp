@@ -16,7 +16,7 @@
 #include "Server/Server.hpp"
 
 #include "Systems/Systems.hpp"
-
+#include "Components/MonsterComponent.hpp"
 #include "Prefab.hpp"
 
 class World

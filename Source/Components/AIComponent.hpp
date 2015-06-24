@@ -13,20 +13,25 @@
 class AIComponent : public es::Component
 {
     public:
-        AIComponent();
+        enum Type
+        {
+            Fighter = 0,
+            Pacific,
+        };
+
+        AIComponent(float view = 100.f, float out = 200.f, Type type = Type::Fighter);
 
         static std::string getId();
         static es::ComponentFilter getTargetFilter();
 
+        void setType(Type type);
+        Type getType() const;
+        bool isFighter() const;
+        bool isPacific() const;
+
         void setTarget(es::Entity::Ptr target);
         es::Entity::Ptr getTarget();
         bool hasTarget();
-
-        void setMonster(bool monster);
-        bool isMonster() const;
-
-        void setFighter(bool fighter);
-        bool isFighter() const;
 
         void setViewDistance(float distance);
         float getViewDistance() const;
@@ -35,9 +40,8 @@ class AIComponent : public es::Component
         float getOutOfView() const;
 
     private:
+        Type mType;
         es::Entity::Ptr mTarget;
-        bool mIsMonster;
-        bool mIsFighter;
         float mViewDistance;
         float mOutOfView;
 };

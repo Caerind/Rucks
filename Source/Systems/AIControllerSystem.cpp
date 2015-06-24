@@ -24,7 +24,7 @@ void AIControllerSystem::update(sf::Time dt)
         }
         else // isAlive
         {
-            if (mEntities[i]->getComponent<AIComponent>().isMonster())
+            if (mEntities[i]->hasComponent<MonsterComponent>())
             {
                 handleMonster(mEntities[i],dt);
                 handleAttack(mEntities[i]);
@@ -68,7 +68,7 @@ void AIControllerSystem::handleMonster(es::Entity::Ptr e, sf::Time dt)
                 {
                     if (targetList[i]->hasComponent<AIComponent>())
                     {
-                        if (!targetList[i]->getComponent<AIComponent>().isMonster())
+                        if (!targetList[i]->hasComponent<MonsterComponent>())
                         {
                             if (target == nullptr)
                             {
@@ -102,7 +102,8 @@ void AIControllerSystem::handleMonster(es::Entity::Ptr e, sf::Time dt)
     }
     if (a.hasTarget())
     {
-        sf::Vector2f diff = a.getTarget()->getComponent<TransformComponent>().getPosition() - ePos;
+        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f diff = tPos - ePos;
         sf::Vector2f mvt;
         if (thor::length(diff) > e->getComponent<WeaponComponent>().getRange() - 16.f)
         {
@@ -118,14 +119,7 @@ void AIControllerSystem::handleMonster(es::Entity::Ptr e, sf::Time dt)
         }
 
         // For Animation
-        if (mvt != sf::Vector2f(0.f,0.f))
-        {
-            e->getComponent<MovementComponent>().walking(dt);
-        }
-        else
-        {
-            e->getComponent<MovementComponent>().stopWalking();
-        }
+        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos);
     }
     else
     {
@@ -157,7 +151,7 @@ void AIControllerSystem::handleFighter(es::Entity::Ptr e, sf::Time dt)
                 {
                     if (targetList[i]->hasComponent<AIComponent>())
                     {
-                        if (targetList[i]->getComponent<AIComponent>().isMonster())
+                        if (targetList[i]->hasComponent<MonsterComponent>())
                         {
                             if (target == nullptr)
                             {
@@ -180,7 +174,8 @@ void AIControllerSystem::handleFighter(es::Entity::Ptr e, sf::Time dt)
     }
     if (a.hasTarget())
     {
-        sf::Vector2f diff = a.getTarget()->getComponent<TransformComponent>().getPosition() - ePos;
+        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f diff = tPos - ePos;
         sf::Vector2f mvt;
         if (thor::length(diff) > e->getComponent<WeaponComponent>().getRange() - 16.f)
         {
@@ -196,14 +191,7 @@ void AIControllerSystem::handleFighter(es::Entity::Ptr e, sf::Time dt)
         }
 
         // For Animation
-        if (mvt != sf::Vector2f(0.f,0.f))
-        {
-            e->getComponent<MovementComponent>().walking(dt);
-        }
-        else
-        {
-            e->getComponent<MovementComponent>().stopWalking();
-        }
+        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos);
     }
     else
     {
@@ -235,7 +223,7 @@ void AIControllerSystem::handlePacific(es::Entity::Ptr e, sf::Time dt)
                 {
                     if (targetList[i]->hasComponent<AIComponent>())
                     {
-                        if (targetList[i]->getComponent<AIComponent>().isMonster())
+                        if (targetList[i]->hasComponent<MonsterComponent>())
                         {
                             if (target == nullptr)
                             {
@@ -258,7 +246,8 @@ void AIControllerSystem::handlePacific(es::Entity::Ptr e, sf::Time dt)
     }
     if (a.hasTarget())
     {
-        sf::Vector2f diff = a.getTarget()->getComponent<TransformComponent>().getPosition() - ePos;
+        sf::Vector2f tPos = a.getTarget()->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f diff = tPos - ePos;
         sf::Vector2f mvt;
         if (thor::length(diff) > 0.f)
         {
@@ -274,14 +263,7 @@ void AIControllerSystem::handlePacific(es::Entity::Ptr e, sf::Time dt)
         }
 
         // For Animation
-        if (mvt != sf::Vector2f(0.f,0.f))
-        {
-            e->getComponent<MovementComponent>().walking(dt);
-        }
-        else
-        {
-            e->getComponent<MovementComponent>().stopWalking();
-        }
+        e->getComponent<MovementComponent>().update(dt,mvt,ePos,tPos - diff - diff);
     }
     else
     {

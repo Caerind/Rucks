@@ -20,8 +20,7 @@ void World::initialize()
     mResources.getTexture("soldier2").setSmooth(true);
     mResources.loadTexture("princess","Assets/Textures/princess.png");
     mResources.getTexture("princess").setSmooth(true);
-    mResources.loadTexture("bat","Assets/Textures/bat.png");
-    mResources.getTexture("bat").setSmooth(true);
+    MonsterComponent::loadMonsterTextures();
 
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
@@ -31,7 +30,8 @@ void World::initialize()
 
     Prefab prefab(mEntities);
     prefab.createPlayer(sf::Vector2f(100,100));
-    prefab.createMonster(sf::Vector2f(400,400));
+    prefab.createMonster(sf::Vector2f(400,400),MonsterComponent::Type::Bat);
+    prefab.createMonster(sf::Vector2f(425,375),MonsterComponent::Type::Bee);
     prefab.createPacific(sf::Vector2f(50,50));
     prefab.createFighter(sf::Vector2f(50,200));
 }
@@ -46,7 +46,7 @@ void World::terminate()
     mResources.releaseTexture("soldier1");
     mResources.releaseTexture("soldier2");
     mResources.releaseTexture("princess");
-    mResources.releaseTexture("bat");
+    MonsterComponent::releaseMonsterTextures();
 }
 
 bool World::loadFromFile(std::string const& filename)

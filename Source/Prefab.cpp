@@ -17,19 +17,16 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     return e;
 }
 
-es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position)
+es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterComponent::Type type)
 {
     es::Entity::Ptr e = mManager.create();
-    e->addComponent<TransformComponent>(new TransformComponent(position,sf::Vector2f(32,32)));
-    e->addComponent<SpriteComponent>(new SpriteComponent("bat",sf::Vector2i(32,32)));
-    e->addComponent<CollisionComponent>(new CollisionComponent(sf::FloatRect(0,10,10,10)));
-    e->addComponent<MovementComponent>(new MovementComponent(100));
-    e->addComponent<LifeComponent>(new LifeComponent(100,100));
-    e->addComponent<AIComponent>(new AIComponent());
-    e->getComponent<AIComponent>().setMonster(true);
-    e->getComponent<AIComponent>().setFighter(true);
-    e->getComponent<AIComponent>().setViewDistance(300);
-    e->getComponent<AIComponent>().setOutOfView(500);
+    e->addComponent<TransformComponent>(new TransformComponent(position,MonsterComponent::getSize(type)));
+    e->addComponent<SpriteComponent>(new SpriteComponent(MonsterComponent::getTextureId(type),MonsterComponent::getSheetSize(type)));
+    e->addComponent<CollisionComponent>(new CollisionComponent(MonsterComponent::getCollisionBox(type)));
+    e->addComponent<MovementComponent>(new MovementComponent(MonsterComponent::getSpeed(type)));
+    e->addComponent<LifeComponent>(new LifeComponent(MonsterComponent::getLife(type),MonsterComponent::getLife(type)));
+    e->addComponent<AIComponent>(new AIComponent(MonsterComponent::getViewDistance(type),MonsterComponent::getOutOfView(type)));
+    e->addComponent<MonsterComponent>(new MonsterComponent(type));
     e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
     return e;
 }
@@ -42,11 +39,7 @@ es::Entity::Ptr Prefab::createPacific(sf::Vector2f const& position)
     e->addComponent<CollisionComponent>(new CollisionComponent(sf::FloatRect(0,20,16,16)));
     e->addComponent<MovementComponent>(new MovementComponent(150));
     e->addComponent<LifeComponent>(new LifeComponent(50,50));
-    e->addComponent<AIComponent>(new AIComponent());
-    e->getComponent<AIComponent>().setMonster(false);
-    e->getComponent<AIComponent>().setFighter(false);
-    e->getComponent<AIComponent>().setViewDistance(200);
-    e->getComponent<AIComponent>().setOutOfView(500);
+    e->addComponent<AIComponent>(new AIComponent(200,500,AIComponent::Type::Pacific));
     return e;
 }
 
@@ -58,11 +51,8 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     e->addComponent<CollisionComponent>(new CollisionComponent(sf::FloatRect(0,20,16,16)));
     e->addComponent<MovementComponent>(new MovementComponent(100));
     e->addComponent<LifeComponent>(new LifeComponent(100,100));
-    e->addComponent<AIComponent>(new AIComponent());
-    e->getComponent<AIComponent>().setMonster(false);
-    e->getComponent<AIComponent>().setFighter(true);
-    e->getComponent<AIComponent>().setViewDistance(300);
-    e->getComponent<AIComponent>().setOutOfView(500);e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
+    e->addComponent<AIComponent>(new AIComponent(300,500));
+    e->addComponent<WeaponComponent>(new WeaponComponent(50,10,sf::seconds(0.3)));
     return e;
 }
 

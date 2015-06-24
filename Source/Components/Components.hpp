@@ -7,6 +7,7 @@
 #include "CollisionComponent.hpp"
 #include "MovementComponent.hpp"
 #include "PlayerComponent.hpp"
+#include "MonsterComponent.hpp"
 #include "AIComponent.hpp"
 #include "WeaponComponent.hpp"
 

@@ -30,9 +30,12 @@ class MovementComponent : public es::Component
         void setDirection(sf::Vector2f const& position, sf::Vector2f const& lookAt);
         Direction getDirection() const;
 
+        void lastMovement(sf::Vector2f const& movement, sf::Time dt);
         void stopWalking();
         void walking(sf::Time dt);
         sf::Time getWalkTime() const;
+
+        void update(sf::Time dt, sf::Vector2f const& movement, sf::Vector2f const& position, sf::Vector2f const& lookAt);
 
     private:
         float mSpeed;

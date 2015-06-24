@@ -11,7 +11,7 @@ class Prefab
         Prefab(es::EntityManager& manager);
 
         es::Entity::Ptr createPlayer(sf::Vector2f const& position);
-        es::Entity::Ptr createMonster(sf::Vector2f const& position);
+        es::Entity::Ptr createMonster(sf::Vector2f const& position, MonsterComponent::Type type);
         es::Entity::Ptr createPacific(sf::Vector2f const& position);
         es::Entity::Ptr createFighter(sf::Vector2f const& position);
 
