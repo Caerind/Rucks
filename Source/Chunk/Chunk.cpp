@@ -31,7 +31,7 @@ Chunk::Chunk(sf::Vector2i pos)
     }
     else
     {
-        // TODO : Send Packet Require Chunk
+        // TODO (#9#): Send Packet Require Chunk
     }
 }
 
@@ -87,7 +87,8 @@ bool Chunk::loadFromFile()
 
 void Chunk::generate()
 {
-    // TODO : Better Generation Algorithm
+    // TODO (#8#): Better Generation Algorithm
+
     sf::Vector2i p;
     for (p.x = 0; p.x < getChunkSizeTile().x; p.x++)
     {

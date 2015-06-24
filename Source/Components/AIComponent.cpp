@@ -37,8 +37,8 @@ bool AIComponent::hasTarget()
         if (mTarget->hasComponents(getTargetFilter()) && mTarget->getId() != getIdAttachedTo())
         {
             es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
-            sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition() + e->getComponent<SpriteComponent>().getOrigin();
-            sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition() + mTarget->getComponent<SpriteComponent>().getOrigin();
+            sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
+            sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition();
             if (mTarget->getComponent<LifeComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)
             {
                 return true;

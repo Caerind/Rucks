@@ -20,34 +20,42 @@ float MovementComponent::getSpeed() const
     return mSpeed;
 }
 
-void MovementComponent::setLastMovement(sf::Vector2f movement)
+void MovementComponent::setDirection(MovementComponent::Direction direction)
 {
-    mLastMovement = movement;
+    mDirection = direction;
 }
 
-sf::Vector2f MovementComponent::getLastMovement() const
+void MovementComponent::setDirection(sf::Vector2f const& position, sf::Vector2f const& lookAt)
 {
-    return mLastMovement;
+    sf::Vector2f diff = lookAt - position;
+    float angle = static_cast<float>(atan2(diff.y,diff.x) * 180 / 3.14159265);
+    if((angle > 0 && angle < 45) || (angle >= -45 && angle <= 0))
+        mDirection = MovementComponent::Direction::E;
+    else if(angle >= 45 && angle < 135)
+        mDirection = MovementComponent::Direction::S;
+    else if((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135))
+        mDirection = MovementComponent::Direction::W;
+    else
+        mDirection = MovementComponent::Direction::N;
 }
 
-void MovementComponent::setLookAt(sf::Vector2f lookAt)
+MovementComponent::Direction MovementComponent::getDirection() const
 {
-    mLookAt = lookAt;
+    return mDirection;
 }
 
-sf::Vector2f MovementComponent::getLookAt() const
-{
-    return mLookAt;
-}
-
-void MovementComponent::resetWalkTime()
+void MovementComponent::stopWalking()
 {
     mWalkTime = sf::Time::Zero;
 }
 
-void MovementComponent::addWalkTime(sf::Time dt)
+void MovementComponent::walking(sf::Time dt)
 {
     mWalkTime += dt;
+    if (mWalkTime >= sf::seconds(0.8f))
+    {
+        stopWalking();
+    }
 }
 
 sf::Time MovementComponent::getWalkTime() const

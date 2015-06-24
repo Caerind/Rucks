@@ -69,6 +69,8 @@ class EntityManager
         SystemArray mSystems;
 };
 
+typedef std::vector<std::shared_ptr<Entity>> EntityArray;
+
 template<typename T>
 T& EntityManager::addSystem(T* system)
 {

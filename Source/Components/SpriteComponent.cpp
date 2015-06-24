@@ -8,6 +8,7 @@ SpriteComponent::SpriteComponent(std::string const& id, sf::Vector2i sheetSize)
     {
         setTexture(id);
     }
+    setOrigin(mSheetSize.x/2,mSheetSize.y/2);
 }
 
 std::string SpriteComponent::getId()
@@ -15,30 +16,15 @@ std::string SpriteComponent::getId()
     return "SpriteComponent";
 }
 
-void SpriteComponent::setTexture(sf::Texture& texture)
-{
-    mSprite.setTexture(texture);
-    mTextureSize = static_cast<sf::Vector2i>(mSprite.getTexture()->getSize());
-    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
-}
-
 void SpriteComponent::setTexture(std::string const& id)
 {
-    mSprite.setTexture(World::instance().getResources().getTexture(id));
-    mTextureSize = static_cast<sf::Vector2i>(mSprite.getTexture()->getSize());
-    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
-}
-
-void SpriteComponent::setTextureRect(sf::IntRect const& rect)
-{
-    mSprite.setTextureRect(rect);
-    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
+    sf::Sprite::setTexture(World::instance().getResources().getTexture(id));
 }
 
 void SpriteComponent::setSheetSize(sf::Vector2i sheetSize)
 {
     mSheetSize = sheetSize;
-    mSprite.setOrigin(mSheetSize.x/2,mSheetSize.y/2);
+    setOrigin(mSheetSize.x/2,mSheetSize.y/2);
 }
 
 sf::Vector2i SpriteComponent::getSheetSize() const
@@ -48,17 +34,7 @@ sf::Vector2i SpriteComponent::getSheetSize() const
 
 sf::Vector2i SpriteComponent::getTextureSize() const
 {
-    return mTextureSize;
-}
-
-sf::Vector2f SpriteComponent::getOrigin() const
-{
-    return mSprite.getOrigin();
-}
-
-void SpriteComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(mSprite,states);
+    return static_cast<sf::Vector2i>(getTexture()->getSize());
 }
 
 

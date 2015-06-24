@@ -11,25 +11,23 @@
 class CollisionComponent : public es::Component
 {
     public:
-        CollisionComponent(sf::Vector2f const& size = sf::Vector2f(1,1));
+        CollisionComponent(sf::FloatRect const& rect);
 
         static std::string getId();
-
-        void setSize(sf::Vector2f const& size);
-        sf::Vector2f getSize() const;
 
         void move(sf::Vector2f const& movement);
         void setCenter(sf::Vector2f const& center);
         sf::Vector2f getCenter() const;
 
-        sf::FloatRect getBounds() const;
+        sf::FloatRect getCollisionBox() const;
 
-        void render(sf::RenderTarget& target);
+        void renderCollisionBox(sf::RenderTarget& target);
 
     private:
         sf::FloatRect mBounds;
+        sf::Vector2f mPosition;
 };
 
-void collision(sf::FloatRect const& rect, sf::Vector2f& movement);
+bool collision(sf::FloatRect const& rect, sf::Vector2f& movement, std::size_t id);
 
 #endif // COLLISIONCOMPONENT_HPP

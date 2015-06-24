@@ -51,7 +51,7 @@ void ChunkManager::setId(sf::Vector2f pos, unsigned int layer, unsigned int id)
     sf::Vector2i tPos = worldToTile(pos);
     if (World::instance().isOnline() && !World::instance().isServer())
     {
-        // TODO : Send Packet Modification
+        // TODO (#9#): Send Packet Modification
     }
     else
     {
@@ -128,8 +128,9 @@ void ChunkManager::draw(sf::RenderTarget& target, sf::View const& view, unsigned
     }
 }
 
-bool ChunkManager::collision(sf::FloatRect const& rect)
+bool ChunkManager::collision(sf::FloatRect const& rect, std::vector<sf::FloatRect>& rects)
 {
+    bool res = false;
     sf::FloatRect r = sf::FloatRect(rect.left - 1.f, rect.top - 1.f, rect.width + 2.f, rect.height + 2.f);
     std::array<sf::Vector2f,4> array = sfh::getPoint<float>(r);
     sf::Vector2i cPos, tPos;
@@ -145,12 +146,13 @@ bool ChunkManager::collision(sf::FloatRect const& rect)
                 sf::Vector2f p = toWorldPos(cPos,tPos);
                 if (sf::FloatRect(p.x,p.y,Chunk::getTileSize().x,Chunk::getTileSize().y).intersects(rect))
                 {
-                    return true;
+                    res = true;
+                    rects.push_back(sf::FloatRect(p.x,p.y,Chunk::getTileSize().x,Chunk::getTileSize().y));
                 }
             }
         }
     }
-    return false;
+    return res;
 }
 
 bool ChunkManager::contains(sf::Vector2i chunkPos)

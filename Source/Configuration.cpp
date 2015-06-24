@@ -13,6 +13,7 @@ void Configuration::initialize()
     (*mPlayerInput)["left"] = thor::Action(sf::Keyboard::Q,thor::Action::Hold);
     (*mPlayerInput)["down"] = thor::Action(sf::Keyboard::S,thor::Action::Hold);
     (*mPlayerInput)["right"] = thor::Action(sf::Keyboard::D,thor::Action::Hold);
+    (*mPlayerInput)["action"] = thor::Action(sf::Mouse::Left,thor::Action::PressOnce);
 }
 
 void Configuration::terminate()

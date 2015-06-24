@@ -3,13 +3,7 @@
 
 #include "../Lib/EntitySystem/EntitySystem.hpp"
 
-#include "Components/TransformComponent.hpp"
-#include "Components/SpriteComponent.hpp"
-#include "Components/CollisionComponent.hpp"
-#include "Components/MovementComponent.hpp"
-#include "Components/LifeComponent.hpp"
-#include "Components/PlayerInputComponent.hpp"
-#include "Components/AIComponent.hpp"
+#include "Components/Components.hpp"
 
 class Prefab
 {

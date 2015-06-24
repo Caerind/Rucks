@@ -26,7 +26,7 @@ class ChunkManager
         void update(sf::View const& view);
         void draw(sf::RenderTarget& target, sf::View const& view, unsigned int layer) const;
 
-        bool collision(sf::FloatRect const& rect);
+        bool collision(sf::FloatRect const& rect, std::vector<sf::FloatRect>& rects);
 
         bool contains(sf::Vector2i chunkPos);
         void clear();

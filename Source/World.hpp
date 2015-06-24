@@ -1,6 +1,8 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <iostream>
+
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Time.hpp>
@@ -13,17 +15,7 @@
 
 #include "Server/Server.hpp"
 
-#include "Systems/RenderSystem.hpp"
-#include "Systems/PlayerInputSystem.hpp"
-#include "Systems/AnimationSystem.hpp"
-#include "Systems/AIControllerSystem.hpp"
-
-#include "Components/TransformComponent.hpp"
-#include "Components/SpriteComponent.hpp"
-#include "Components/MovementComponent.hpp"
-#include "Components/PlayerInputComponent.hpp"
-#include "Components/LifeComponent.hpp"
-#include "Components/AIComponent.hpp"
+#include "Systems/Systems.hpp"
 
 #include "Prefab.hpp"
 

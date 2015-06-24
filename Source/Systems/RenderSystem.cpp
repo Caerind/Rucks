@@ -24,12 +24,23 @@ void RenderSystem::render(sf::RenderTarget& target)
         sf::RenderStates states;
         states.transform *= mEntities[i]->getComponent<TransformComponent>().getTransform();
         target.draw(mEntities[i]->getComponent<SpriteComponent>(),states);
-    }
-    for (unsigned int i = 0; i < mEntities.size(); i++)
-    {
+        if (mEntities[i]->hasComponent<WeaponComponent>())
+        {
+            mEntities[i]->getComponent<WeaponComponent>().renderWeapon(target,states);
+        }
+        if (mEntities[i]->hasComponent<LifeComponent>())
+        {
+            mEntities[i]->getComponent<LifeComponent>().renderLifeBar(target,states);
+        }
+
+        // Debug
         if (mEntities[i]->hasComponent<CollisionComponent>())
         {
-            mEntities[i]->getComponent<CollisionComponent>().render(target);
+            mEntities[i]->getComponent<CollisionComponent>().renderCollisionBox(target);
+        }
+        if (mEntities[i]->hasComponent<TransformComponent>())
+        {
+            mEntities[i]->getComponent<TransformComponent>().renderBoundingBox(target);
         }
     }
 }

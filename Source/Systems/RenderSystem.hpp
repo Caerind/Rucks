@@ -7,9 +7,7 @@
 
 #include "../../Lib/EntitySystem/System.hpp"
 
-#include "../Components/TransformComponent.hpp"
-#include "../Components/SpriteComponent.hpp"
-#include "../Components/CollisionComponent.hpp"
+#include "../Components/Components.hpp"
 
 class RenderSystem : public es::System
 {

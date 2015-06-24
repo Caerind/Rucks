@@ -3,6 +3,10 @@
 
 #include "../../Lib/EntitySystem/Component.hpp"
 
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+
 class LifeComponent : public es::Component
 {
     public:
@@ -21,6 +25,8 @@ class LifeComponent : public es::Component
 
         bool inflige(unsigned int damage); // return true if is has been killed by the damage
         bool restore(unsigned int heal); // return true if full life
+
+        void renderLifeBar(sf::RenderTarget& target, sf::RenderStates states);
 
     private:
         unsigned int mLife;

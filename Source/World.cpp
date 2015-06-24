@@ -25,7 +25,7 @@ void World::initialize()
 
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
-    mEntities.addSystem<PlayerInputSystem>(new PlayerInputSystem());
+    mEntities.addSystem<PlayerControllerSystem>(new PlayerControllerSystem());
     mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
     mEntities.addSystem<AnimationSystem>(new AnimationSystem());
 
@@ -61,7 +61,7 @@ bool World::saveToFile(std::string const& filename)
 
 void World::handleEvent(sf::Event const& event)
 {
-    mEntities.getSystem<PlayerInputSystem>().handleEvent(event);
+    mEntities.getSystem<PlayerControllerSystem>().handleEvent(event);
 
     // Zoom
     if (event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
@@ -81,7 +81,7 @@ void World::handleEvent(sf::Event const& event)
 
 void World::update(sf::Time dt)
 {
-    mEntities.getSystem<PlayerInputSystem>().update(dt);
+    mEntities.getSystem<PlayerControllerSystem>().update(dt);
     mEntities.getSystem<AIControllerSystem>().update(dt);
     mEntities.getSystem<AnimationSystem>().update(dt);
 
