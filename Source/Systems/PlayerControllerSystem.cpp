@@ -72,13 +72,16 @@ void PlayerControllerSystem::update(sf::Time dt)
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
             if (w.canAttack())
             {
-                w.attack();
-                for (unsigned int j = 0; j < monster.size(); j++)
+                w.attack(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
+                if (!w.isLongRange())
                 {
-                    if (thor::length(ePos - monster[j]->getComponent<TransformComponent>().getPosition()) < w.getRange()
-                    && monster[j]->getComponent<TransformComponent>().getBoundingBox().contains(mPos))
+                    for (unsigned int j = 0; j < monster.size(); j++)
                     {
-                        monster[j]->getComponent<LifeComponent>().inflige(w.getDamage());
+                        if (thor::length(ePos - monster[j]->getComponent<TransformComponent>().getPosition()) < w.getRange()
+                        && monster[j]->getComponent<TransformComponent>().getBoundingBox().contains(mPos))
+                        {
+                            monster[j]->getComponent<LifeComponent>().inflige(w.getDamage());
+                        }
                     }
                 }
             }

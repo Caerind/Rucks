@@ -39,11 +39,41 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     else
     {
         // TODO (#7#): Better Collision Handling
-        // TODO (#3#): Intersect with a Projectile
     }
 
     e->getComponent<TransformComponent>().move(movement);
     e->getComponent<CollisionComponent>().setCenter(e->getComponent<TransformComponent>().getPosition());
 
     return movement != defaultMovement;
+}
+
+bool CollisionSystem::projectileCollision(sf::FloatRect const& rect, es::Entity::Ptr& e)
+{
+    std::vector<sf::FloatRect> rects;
+    if (mChunks.collision(rect,rects))
+    {
+        e = nullptr;
+        return true;
+    }
+    std::vector<es::Entity::Ptr> es;
+    for (unsigned int i = 0; i < mEntities.size(); i++)
+    {
+        if (mEntities[i]->getComponent<CollisionComponent>().getCollisionBox().intersects(rect))
+        {
+            es.push_back(mEntities[i]);
+        }
+    }
+    if (es.size() > 0)
+    {
+        for (unsigned int i = 0; i < es.size(); i++)
+        {
+            if (es[i]->hasComponent<LifeComponent>())
+            {
+                e = es[i];
+                return true;
+            }
+        }
+    }
+    e = nullptr;
+    return false;
 }

@@ -36,6 +36,7 @@ class ProjectileComponent : public es::Component
 
         void addDistanceTraveled(float distance);
         void addDistanceTraveled(sf::Vector2f const& movement);
+        float getDistanceTraveled() const;
         bool fallDown() const;
 
         static std::string getTextureId(Type type);

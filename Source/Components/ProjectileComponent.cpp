@@ -3,7 +3,7 @@
 
 ProjectileComponent::ProjectileComponent(ProjectileComponent::Type type)
 {
-    setType(type);
+    mType = type;
 }
 
 std::string ProjectileComponent::getId()
@@ -15,9 +15,14 @@ void ProjectileComponent::setType(ProjectileComponent::Type type)
 {
     mType = type;
     es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
-    if (e->hasComponent<SpriteComponent>())
+    if (e != nullptr)
     {
-        // TODO (#3#): Set Projectile Texture
+        if (e->hasComponent<SpriteComponent>())
+        {
+            e->getComponent<SpriteComponent>().setTexture(getTextureId(type));
+            e->getComponent<SpriteComponent>().setSheetSize(getSheetSize(type));
+            e->getComponent<SpriteComponent>().setTextureRect(getTextureRect(type));
+        }
     }
 }
 
@@ -60,9 +65,12 @@ void ProjectileComponent::setDirection(sf::Vector2f const& direction)
 {
     mDirection = thor::unitVector<float>(direction);
     es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
-    if (e->hasComponent<SpriteComponent>() && e->hasComponent<TransformComponent>())
+    if (e != nullptr)
     {
-        // TODO (#3#): Update Angle
+        if (e->hasComponent<TransformComponent>())
+        {
+            e->getComponent<TransformComponent>().setRotation(static_cast<float>(atan2(direction.y,direction.x) * 180 / 3.14159265) + 90.f);
+        }
     }
 }
 
@@ -81,6 +89,11 @@ void ProjectileComponent::addDistanceTraveled(sf::Vector2f const& movement)
     mDistanceTraveled += thor::length(movement);
 }
 
+float ProjectileComponent::getDistanceTraveled() const
+{
+    return mDistanceTraveled;
+}
+
 bool ProjectileComponent::fallDown() const
 {
     return mDistanceTraveled >= mRange;
@@ -93,7 +106,7 @@ std::string ProjectileComponent::getTextureId(Type type)
 
 sf::Vector2f ProjectileComponent::getSize(Type type)
 {
-    return sf::Vector2f(16,32);
+    return sf::Vector2f(8,8);
 }
 
 sf::Vector2i ProjectileComponent::getSheetSize(Type type)
@@ -103,7 +116,7 @@ sf::Vector2i ProjectileComponent::getSheetSize(Type type)
 
 sf::IntRect ProjectileComponent::getTextureRect(Type type)
 {
-    return sf::IntRect(type * 16, 32, 16, 32);
+    return sf::IntRect(type * 16, 0, 16, 32);
 }
 
 void ProjectileComponent::loadProjectileTextures()

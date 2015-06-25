@@ -14,6 +14,7 @@ class CollisionSystem : public es::System
         static std::string getId();
 
         bool handle(es::Entity::Ptr e, sf::Vector2f& movement);
+        bool projectileCollision(sf::FloatRect const& rect, es::Entity::Ptr& e);
 
     private:
         ChunkManager& mChunks;

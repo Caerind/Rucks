@@ -74,13 +74,13 @@ sf::Time WeaponComponent::getCooldown() const
     return mCooldown;
 }
 
-void WeaponComponent::attack()
+void WeaponComponent::attack(sf::Vector2f const& direction)
 {
     mTimeSinceLastAttack.restart();
     if (isLongRange())
     {
-        // TODO (#3#): Start Projectile !
-        //World::instance().getPrefab()
+        sf::Vector2f pos = World::instance().getEntities().get(getIdAttachedTo())->getComponent<TransformComponent>().getPosition() + mWeaponSprite.getPosition();
+        World::instance().getPrefab().createProjectile(pos, ProjectileComponent::Type::Arrow, direction);
     }
 }
 

@@ -39,7 +39,7 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
         void setCooldown(sf::Time cooldown);
         sf::Time getCooldown() const;
 
-        void attack();
+        void attack(sf::Vector2f const& direction);
         bool canAttack();
         sf::Time getTimeSinceLastAttack() const;
 

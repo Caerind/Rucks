@@ -121,11 +121,12 @@ void AIControllerSystem::handleAttack(es::Entity::Ptr e)
     {
         WeaponComponent& w = e->getComponent<WeaponComponent>();
         es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
-        if (thor::length(e->getComponent<TransformComponent>().getPosition() - target->getComponent<TransformComponent>().getPosition()) < w.getRange()
+        sf::Vector2f diff = e->getComponent<TransformComponent>().getPosition() - target->getComponent<TransformComponent>().getPosition();
+        if (thor::length(diff) < w.getRange()
         && w.canAttack())
         {
             target->getComponent<LifeComponent>().inflige(w.getDamage());
-            w.attack();
+            w.attack(diff);
         }
     }
 }

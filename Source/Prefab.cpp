@@ -13,7 +13,7 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->addComponent<MovementComponent>(new MovementComponent(200));
     e->addComponent<LifeComponent>(new LifeComponent(200,200));
     e->addComponent<PlayerComponent>(new PlayerComponent());
-    e->addComponent<WeaponComponent>(new WeaponComponent(WeaponComponent::Type::Sword));
+    e->addComponent<WeaponComponent>(new WeaponComponent(WeaponComponent::Type::Bow));
     return e;
 }
 
@@ -63,6 +63,10 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, Projectil
     e->addComponent<SpriteComponent>(new SpriteComponent(ProjectileComponent::getTextureId(type),ProjectileComponent::getSheetSize(type)));
     e->addComponent<ProjectileComponent>(new ProjectileComponent(type));
     e->getComponent<ProjectileComponent>().setDirection(direction);
+    e->getComponent<ProjectileComponent>().setRange(800);
+    e->getComponent<ProjectileComponent>().setSpeed(300);
+    e->getComponent<ProjectileComponent>().setDamage(10);
+    e->getComponent<SpriteComponent>().setTextureRect(ProjectileComponent::getTextureRect(type));
     return e;
 }
 

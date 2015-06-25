@@ -30,6 +30,7 @@ void World::initialize()
     mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
     mEntities.addSystem<AnimationSystem>(new AnimationSystem());
     mEntities.addSystem<CollisionSystem>(new CollisionSystem(mChunks));
+    mEntities.addSystem<ProjectileSystem>(new ProjectileSystem());
 
     // Load Entities
     mPrefab.createPlayer(sf::Vector2f(100,100));
@@ -89,6 +90,7 @@ void World::update(sf::Time dt)
     mEntities.getSystem<PlayerControllerSystem>().update(dt);
     mEntities.getSystem<AIControllerSystem>().update(dt);
     mEntities.getSystem<AnimationSystem>().update();
+    mEntities.getSystem<ProjectileSystem>().update(dt);
 
     mChunks.update(mView);
 }
