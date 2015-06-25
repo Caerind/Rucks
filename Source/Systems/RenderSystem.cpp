@@ -28,7 +28,7 @@ void RenderSystem::render(sf::RenderTarget& target)
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
             MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
-            if (dir == MovementComponent::Direction::E || dir == MovementComponent::Direction::N)
+            if (dir == MovementComponent::Direction::W || dir == MovementComponent::Direction::N)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
             }
@@ -41,7 +41,7 @@ void RenderSystem::render(sf::RenderTarget& target)
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
             MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
-            if (dir == MovementComponent::Direction::S || dir == MovementComponent::Direction::W)
+            if (dir == MovementComponent::Direction::S || dir == MovementComponent::Direction::E)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
             }

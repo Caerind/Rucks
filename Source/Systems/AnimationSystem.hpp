@@ -5,8 +5,6 @@
 
 #include "../Components/Components.hpp"
 
-#include <SFML/System/Time.hpp>
-
 class AnimationSystem : public es::System
 {
     public:
@@ -14,7 +12,9 @@ class AnimationSystem : public es::System
 
         static std::string getId();
 
-        void update(sf::Time dt);
+        void update();
+
+        void handleWeaponOnMoving(WeaponComponent& w, sf::Vector2i sPos);
 };
 
 #endif // ANIMATIONSYSTEM_HPP

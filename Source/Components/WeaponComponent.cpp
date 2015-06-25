@@ -8,7 +8,7 @@ WeaponComponent::WeaponComponent(WeaponComponent::Type type)
 
 WeaponComponent::WeaponComponent(float range, unsigned int damage, sf::Time cooldown)
 {
-    mType = WeaponComponent::None;
+    setType(WeaponComponent::Type::None);
     mRange = range;
     mDamage = damage;
     mCooldown = cooldown;
@@ -25,8 +25,9 @@ void WeaponComponent::setType(WeaponComponent::Type type)
     mRange = getRange(type);
     mDamage = getDamage(type);
     mCooldown = getCooldown(type);
-    //mWeaponSprite.setTexture(World::instance().getResources().getTexture(getTextureId(type)));
+    mWeaponSprite.setTexture(World::instance().getResources().getTexture(getTextureId(type)));
     mWeaponSprite.setTextureRect(getTextureRect(type));
+    mWeaponSprite.setOrigin(16,64);
 }
 
 WeaponComponent::Type WeaponComponent::getType() const
@@ -80,9 +81,9 @@ bool WeaponComponent::canAttack()
     return mTimeSinceLastAttack.getElapsedTime() >= mCooldown;
 }
 
-void WeaponComponent::setWeaponTransform(sf::Vector2f const& position, float rotation)
+void WeaponComponent::setWeaponTransform(float x, float y, float rotation)
 {
-    setPosition(position);
+    setPosition(x,y);
     setRotation(rotation);
 }
 

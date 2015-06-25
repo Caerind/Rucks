@@ -41,7 +41,7 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
         void attack();
         bool canAttack();
 
-        void setWeaponTransform(sf::Vector2f const& position, float rotation);
+        void setWeaponTransform(float x, float y, float rotation);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
         static float getRange(Type type);

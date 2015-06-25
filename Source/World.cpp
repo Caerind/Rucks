@@ -86,7 +86,7 @@ void World::update(sf::Time dt)
 {
     mEntities.getSystem<PlayerControllerSystem>().update(dt);
     mEntities.getSystem<AIControllerSystem>().update(dt);
-    mEntities.getSystem<AnimationSystem>().update(dt);
+    mEntities.getSystem<AnimationSystem>().update();
 
     mChunks.update(mView);
 }

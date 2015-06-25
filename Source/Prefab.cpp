@@ -13,7 +13,7 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->addComponent<MovementComponent>(new MovementComponent(200));
     e->addComponent<LifeComponent>(new LifeComponent(200,200));
     e->addComponent<PlayerComponent>(new PlayerComponent());
-    e->addComponent<WeaponComponent>(new WeaponComponent());
+    e->addComponent<WeaponComponent>(new WeaponComponent(WeaponComponent::Type::Sword));
     return e;
 }
 
@@ -52,7 +52,7 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     e->addComponent<MovementComponent>(new MovementComponent(100));
     e->addComponent<LifeComponent>(new LifeComponent(100,100));
     e->addComponent<AIComponent>(new AIComponent(300,500));
-    e->addComponent<WeaponComponent>(new WeaponComponent());
+    e->addComponent<WeaponComponent>(new WeaponComponent(WeaponComponent::Type::Sword));
     return e;
 }
 

@@ -49,11 +49,16 @@ void PlayerControllerSystem::update(sf::Time dt)
 
     es::ComponentFilter filterMonster;
     filterMonster.push_back(MonsterComponent::getId());
-
     es::EntityManager::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
+        if (mEntities[i]->getComponent<LifeComponent>().isDead())
+        {
+            mEntities[i]->getComponent<LifeComponent>().setLife(mEntities[i]->getComponent<LifeComponent>().getLifeMax());
+            mEntities[i]->getComponent<TransformComponent>().setPosition(0.f,0.f);
+        }
+
         sf::Vector2f ePos = mEntities[i]->getComponent<TransformComponent>().getPosition();
         sf::Vector2f mvt = mMovement * dt.asSeconds() * mEntities[i]->getComponent<MovementComponent>().getSpeed();
         World::instance().getEntities().getSystem<CollisionSystem>().handle(mEntities[i],mvt);
@@ -63,6 +68,7 @@ void PlayerControllerSystem::update(sf::Time dt)
 
         if (isActive("action"))
         {
+            // Attack Monster
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
             for (unsigned int j = 0; j < monster.size(); j++)
             {
