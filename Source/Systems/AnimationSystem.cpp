@@ -27,15 +27,13 @@ void AnimationSystem::update()
         // Update The Weapon Animation
         if (mEntities[i]->hasComponent<WeaponComponent>() && !mEntities[i]->hasComponent<MonsterComponent>())
         {
-            // TODO (#3#): Weapon Animation
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
-            if (w.canAttack()) // canAttack = No Special Weapon Animation
+            handleWeaponOnMoving(w,sf::Vector2i(col,dir));
+            if (!w.canAttack()) // !canAttack = Special Weapon Animation
             {
-                handleWeaponOnMoving(w,sf::Vector2i(col,dir));
+                handleWeaponOnAttack(w,dir);
             }
-            else // !canAttack = Special Weapon Animation
-            {
-            }
+            // TODO (#7#): Double Sprite Animation
         }
     }
 }
@@ -85,4 +83,35 @@ void AnimationSystem::handleWeaponOnMoving(WeaponComponent& w, sf::Vector2i sPos
     if (sPos == sf::Vector2i(6,3)) w.setWeaponTransform(-10,18,75);
     if (sPos == sf::Vector2i(7,3)) w.setWeaponTransform(-7,17,77);
     if (sPos == sf::Vector2i(8,3)) w.setWeaponTransform(-4,16,80);
+}
+
+void AnimationSystem::handleWeaponOnAttack(WeaponComponent& w, unsigned int dir)
+{
+    sf::Time attack = w.getTimeSinceLastAttack();
+    sf::Time touch = w.getCooldown() * 0.25f;
+    sf::Time end = w.getCooldown() - touch;
+    if (attack < touch)
+    {
+        float d = attack.asSeconds() / touch.asSeconds();
+        switch (dir)
+        {
+            // f(d) = d * (end - begin) + begin;
+            case 0: w.setRotation(d * (-20 - 6) + 6); break;
+            case 1: w.setRotation(d * (-50 + 77.5) - 77.5); break;
+            case 2: w.setRotation(d * (20 + 6) - 6); break;
+            case 3: w.setRotation(d * (50 - 77.5) + 77.5); break;
+        }
+    }
+    else
+    {
+        float d = (attack.asSeconds()-touch.asSeconds()) / end.asSeconds();
+        switch (dir)
+        {
+            // f(d) = d * (end - begin) + begin;
+            case 0: w.setRotation(d * (6 + 20) - 20); break;
+            case 1: w.setRotation(d * (-77.5 + 50) - 50); break;
+            case 2: w.setRotation(d * (-6 - 20) + 20); break;
+            case 3: w.setRotation(d * (77.5 - 50) + 50); break;
+        }
+    }
 }

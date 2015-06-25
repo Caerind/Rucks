@@ -81,6 +81,11 @@ bool WeaponComponent::canAttack()
     return mTimeSinceLastAttack.getElapsedTime() >= mCooldown;
 }
 
+sf::Time WeaponComponent::getTimeSinceLastAttack() const
+{
+    return mTimeSinceLastAttack.getElapsedTime();
+}
+
 void WeaponComponent::setWeaponTransform(float x, float y, float rotation)
 {
     setPosition(x,y);
@@ -110,7 +115,7 @@ unsigned int WeaponComponent::getDamage(WeaponComponent::Type type)
 
 sf::Time WeaponComponent::getCooldown(WeaponComponent::Type type)
 {
-    return sf::seconds(0.3f);
+    return sf::seconds(0.2f);
 }
 
 std::string WeaponComponent::getTextureId(WeaponComponent::Type type)

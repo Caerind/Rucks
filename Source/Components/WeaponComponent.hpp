@@ -40,6 +40,7 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
 
         void attack();
         bool canAttack();
+        sf::Time getTimeSinceLastAttack() const;
 
         void setWeaponTransform(float x, float y, float rotation);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;

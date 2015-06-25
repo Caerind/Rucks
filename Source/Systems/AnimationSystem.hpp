@@ -5,6 +5,8 @@
 
 #include "../Components/Components.hpp"
 
+#include <SFML/System/Time.hpp>
+
 class AnimationSystem : public es::System
 {
     public:
@@ -15,6 +17,7 @@ class AnimationSystem : public es::System
         void update();
 
         void handleWeaponOnMoving(WeaponComponent& w, sf::Vector2i sPos);
+        void handleWeaponOnAttack(WeaponComponent& w, unsigned int dir);
 };
 
 #endif // ANIMATIONSYSTEM_HPP
