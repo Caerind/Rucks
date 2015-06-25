@@ -22,6 +22,7 @@ void World::initialize()
     mResources.getTexture("princess").setSmooth(true);
     MonsterComponent::loadMonsterTextures();
     WeaponComponent::loadWeaponTextures();
+    ProjectileComponent::loadProjectileTextures();
 
     // Attach Systems
     mEntities.addSystem<RenderSystem>(new RenderSystem());
@@ -30,12 +31,12 @@ void World::initialize()
     mEntities.addSystem<AnimationSystem>(new AnimationSystem());
     mEntities.addSystem<CollisionSystem>(new CollisionSystem(mChunks));
 
-    Prefab prefab(mEntities);
-    prefab.createPlayer(sf::Vector2f(100,100));
-    prefab.createMonster(sf::Vector2f(400,400),MonsterComponent::Type::Bat);
-    prefab.createMonster(sf::Vector2f(425,375),MonsterComponent::Type::Bee);
-    prefab.createPacific(sf::Vector2f(50,50));
-    prefab.createFighter(sf::Vector2f(50,200));
+    // Load Entities
+    mPrefab.createPlayer(sf::Vector2f(100,100));
+    mPrefab.createMonster(sf::Vector2f(400,400),MonsterComponent::Type::Bat);
+    mPrefab.createMonster(sf::Vector2f(425,375),MonsterComponent::Type::Bee);
+    mPrefab.createPacific(sf::Vector2f(50,50));
+    mPrefab.createFighter(sf::Vector2f(50,200));
 }
 
 void World::terminate()
@@ -50,6 +51,7 @@ void World::terminate()
     mResources.releaseTexture("princess");
     MonsterComponent::releaseMonsterTextures();
     WeaponComponent::releaseWeaponTextures();
+    ProjectileComponent::releaseProjectileTextures();
 }
 
 bool World::loadFromFile(std::string const& filename)
@@ -122,6 +124,11 @@ es::EntityManager& World::getEntities()
     return mEntities;
 }
 
+Prefab& World::getPrefab()
+{
+    return mPrefab;
+}
+
 bool World::isOnline() const
 {
     return mIsOnline;
@@ -132,7 +139,7 @@ bool World::isServer() const
     return mIsServer;
 }
 
-World::World()
+World::World() : mPrefab(mEntities)
 {
 
 }

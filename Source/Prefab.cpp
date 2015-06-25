@@ -56,3 +56,13 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     return e;
 }
 
+es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, ProjectileComponent::Type type, sf::Vector2f const& direction)
+{
+    es::Entity::Ptr e = mManager.create();
+    e->addComponent<TransformComponent>(new TransformComponent(position,ProjectileComponent::getSize(type)));
+    e->addComponent<SpriteComponent>(new SpriteComponent(ProjectileComponent::getTextureId(type),ProjectileComponent::getSheetSize(type)));
+    e->addComponent<ProjectileComponent>(new ProjectileComponent(type));
+    e->getComponent<ProjectileComponent>().setDirection(direction);
+    return e;
+}
+

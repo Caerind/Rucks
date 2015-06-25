@@ -39,6 +39,7 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     else
     {
         // TODO (#7#): Better Collision Handling
+        // TODO (#3#): Intersect with a Projectile
     }
 
     e->getComponent<TransformComponent>().move(movement);

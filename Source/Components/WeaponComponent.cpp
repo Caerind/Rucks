@@ -37,7 +37,10 @@ WeaponComponent::Type WeaponComponent::getType() const
 
 bool WeaponComponent::isLongRange() const
 {
-    // TODO (#7#): Long Range Weapons
+    if (mType == WeaponComponent::Type::Bow)
+    {
+        return true;
+    }
     return false;
 }
 
@@ -74,6 +77,11 @@ sf::Time WeaponComponent::getCooldown() const
 void WeaponComponent::attack()
 {
     mTimeSinceLastAttack.restart();
+    if (isLongRange())
+    {
+        // TODO (#3#): Start Projectile !
+        //World::instance().getPrefab()
+    }
 }
 
 bool WeaponComponent::canAttack()

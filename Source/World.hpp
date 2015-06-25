@@ -38,6 +38,7 @@ class World
         sf::View& getView();
         ChunkManager& getChunks();
         es::EntityManager& getEntities();
+        Prefab& getPrefab();
 
         bool isOnline() const;
         bool isServer() const;
@@ -52,6 +53,7 @@ class World
         sf::View mView;
         ChunkManager mChunks;
         es::EntityManager mEntities;
+        Prefab mPrefab;
 
         bool mIsOnline;
         bool mIsServer;

@@ -6,5 +6,6 @@
 #include "PlayerControllerSystem.hpp"
 #include "AnimationSystem.hpp"
 #include "CollisionSystem.hpp"
+#include "ProjectileSystem.hpp"
 
 #endif // SYSTEMS_HPP_INCLUDED

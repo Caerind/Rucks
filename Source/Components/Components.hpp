@@ -10,5 +10,6 @@
 #include "MonsterComponent.hpp"
 #include "AIComponent.hpp"
 #include "WeaponComponent.hpp"
+#include "ProjectileComponent.hpp"
 
 #endif // COMPONENTS_HPP_INCLUDED

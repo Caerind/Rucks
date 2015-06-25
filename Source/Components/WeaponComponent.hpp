@@ -16,6 +16,7 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
         {
             None,
             Sword,
+            Bow,
             // TODO (#7#): More Weapons !
         };
 
