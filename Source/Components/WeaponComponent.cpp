@@ -79,7 +79,7 @@ void WeaponComponent::attack(sf::Vector2f const& direction)
     mTimeSinceLastAttack.restart();
     if (isLongRange())
     {
-        sf::Vector2f pos = World::instance().getEntities().get(getIdAttachedTo())->getComponent<TransformComponent>().getPosition() + mWeaponSprite.getPosition();
+        sf::Vector2f pos = World::instance().getEntities().get(getParentId())->getComponent<TransformComponent>().getPosition() + mWeaponSprite.getPosition();
         World::instance().getPrefab().createProjectile(pos, ProjectileComponent::Type::Arrow, direction);
     }
 }

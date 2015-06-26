@@ -53,7 +53,7 @@ void AIControllerSystem::update(sf::Time dt)
 
 void AIControllerSystem::findTarget(es::Entity::Ptr e)
 {
-    es::EntityManager::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
+    es::EntityArray targetList = mManager->getByFilter(AIComponent::getTargetFilter());
     es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
     sf::Vector2f tPos, ePos = e->getComponent<TransformComponent>().getPosition();
     for (unsigned int i = 0; i < targetList.size(); i++)

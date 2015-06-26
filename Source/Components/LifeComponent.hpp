@@ -10,27 +10,27 @@
 class LifeComponent : public es::Component
 {
     public:
-        LifeComponent(unsigned int life = 100, unsigned int lifeMax = 100);
+        LifeComponent(int life = 100, int lifeMax = 100);
 
         static std::string getId();
 
-        void setLife(unsigned int life);
-        void setLifeMax(unsigned int lifeMax);
+        void setLife(int life);
+        void setLifeMax(int lifeMax);
 
-        unsigned int getLife() const;
-        unsigned int getLifeMax() const;
+        int getLife() const;
+        int getLifeMax() const;
 
         bool isDead() const;
         bool isAlive() const;
 
-        bool inflige(unsigned int damage); // return true if is has been killed by the damage
-        bool restore(unsigned int heal); // return true if full life
+        bool inflige(int damage); // return true if is has been killed by the damage
+        bool restore(int heal); // return true if full life
 
         void renderLifeBar(sf::RenderTarget& target, sf::RenderStates states);
 
     private:
-        unsigned int mLife;
-        unsigned int mLifeMax;
+        int mLife;
+        int mLifeMax;
 };
 
 #endif // LIFECOMPONENT_HPP

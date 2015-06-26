@@ -25,12 +25,13 @@ void World::initialize()
     ProjectileComponent::loadProjectileTextures();
 
     // Attach Systems
-    mEntities.addSystem<RenderSystem>(new RenderSystem());
-    mEntities.addSystem<PlayerControllerSystem>(new PlayerControllerSystem());
-    mEntities.addSystem<AIControllerSystem>(new AIControllerSystem());
-    mEntities.addSystem<AnimationSystem>(new AnimationSystem());
-    mEntities.addSystem<CollisionSystem>(new CollisionSystem(mChunks));
-    mEntities.addSystem<ProjectileSystem>(new ProjectileSystem());
+    mEntities.addSystem<RenderSystem>();
+    mEntities.addSystem<PlayerControllerSystem>();
+    mEntities.addSystem<AIControllerSystem>();
+    mEntities.addSystem<AnimationSystem>();
+    mEntities.addSystem<CollisionSystem>();
+    mEntities.getSystem<CollisionSystem>().setChunks(mChunks);
+    mEntities.addSystem<ProjectileSystem>();
 
     // Load Entities
     mPrefab.createPlayer(sf::Vector2f(100,100));
@@ -87,6 +88,7 @@ void World::handleEvent(sf::Event const& event)
 
 void World::update(sf::Time dt)
 {
+    mEntities.update();
     mEntities.getSystem<PlayerControllerSystem>().update(dt);
     mEntities.getSystem<AIControllerSystem>().update(dt);
     mEntities.getSystem<AnimationSystem>().update();

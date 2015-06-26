@@ -5,28 +5,17 @@ namespace es
 
 std::size_t Entity::gIdCounter = 0;
 
-Entity::Entity(EntityManager* manager, std::string const& name, std::size_t id)
-: mManager(manager)
+Entity::Entity()
 {
-    if (id != 0)
-    {
-        mId = id;
-    }
-    else
-    {
-        mId = gIdCounter++;
-    }
-    mName = name;
-    mType = "Entity";
-    mTag = "Nothing";
+    mId = gIdCounter++;
 }
 
-bool Entity::hasComponent(std::string const& type)
+bool Entity::hasComponent(std::string const& type) const
 {
     return mComponents.find(type) != mComponents.end();
 }
 
-bool Entity::hasComponents(ComponentFilter const& filter)
+bool Entity::hasComponents(ComponentFilter const& filter) const
 {
     for (unsigned int i = 0; i < filter.size(); i++)
     {
@@ -38,9 +27,13 @@ bool Entity::hasComponents(ComponentFilter const& filter)
     return true;
 }
 
-void Entity::removeAllComponents()
+void Entity::removeComponents()
 {
     mComponents.clear();
+    if (hasManager())
+    {
+        mManager->updateEntity(mId,EntityManager::UpdateEntity::RemoveComponents);
+    }
 }
 
 std::size_t Entity::getId() const
@@ -48,29 +41,14 @@ std::size_t Entity::getId() const
     return mId;
 }
 
-std::string Entity::getName() const
+EntityManager* Entity::getManager() const
 {
-    return mName;
+    return mManager;
 }
 
-std::string Entity::getType() const
+bool Entity::hasManager() const
 {
-    return mType;
+    return mManager != nullptr;
 }
 
-std::string Entity::getTag() const
-{
-    return mTag;
-}
-
-void Entity::setType(std::string const& type)
-{
-    mType = type;
-}
-
-void Entity::setTag(std::string const& tag)
-{
-    mTag = tag;
-}
-
-}
+} // namespace es

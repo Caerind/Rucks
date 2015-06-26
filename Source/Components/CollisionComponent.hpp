@@ -11,7 +11,7 @@
 class CollisionComponent : public es::Component
 {
     public:
-        CollisionComponent(sf::FloatRect const& rect);
+        CollisionComponent(sf::FloatRect const& rect = sf::FloatRect());
 
         static std::string getId();
 

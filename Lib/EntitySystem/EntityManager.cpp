@@ -9,183 +9,63 @@ EntityManager::EntityManager()
 {
 }
 
-Entity::Ptr EntityManager::create(std::string const& name)
+Entity::Ptr EntityManager::create()
 {
-    mEntities.push_back(std::make_shared<Entity>(this,name));
-    update(mEntities.back()->getId());
+    mEntities.push_back(std::make_shared<Entity>());
+    mEntities.back()->mManager = this;
     return mEntities.back();
 }
 
-Entity::Ptr EntityManager::create(std::size_t id, std::string const& name)
-{
-    if (!idExist(id))
-    {
-        mEntities.push_back(std::make_shared<Entity>(this,name,id));
-    }
-    else
-    {
-        mEntities.push_back(std::make_shared<Entity>(this,name));
-    }
-    update(mEntities.back()->getId());
-    return mEntities.back();
-}
-
-Entity::Ptr EntityManager::get(std::size_t id)
+Entity::Ptr EntityManager::get(std::size_t id) const
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (mEntities[i]->getId() == id)
+        if (mEntities[i] != nullptr)
         {
-            return mEntities[i];
+            if (mEntities[i]->getId() == id)
+            {
+                return mEntities[i];
+            }
         }
     }
     return nullptr;
 }
 
-Entity::Ptr EntityManager::getByName(std::string const& name)
-{
-    for (unsigned int i = 0; i < mEntities.size(); i++)
-    {
-        if (mEntities[i]->getName() == name)
-        {
-            return mEntities[i];
-        }
-    }
-    return nullptr;
-}
-
-EntityManager::EntityArray EntityManager::getByType(std::string const& type)
+EntityArray EntityManager::getByFilter(ComponentFilter const& filter) const
 {
     EntityArray array;
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (mEntities[i]->getType() == type)
+        if (mEntities[i] != nullptr)
         {
-            array.push_back(mEntities[i]);
+            if (mEntities[i]->hasComponents(filter))
+            {
+                array.push_back(mEntities[i]);
+            }
         }
     }
     return array;
 }
 
-EntityManager::EntityArray EntityManager::getByTag(std::string const& tag)
+EntityArray EntityManager::getAll() const
 {
-    EntityArray array;
-    for (unsigned int i = 0; i < mEntities.size(); i++)
-    {
-        if (mEntities[i]->getTag() == tag)
-        {
-            array.push_back(mEntities[i]);
-        }
-    }
-    return array;
+    return mEntities;
 }
 
-EntityManager::EntityArray EntityManager::getByFilter(ComponentFilter const& filter)
+void EntityManager::remove(EntityPtr e)
 {
-    EntityArray array;
-    for (unsigned int i = 0; i < mEntities.size(); i++)
-    {
-        if (mEntities[i]->hasComponents(filter))
-        {
-            array.push_back(mEntities[i]);
-        }
-    }
-    return array;
-}
-
-void EntityManager::remove(Entity::Ptr e)
-{
-    mEntities.erase(std::remove_if(mEntities.begin(),
-        mEntities.end(),
-        [&](Entity::Ptr entity){return entity == e;}),
-        mEntities.end());
-    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-    {
-        if (itr->second->contains(e))
-        {
-            itr->second->remove(e);
-        }
-    }
+    mEntitiesToRemove.push_back(e);
 }
 
 void EntityManager::remove(std::size_t id)
 {
-    auto e = get(id);
-    if (e != nullptr)
-    {
-        mEntities.erase(std::remove_if(mEntities.begin(),
-            mEntities.end(),
-            [&](Entity::Ptr entity){return entity->getId() == id;}),
-            mEntities.end());
-        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-        {
-            if (itr->second->contains(e))
-            {
-                itr->second->remove(e);
-            }
-        }
-    }
-}
-
-void EntityManager::removeByName(std::string const& name)
-{
-    EntityArray e;
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (mEntities[i]->getName() == name)
+        if (mEntities[i] != nullptr)
         {
-            e.push_back(mEntities[i]);
-        }
-    }
-    mEntities.erase(std::remove_if(mEntities.begin(),
-        mEntities.end(),
-        [&](Entity::Ptr entity){return entity->getName() == name;}),
-        mEntities.end());
-    for (unsigned int j = 0; j < e.size(); j++)
-    {
-        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-        {
-            if (itr->second->contains(e[j]))
+            if (id == mEntities[i]->getId())
             {
-                itr->second->remove(e[j]);
-            }
-        }
-    }
-}
-
-void EntityManager::removeByType(std::string const& type)
-{
-    auto e = EntityManager::getByType(type);
-    mEntities.erase(std::remove_if(mEntities.begin(),
-        mEntities.end(),
-        [&](Entity::Ptr entity){return entity->getType() == type;}),
-        mEntities.end());
-    for (unsigned int j = 0; j < e.size(); j++)
-    {
-        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-        {
-            if (itr->second->contains(e[j]))
-            {
-                itr->second->remove(e[j]);
-            }
-        }
-    }
-}
-
-void EntityManager::removeByTag(std::string const& tag)
-{
-    auto e = EntityManager::getByTag(tag);
-    mEntities.erase(std::remove_if(mEntities.begin(),
-        mEntities.end(),
-        [&](Entity::Ptr entity){return entity->getTag() == tag;}),
-        mEntities.end());
-    for (unsigned int j = 0; j < e.size(); j++)
-    {
-        for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-        {
-            if (itr->second->contains(e[j]))
-            {
-                itr->second->remove(e[j]);
+                mEntitiesToRemove.push_back(mEntities[i]);
             }
         }
     }
@@ -193,19 +73,45 @@ void EntityManager::removeByTag(std::string const& tag)
 
 void EntityManager::removeAll()
 {
-    removeAllSystems();
-    mEntities.clear();
+    for (unsigned int i = 0; i < mEntities.size(); i++)
+    {
+        mEntitiesToRemove.push_back(mEntities[i]);
+    }
 }
 
-bool EntityManager::hasSystem(std::string const& type)
+void EntityManager::update()
+{
+    for (unsigned int i = 0; i < mEntitiesToRemove.size(); i++)
+    {
+        for (auto itr = mSystems.begin(); itr != mSystems.end(); ++itr)
+        {
+            itr->second->remove(mEntitiesToRemove[i]);
+        }
+        for (unsigned int j = 0; j < mEntities.size(); j++)
+        {
+            if (mEntities[j] == mEntitiesToRemove[i])
+            {
+                mEntities.erase(mEntities.begin() + j);
+            }
+        }
+    }
+}
+
+bool EntityManager::hasSystem(std::string const& type) const
 {
     return mSystems.find(type) != mSystems.end();
 }
 
-void EntityManager::removeAllSystems()
+void EntityManager::removeSystems()
 {
+    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
+    {
+        itr->second->mEntities.clear();
+        itr->second->mManager = nullptr;
+        delete itr->second;
+        mSystems.erase(itr);
+    }
     mSystems.clear();
-    updateAll();
 }
 
 std::size_t EntityManager::getEntitiesCount() const
@@ -213,38 +119,84 @@ std::size_t EntityManager::getEntitiesCount() const
     return mEntities.size();
 }
 
-bool EntityManager::idExist(std::size_t id) const
+void EntityManager::reset()
+{
+    removeAll();
+    removeSystems();
+    Entity::gIdCounter = 0;
+}
+
+void EntityManager::updateEntity(std::size_t id, UpdateEntity type)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (id == mEntities[i]->getId())
+        if (mEntities[i]->getId() == id)
         {
-            return true;
+            auto e = mEntities[i];
+            switch (type)
+            {
+                case AddComponent:
+                {
+                    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
+                    {
+                        if (!itr->second->has(e) && e->hasComponents(itr->second->getFilter()))
+                        {
+                            itr->second->mEntities.push_back(e);
+                        }
+                    }
+                } break;
+
+                case RemoveComponent:
+                {
+                    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
+                    {
+                        if (itr->second->has(e) && !e->hasComponents(itr->second->getFilter()))
+                        {
+                            for (unsigned int i = 0; i < itr->second->mEntities.size(); i++)
+                            {
+                                if (itr->second->mEntities[i] == e)
+                                {
+                                    itr->second->mEntities.erase(itr->second->mEntities.begin() + i);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } break;
+
+                case RemoveComponents:
+                case RemoveEntity:
+                {
+                    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
+                    {
+                        if (itr->second->has(e))
+                        {
+                            for (unsigned int i = 0; i < itr->second->mEntities.size(); i++)
+                            {
+                                if (itr->second->mEntities[i] == e)
+                                {
+                                    itr->second->mEntities.erase(itr->second->mEntities.begin() + i);
+                                }
+                            }
+                        }
+                    }
+                } break;
+            }
+            return;
         }
     }
-    return false;
 }
 
-void EntityManager::updateAll()
+void EntityManager::updateSystem(System* s, ComponentFilter const& filter)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        update(mEntities[i]->getId());
-    }
-}
-
-void EntityManager::update(std::size_t id)
-{
-    Entity::Ptr e = get(id);
-    for (auto itr = mSystems.begin(); itr != mSystems.end(); itr++)
-    {
-        if (!itr->second->contains(e) && itr->second->hasRequiredComponents(e))
+        if (mEntities[i] != nullptr)
         {
-            itr->second->add(e);
-        }
-        if (itr->second->contains(e) && !itr->second->hasRequiredComponents(e))
-        {
-            itr->second->remove(e);
+            if (mEntities[i]->hasComponents(filter))
+            {
+                s->mEntities.push_back(mEntities[i]);
+            }
         }
     }
 }

@@ -2,7 +2,6 @@
 #define ES_SYSTEM_HPP
 
 #include <vector>
-#include <algorithm>
 
 #include "Component.hpp"
 #include "Entity.hpp"
@@ -14,30 +13,30 @@ namespace es
 class System
 {
     public:
-        typedef std::vector<Entity::Ptr> EntityArray;
+        friend class EntityManager;
 
     public:
         System();
-        System(EntityManager* manager);
         virtual ~System();
 
         static std::string getId();
 
+        ComponentFilter getFilter();
+
+        bool has(Entity::Ptr e);
         void add(Entity::Ptr e);
         void remove(Entity::Ptr e);
-        void removeAll();
-        bool contains(Entity::Ptr e);
-        bool hasRequiredComponents(Entity::Ptr e);
-        EntityArray getEntities();
 
-        void setManager(EntityManager* manager);
+        EntityManager* getManager() const;
+        bool hasManager() const;
+        void requestRemove(Entity::Ptr e);
 
     protected:
+        ComponentFilter mFilter;
         EntityManager* mManager;
         EntityArray mEntities;
-        ComponentFilter mFilter;
 };
 
-}
+} // namespace es
 
 #endif // ES_SYSTEM_HPP

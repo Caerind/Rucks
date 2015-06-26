@@ -2,6 +2,7 @@
 #define ES_ENTITYMANAGER_HPP
 
 #include <algorithm>
+#include <cassert>
 #include <map>
 #include <memory>
 
@@ -13,75 +14,85 @@ namespace es
 class Entity;
 class System;
 
+typedef std::shared_ptr<Entity> EntityPtr;
+typedef std::vector<EntityPtr> EntityArray;
+typedef std::map<std::string,System*> SystemArray;
+
 class EntityManager
 {
     public:
         friend class Entity;
         friend class System;
 
-        typedef std::shared_ptr<Entity> EntityPtr;
-        typedef std::vector<EntityPtr> EntityArray;
-        typedef std::map<std::string,System*> SystemArray;
+        enum UpdateEntity
+        {
+            AddComponent,
+            RemoveComponent,
+            RemoveComponents,
+            RemoveEntity,
+        };
 
     public:
         EntityManager();
 
-        EntityPtr create(std::string const& name = "");
-        EntityPtr create(std::size_t id, std::string const& name = "");
+        EntityPtr create();
 
-        EntityPtr get(std::size_t id);
-        EntityPtr getByName(std::string const& name);
-        EntityArray getByType(std::string const& type);
-        EntityArray getByTag(std::string const& tag);
-        EntityArray getByFilter(ComponentFilter const& filter);
+        // Entity Management
+        EntityPtr get(std::size_t id) const;
+        EntityArray getByFilter(ComponentFilter const& filter) const;
+        EntityArray getAll() const;
 
         void remove(EntityPtr e);
         void remove(std::size_t id);
-        void removeByName(std::string const& name);
-        void removeByType(std::string const& type);
-        void removeByTag(std::string const& tag);
         void removeAll();
 
+        void update(); // Remove EntitiesToRemove
+
+        // System Management
         template<typename T>
-        T& addSystem(T* system);
+        T& addSystem(T* system = nullptr);
 
         template<typename T>
-        bool hasSystem();
-        bool hasSystem(std::string const& type);
+        bool hasSystem() const;
+        bool hasSystem(std::string const& type) const;
 
         template<typename T>
         void removeSystem();
-        void removeAllSystems();
+        void removeSystems();
 
         template<typename T>
         T& getSystem();
 
         std::size_t getEntitiesCount() const;
+        void reset();
 
-        bool idExist(std::size_t id) const;
+    protected:
+        void updateEntity(std::size_t id, UpdateEntity type);
+        void updateSystem(System* s, ComponentFilter const& filter);
 
-    private:
-        void updateAll();
-        void update(std::size_t id);
-
-    private:
+    protected:
         EntityArray mEntities;
         SystemArray mSystems;
+        EntityArray mEntitiesToRemove;
 };
 
-typedef std::vector<std::shared_ptr<Entity>> EntityArray;
 
 template<typename T>
 T& EntityManager::addSystem(T* system)
 {
-    system->setManager(this);
+    if (system == nullptr)
+    {
+        system = new T();
+    }
+
+    system->mManager = this;
     mSystems[T::getId()] = system;
-    updateAll();
+    updateSystem(system,system->getFilter());
     return *system;
 }
 
 template<typename T>
-bool EntityManager::hasSystem()
+bool EntityManager::hasSystem() const
 {
     return mSystems.find(T::getId()) != mSystems.end();
 }
@@ -89,10 +100,13 @@ bool EntityManager::hasSystem()
 template<typename T>
 void EntityManager::removeSystem()
 {
-    if (hasSystem<T>())
+    auto itr = mSystems.find(T::getId());
+    if (itr != mSystems.end())
     {
-        mSystems.erase(mSystems.find(T::getId()));
-        updateAll();
+        itr->second->mEntities.clear();
+        itr->second->mManager = nullptr;
+        delete itr->second;
+        mSystems.erase(itr);
     }
 }
 
@@ -104,6 +118,6 @@ T& EntityManager::getSystem()
     return static_cast<T&>(*mSystems[T::getId()]);
 }
 
-}
+} // namespace es
 
 #endif // ES_ENTITYMANAGER_HPP

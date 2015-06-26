@@ -49,7 +49,7 @@ void PlayerControllerSystem::update(sf::Time dt)
 
     es::ComponentFilter filterMonster;
     filterMonster.push_back(MonsterComponent::getId());
-    es::EntityManager::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
+    es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {

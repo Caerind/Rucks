@@ -14,7 +14,7 @@ std::string ProjectileComponent::getId()
 void ProjectileComponent::setType(ProjectileComponent::Type type)
 {
     mType = type;
-    es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
+    es::Entity::Ptr e = World::instance().getEntities().get(getParentId());
     if (e != nullptr)
     {
         if (e->hasComponent<SpriteComponent>())
@@ -64,7 +64,7 @@ float ProjectileComponent::getSpeed() const
 void ProjectileComponent::setDirection(sf::Vector2f const& direction)
 {
     mDirection = thor::unitVector<float>(direction);
-    es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
+    es::Entity::Ptr e = World::instance().getEntities().get(getParentId());
     if (e != nullptr)
     {
         if (e->hasComponent<TransformComponent>())

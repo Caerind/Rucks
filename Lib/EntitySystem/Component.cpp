@@ -1,14 +1,17 @@
 #include "Component.hpp"
+#include "Entity.hpp"
 
 namespace es
 {
 
 Component::Component()
 {
+    mParent = nullptr;
 }
 
 Component::~Component()
 {
+    mParent = nullptr;
 }
 
 std::string Component::getId()
@@ -16,14 +19,44 @@ std::string Component::getId()
     return "Component";
 }
 
-void Component::setIdAttachedTo(std::size_t id)
+Entity* Component::getParent() const
 {
-    mIdAttachedTo = id;
+    return mParent;
 }
 
-std::size_t Component::getIdAttachedTo() const
+EntityManager* Component::getManager() const
 {
-    return mIdAttachedTo;
+    if (hasParent())
+    {
+        return mParent->getManager();
+    }
+    return nullptr;
 }
 
+bool Component::hasParent() const
+{
+    return mParent != nullptr;
 }
+
+bool Component::hasManager() const
+{
+    if (hasParent())
+    {
+        if (mParent->getManager() != nullptr)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::size_t Component::getParentId() const
+{
+    if (hasParent())
+    {
+        return mParent->getId();
+    }
+    return 0;
+}
+
+} // namespace es

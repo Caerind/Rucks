@@ -1,6 +1,6 @@
 #include "LifeComponent.hpp"
 
-LifeComponent::LifeComponent(unsigned int life, unsigned int lifeMax)
+LifeComponent::LifeComponent(int life, int lifeMax)
 {
     mLife = life;
     mLifeMax = lifeMax;
@@ -11,22 +11,22 @@ std::string LifeComponent::getId()
     return "LifeComponent";
 }
 
-void LifeComponent::setLife(unsigned int life)
+void LifeComponent::setLife(int life)
 {
     mLife = life;
 }
 
-void LifeComponent::setLifeMax(unsigned int lifeMax)
+void LifeComponent::setLifeMax(int lifeMax)
 {
     mLifeMax = lifeMax;
 }
 
-unsigned int LifeComponent::getLife() const
+int LifeComponent::getLife() const
 {
     return mLife;
 }
 
-unsigned int LifeComponent::getLifeMax() const
+int LifeComponent::getLifeMax() const
 {
     return mLifeMax;
 }
@@ -41,15 +41,15 @@ bool LifeComponent::isAlive() const
     return mLife > 0;
 }
 
-bool LifeComponent::inflige(unsigned int damage)
+bool LifeComponent::inflige(int damage)
 {
     bool res = damage >= mLife;
     mLife -= damage;
-    mLife = std::max((unsigned int)0,mLife);
+    mLife = std::max((int)0,mLife);
     return res;
 }
 
-bool LifeComponent::restore(unsigned int heal)
+bool LifeComponent::restore(int heal)
 {
     mLife += heal;
     mLife = std::max(mLife,mLifeMax);

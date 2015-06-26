@@ -6,6 +6,7 @@ AIComponent::AIComponent(float view, float out, Type type)
     setViewDistance(view);
     setOutOfView(out);
     setType(type);
+    mTarget = nullptr;
 }
 
 std::string AIComponent::getId()
@@ -57,9 +58,9 @@ bool AIComponent::hasTarget()
 {
     if (mTarget != nullptr)
     {
-        if (mTarget->hasComponents(getTargetFilter()) && mTarget->getId() != getIdAttachedTo())
+        if (mTarget->hasComponents(getTargetFilter()) && mTarget->getId() != getParentId())
         {
-            es::Entity::Ptr e = World::instance().getEntities().get(getIdAttachedTo());
+            es::Entity::Ptr e = World::instance().getEntities().get(getParentId());
             sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
             sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition();
             if (mTarget->getComponent<LifeComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)

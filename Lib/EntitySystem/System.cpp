@@ -4,12 +4,13 @@ namespace es
 {
 
 System::System()
-: mManager(nullptr)
 {
+    mManager = nullptr;
 }
 
 System::~System()
 {
+    mManager = nullptr;
 }
 
 std::string System::getId()
@@ -17,25 +18,12 @@ std::string System::getId()
     return "System";
 }
 
-void System::add(Entity::Ptr e)
+ComponentFilter System::getFilter()
 {
-    mEntities.push_back(e);
+    return mFilter;
 }
 
-void System::remove(Entity::Ptr e)
-{
-    mEntities.erase(std::remove_if(mEntities.begin(),
-        mEntities.end(),
-        [&](Entity::Ptr entity){return entity == e;}),
-        mEntities.end());
-}
-
-void System::removeAll()
-{
-    mEntities.clear();
-}
-
-bool System::contains(Entity::Ptr e)
+bool System::has(Entity::Ptr e)
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
@@ -47,23 +35,44 @@ bool System::contains(Entity::Ptr e)
     return false;
 }
 
-bool System::hasRequiredComponents(Entity::Ptr e)
+void System::add(Entity::Ptr e)
 {
     if (e != nullptr)
     {
-        return e->hasComponents(mFilter);
+        if (e->hasComponents(mFilter))
+        {
+            mEntities.push_back(e);
+        }
     }
-    return false;
 }
 
-System::EntityArray System::getEntities()
+void System::remove(Entity::Ptr e)
 {
-    return mEntities;
+    for (unsigned int i = 0; i < mEntities.size(); i++)
+    {
+        if (mEntities[i] == e)
+        {
+            mEntities.erase(mEntities.begin() + i);
+        }
+    }
 }
 
-void System::setManager(EntityManager* manager)
+EntityManager* System::getManager() const
 {
-    mManager = manager;
+    return mManager;
 }
 
+bool System::hasManager() const
+{
+    return mManager != nullptr;
 }
+
+void System::requestRemove(Entity::Ptr e)
+{
+    if (hasManager())
+    {
+        mManager->remove(e);
+    }
+}
+
+} // namespace es

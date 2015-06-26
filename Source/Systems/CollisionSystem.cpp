@@ -1,13 +1,19 @@
 #include "CollisionSystem.hpp"
 
-CollisionSystem::CollisionSystem(ChunkManager& chunks) : es::System(), mChunks(chunks)
+CollisionSystem::CollisionSystem()
 {
     mFilter.push_back(CollisionComponent::getId());
+    mChunks = nullptr;
 }
 
 std::string CollisionSystem::getId()
 {
     return "CollisionSystem";
+}
+
+void CollisionSystem::setChunks(ChunkManager& chunks)
+{
+    mChunks = &chunks;
 }
 
 bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
@@ -21,7 +27,10 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     std::vector<sf::FloatRect> rects;
 
     // Intersecting tiles
-    mChunks.collision(rect,rects);
+    if (mChunks != nullptr)
+    {
+        mChunks->collision(rect,rects);
+    }
 
     // Intersecting entities
     for (unsigned int i = 0; i < mEntities.size(); i++)
@@ -50,10 +59,13 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
 bool CollisionSystem::projectileCollision(sf::FloatRect const& rect, es::Entity::Ptr& e)
 {
     std::vector<sf::FloatRect> rects;
-    if (mChunks.collision(rect,rects))
+    if (mChunks != nullptr)
     {
-        e = nullptr;
-        return true;
+        if (mChunks->collision(rect,rects))
+        {
+            e = nullptr;
+            return true;
+        }
     }
     std::vector<es::Entity::Ptr> es;
     for (unsigned int i = 0; i < mEntities.size(); i++)

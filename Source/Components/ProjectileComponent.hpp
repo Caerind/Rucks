@@ -15,7 +15,7 @@ class ProjectileComponent : public es::Component
             // TODO (#7#): More Projectiles !
         };
 
-        ProjectileComponent(Type type);
+        ProjectileComponent(Type type = Type::None);
 
         static std::string getId();
 

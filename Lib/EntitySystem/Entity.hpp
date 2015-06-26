@@ -1,9 +1,9 @@
 #ifndef ES_ENTITY_HPP
 #define ES_ENTITY_HPP
 
+#include <cassert>
 #include <memory>
 #include <string>
-#include <cassert>
 
 #include "Component.hpp"
 #include "EntityManager.hpp"
@@ -16,60 +16,57 @@ class Entity
     public:
         friend class EntityManager;
 
-        Entity(EntityManager* manager, std::string const& name = "", std::size_t id = 0);
-
         typedef std::shared_ptr<Entity> Ptr;
 
-        template<typename T>
-        T& addComponent(T* component);
+        Entity();
 
         template<typename T>
-        bool hasComponent();
-        bool hasComponent(std::string const& type);
-        bool hasComponents(ComponentFilter const& filter);
+        T& addComponent(T* component = nullptr);
+
+        template<typename T>
+        bool hasComponent() const;
+        bool hasComponent(std::string const& type) const;
+        bool hasComponents(ComponentFilter const& filter) const;
 
         template<typename T>
         void removeComponent();
-        void removeAllComponents();
+        void removeComponents();
 
         template<typename T>
         T& getComponent();
 
         std::size_t getId() const;
-        std::string getName() const;
-        std::string getType() const;
-        std::string getTag() const;
-
-        void setType(std::string const& type);
-        void setTag(std::string const& tag);
+        EntityManager* getManager() const;
+        bool hasManager() const;
 
     private:
         static std::size_t gIdCounter;
 
+        std::size_t mId;
         EntityManager* mManager;
-
-        std::size_t mId; // Id of the entity : unique and precise
-        std::string mName; // Name of the entity : for unique entity (example : player character...)
-        std::string mType; // Type of the entity : for entities made by strict function "prefab entities"
-        std::string mTag; // Tag of the entity : for group of "what you want" (example : you have few type of entities : Sorcerer & Magician which don't have the same components, you can get them both with the tag)
-
         ComponentArray mComponents;
 };
 
 template<typename T>
 T& Entity::addComponent(T* component)
 {
-    component->setIdAttachedTo(mId);
-    mComponents[T::getId()] = component;
-    if (mManager != nullptr)
+    if (component == nullptr)
     {
-        mManager->update(mId);
+        component = new T();
     }
+    component->mParent = this;
+    mComponents[T::getId()] = component;
+
+   if (hasManager())
+   {
+       mManager->updateEntity(mId,EntityManager::UpdateEntity::AddComponent);
+   }
+
     return *component;
 }
 
 template<typename T>
-bool Entity::hasComponent()
+bool Entity::hasComponent() const
 {
     return mComponents.find(T::getId()) != mComponents.end();
 }
@@ -77,12 +74,14 @@ bool Entity::hasComponent()
 template<typename T>
 void Entity::removeComponent()
 {
-    if (hasComponent<T>())
+    auto itr = mComponents.find(T::getId());
+    if (itr != mComponents.end())
     {
-        mComponents.erase(mComponents.find(T::getId()));
-        if (mManager != nullptr)
+        mComponents.erase(itr);
+
+        if (hasManager())
         {
-            mManager->update(mId);
+            mManager->updateEntity(mId,EntityManager::UpdateEntity::RemoveComponent);
         }
     }
 }
@@ -95,6 +94,7 @@ T& Entity::getComponent()
     return static_cast<T&>(*mComponents[T::getId()]);
 }
 
-}
+
+} // namespace es
 
 #endif // ES_ENTITY_HPP

@@ -9,7 +9,9 @@
 class CollisionSystem : public es::System
 {
     public:
-        CollisionSystem(ChunkManager& chunks);
+        CollisionSystem();
+
+        void setChunks(ChunkManager& chunks);
 
         static std::string getId();
 
@@ -17,7 +19,7 @@ class CollisionSystem : public es::System
         bool projectileCollision(sf::FloatRect const& rect, es::Entity::Ptr& e);
 
     private:
-        ChunkManager& mChunks;
+        ChunkManager* mChunks;
 };
 
 #endif // COLLISIONSYSTEM_HPP
