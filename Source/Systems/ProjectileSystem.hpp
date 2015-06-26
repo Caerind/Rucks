@@ -1,7 +1,7 @@
 #ifndef PROJECTILESYSTEM_HPP
 #define PROJECTILESYSTEM_HPP
 
-#include "../Components/Components.hpp"
+#include "../Components.hpp"
 #include "../../Lib/EntitySystem/System.hpp"
 #include <SFML/System/Time.hpp>
 

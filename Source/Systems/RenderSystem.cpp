@@ -4,6 +4,8 @@ RenderSystem::RenderSystem()
 {
     mFilter.push_back(TransformComponent::getId());
     mFilter.push_back(SpriteComponent::getId());
+
+    mRenderDebug = false;
 }
 
 std::string RenderSystem::getId()
@@ -16,7 +18,8 @@ void RenderSystem::render(sf::RenderTarget& target)
     std::sort(mEntities.begin(), mEntities.end(),
     [](es::Entity::Ptr a, es::Entity::Ptr b) -> bool
     {
-        return a->getComponent<TransformComponent>().getPosition().y + a->getComponent<SpriteComponent>().getSheetSize().y < b->getComponent<TransformComponent>().getPosition().y + b->getComponent<SpriteComponent>().getSheetSize().y;
+        // TODO : Sort
+        return a->getComponent<TransformComponent>().getPosition().y < b->getComponent<TransformComponent>().getPosition().y;
     });
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
@@ -27,11 +30,12 @@ void RenderSystem::render(sf::RenderTarget& target)
         // Weapon
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
-            MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
+            // TODO : Handle Weapon Rendering
+            /*MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
             if (dir == MovementComponent::Direction::W || dir == MovementComponent::Direction::N)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
-            }
+            }*/
         }
 
         // Sprite
@@ -40,30 +44,40 @@ void RenderSystem::render(sf::RenderTarget& target)
         // Weapon
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
-            MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
+            // TODO : Handle Weapon Rendering
+            /*MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
             if (dir == MovementComponent::Direction::S || dir == MovementComponent::Direction::E)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
-            }
+            }*/
         }
 
-        // Life
+        // Life Bar
         if (mEntities[i]->hasComponent<LifeComponent>())
         {
-            // TODO (#5#): Life Bar Position
-            mEntities[i]->getComponent<LifeComponent>().renderLifeBar(target,states);
+            target.draw(mEntities[i]->getComponent<LifeComponent>(), states);
         }
 
-        // Debug
-        if (mEntities[i]->hasComponent<CollisionComponent>())
+        if (mRenderDebug)
         {
-            mEntities[i]->getComponent<CollisionComponent>().renderCollisionBox(target);
-        }
-        if (mEntities[i]->hasComponent<TransformComponent>())
-        {
-            mEntities[i]->getComponent<TransformComponent>().renderBoundingBox(target);
+            // Collision Box
+            if (mEntities[i]->hasComponent<CollisionComponent>())
+            {
+                target.draw(mEntities[i]->getComponent<CollisionComponent>(), states);
+            }
+
+            // Bounding Box
+            if (mEntities[i]->hasComponent<TransformComponent>())
+            {
+                target.draw(mEntities[i]->getComponent<BoxComponent>(), states);
+            }
         }
     }
+}
+
+void RenderSystem::renderDebug(bool renderDebug)
+{
+    mRenderDebug = renderDebug;
 }
 
 

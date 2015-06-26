@@ -1,5 +1,5 @@
-#ifndef COLLISIONCOMPONENT_HPP
-#define COLLISIONCOMPONENT_HPP
+#ifndef BOXCOMPONENT_HPP
+#define BOXCOMPONENT_HPP
 
 #include "../../Lib/EntitySystem/Component.hpp"
 
@@ -9,10 +9,10 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/System/Vector2.hpp>
 
-class CollisionComponent : public es::Component, public sf::Drawable, public sf::Transformable
+class BoxComponent : public es::Component, public sf::Drawable, public sf::Transformable
 {
     public:
-        CollisionComponent();
+        BoxComponent();
 
         static std::string getId();
 
@@ -29,4 +29,4 @@ class CollisionComponent : public es::Component, public sf::Drawable, public sf:
         sf::Vector2f mSize;
 };
 
-#endif // COLLISIONCOMPONENT_HPP
+#endif // BOXCOMPONENT_HPP

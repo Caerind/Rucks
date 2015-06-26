@@ -31,6 +31,20 @@ int LifeComponent::getLifeMax() const
     return mLifeMax;
 }
 
+void LifeComponent::setLifePercent(float percent)
+{
+    mLife = static_cast<int>(percent * static_cast<float>(mLifeMax) / 100.f);
+}
+
+float LifeComponent::getLifePercent() const
+{
+    if (mLifeMax == 0.f) // No Div By Zero
+    {
+        return 100.f;
+    }
+    return 100.f * static_cast<float>(mLife) / static_cast<float>(mLifeMax);
+}
+
 bool LifeComponent::isDead() const
 {
     return mLife <= 0;
@@ -45,34 +59,53 @@ bool LifeComponent::inflige(int damage)
 {
     bool res = damage >= mLife;
     mLife -= damage;
-    mLife = std::max((int)0,mLife);
+    mLife = std::max(0,mLife);
+    mLife = std::min(mLife,mLifeMax);
     return res;
 }
 
 bool LifeComponent::restore(int heal)
 {
     mLife += heal;
-    mLife = std::max(mLife,mLifeMax);
+    mLife = std::max(0,mLife);
+    mLife = std::min(mLife,mLifeMax);
     return mLife == mLifeMax;
 }
 
-void LifeComponent::renderLifeBar(sf::RenderTarget& target, sf::RenderStates states)
+void LifeComponent::fullRestore()
+{
+    mLife = mLifeMax;
+}
+
+void LifeComponent::setLifeBarSize(sf::Vector2f const& lifeBarSize)
+{
+    mLifeBarSize = lifeBarSize;
+}
+
+sf::Vector2f LifeComponent::getLifeBarSize() const
+{
+    return mLifeBarSize;
+}
+
+void LifeComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     if (mLife < mLifeMax)
     {
-        sf::RectangleShape bg;
-        bg.setPosition(-15.f,-20.f);
-        bg.setSize(sf::Vector2f(30,6));
-        bg.setFillColor(sf::Color::Red);
-        bg.setOutlineThickness(1.2f);
-        bg.setOutlineColor(sf::Color::Black);
+        states.transform *= getTransform();
 
-        sf::RectangleShape l;
-        l.setPosition(-15.f,-20.f);
-        l.setSize(sf::Vector2f(30.f * static_cast<float>(mLife) / static_cast<float>(mLifeMax),6));
-        l.setFillColor(sf::Color::Green);
+        sf::RectangleShape background;
+        background.setPosition(-mLifeBarSize.x/2,0.f);
+        background.setSize(mLifeBarSize);
+        background.setFillColor(sf::Color::Red);
+        background.setOutlineThickness(1.2f);
+        background.setOutlineColor(sf::Color::Black);
 
-        target.draw(bg,states);
-        target.draw(l,states);
+        sf::RectangleShape life;
+        life.setPosition(-mLifeBarSize.x/2,0.f);
+        life.setSize(sf::Vector2f(mLifeBarSize.x * getLifePercent() * 0.01f, mLifeBarSize.y));
+        life.setFillColor(sf::Color::Green);
+
+        target.draw(background,states);
+        target.draw(life,states);
     }
 }

@@ -3,11 +3,10 @@
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 
 #include "../../Lib/EntitySystem/System.hpp"
 
-#include "../Components/Components.hpp"
+#include "../Components.hpp"
 
 class RenderSystem : public es::System
 {
@@ -17,6 +16,11 @@ class RenderSystem : public es::System
         static std::string getId();
 
         void render(sf::RenderTarget& target);
+
+        void renderDebug(bool renderDebug);
+
+    private:
+        bool mRenderDebug;
 };
 
 #endif // RENDERSYSTEM_HPP

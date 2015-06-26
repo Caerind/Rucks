@@ -4,6 +4,7 @@
 #include <cassert>
 #include <memory>
 #include <string>
+//#include <iostream>
 
 #include "Component.hpp"
 #include "EntityManager.hpp"
@@ -20,8 +21,8 @@ class Entity
 
         Entity();
 
-        template<typename T>
-        T& addComponent(T* component = nullptr);
+        template<typename T, typename ... Args>
+        T& addComponent(Args&& ... args);
 
         template<typename T>
         bool hasComponent() const;
@@ -47,22 +48,18 @@ class Entity
         ComponentArray mComponents;
 };
 
-template<typename T>
-T& Entity::addComponent(T* component)
+template<typename T, typename ... Args>
+T& Entity::addComponent(Args&& ... args)
 {
-    if (component == nullptr)
+    mComponents[T::getId()] = new T(std::forward<Args>(args)...);
+    mComponents[T::getId()]->mParent = this;
+
+    if (hasManager())
     {
-        component = new T();
+        mManager->updateEntity(mId,EntityManager::UpdateEntity::AddComponent);
     }
-    component->mParent = this;
-    mComponents[T::getId()] = component;
 
-   if (hasManager())
-   {
-       mManager->updateEntity(mId,EntityManager::UpdateEntity::AddComponent);
-   }
-
-    return *component;
+    return getComponent<T>();
 }
 
 template<typename T>
@@ -89,6 +86,7 @@ void Entity::removeComponent()
 template<typename T>
 T& Entity::getComponent()
 {
+    //std::cerr << T::getId() << std::endl;
     assert(hasComponent<T>());
 
     return static_cast<T&>(*mComponents[T::getId()]);

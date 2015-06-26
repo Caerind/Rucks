@@ -15,8 +15,8 @@
 
 #include "Server/Server.hpp"
 
-#include "Systems/Systems.hpp"
-#include "Components/Components.hpp"
+#include "Systems.hpp"
+#include "Components.hpp"
 #include "Prefab.hpp"
 
 class World

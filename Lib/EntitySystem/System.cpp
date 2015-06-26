@@ -39,7 +39,7 @@ void System::add(Entity::Ptr e)
 {
     if (e != nullptr)
     {
-        if (e->hasComponents(mFilter))
+        if (e->hasComponents(mFilter) && !has(e))
         {
             mEntities.push_back(e);
         }

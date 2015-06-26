@@ -1,10 +1,8 @@
 #include "MovementComponent.hpp"
 #include <Thor/Math/Random.hpp>
 
-MovementComponent::MovementComponent(float speed)
+MovementComponent::MovementComponent()
 {
-    mSpeed = speed;
-    mDirection = static_cast<MovementComponent::Direction>(thor::random(0,3));
 }
 
 std::string MovementComponent::getId()
@@ -22,75 +20,19 @@ float MovementComponent::getSpeed() const
     return mSpeed;
 }
 
-void MovementComponent::setDirection(MovementComponent::Direction direction)
+void MovementComponent::setDirection(sf::Vector2f const& direction)
 {
-    mDirection = direction;
-}
-
-void MovementComponent::setDirection(sf::Vector2f const& position, sf::Vector2f const& lookAt)
-{
-    sf::Vector2f diff = lookAt - position;
-    float angle = static_cast<float>(atan2(diff.y,diff.x) * 180 / 3.14159265);
-    if((angle > 0 && angle < 45) || (angle >= -45 && angle <= 0))
-        mDirection = MovementComponent::Direction::E;
-    else if(angle >= 45 && angle < 135)
-        mDirection = MovementComponent::Direction::S;
-    else if((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135))
-        mDirection = MovementComponent::Direction::W;
+    if (direction != sf::Vector2f())
+    {
+        mDirection = thor::unitVector<float>(direction);
+    }
     else
-        mDirection = MovementComponent::Direction::N;
+    {
+        mDirection = direction;
+    }
 }
 
-MovementComponent::Direction MovementComponent::getDirection() const
+sf::Vector2f MovementComponent::getDirection() const
 {
     return mDirection;
-}
-
-void MovementComponent::lastMovement(sf::Vector2f const& movement, sf::Time dt)
-{
-    if (movement != sf::Vector2f(0.f,0.f))
-    {
-        walking(dt);
-    }
-    else
-    {
-        stopWalking();
-    }
-}
-
-void MovementComponent::stopWalking()
-{
-    mWalkTime = sf::Time::Zero;
-}
-
-void MovementComponent::walking(sf::Time dt)
-{
-    mWalkTime += dt;
-    if (mWalkTime >= sf::seconds(0.8f))
-    {
-        stopWalking();
-    }
-}
-
-sf::Time MovementComponent::getWalkTime() const
-{
-    return mWalkTime;
-}
-
-void MovementComponent::update(sf::Time dt, sf::Vector2f const& movement, sf::Vector2f const& position, sf::Vector2f const& lookAt)
-{
-    lastMovement(movement,dt);
-    setDirection(position,lookAt);
-}
-
-sf::Vector2f MovementComponent::getMovementFromDirection(Direction d)
-{
-    switch (d)
-    {
-        case MovementComponent::Direction::N: return sf::Vector2f(0.f,-1.f); break;
-        case MovementComponent::Direction::W: return sf::Vector2f(-1.f,0.f); break;
-        case MovementComponent::Direction::S: return sf::Vector2f(0.f,1.f); break;
-        case MovementComponent::Direction::E: return sf::Vector2f(1.f,0.f); break;
-    }
-    return sf::Vector2f(0.f,0.f);
 }

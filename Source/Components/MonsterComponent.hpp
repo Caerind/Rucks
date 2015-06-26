@@ -21,17 +21,7 @@ class MonsterComponent : public es::Component
 
         static std::string getId();
 
-        static sf::Vector2f getSize(Type type);
         static std::string getTextureId(Type type);
-        static sf::Vector2i getSheetSize(Type type);
-        static sf::FloatRect getCollisionBox(Type type);
-        static float getSpeed(Type type);
-        static unsigned int getLife(Type type);
-        static float getViewDistance(Type type);
-        static float getOutOfView(Type type);
-        static float getRange(Type type);
-        static unsigned int getDamage(Type type);
-        static sf::Time getCooldown(Type type);
 
         static void loadMonsterTextures();
         static void releaseMonsterTextures();

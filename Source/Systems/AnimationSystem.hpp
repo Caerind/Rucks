@@ -3,8 +3,9 @@
 
 #include "../../Lib/EntitySystem/System.hpp"
 
-#include "../Components/Components.hpp"
+#include "../Components.hpp"
 
+#include <cassert>
 #include <SFML/System/Time.hpp>
 
 class AnimationSystem : public es::System

@@ -141,7 +141,7 @@ void EntityManager::updateEntity(std::size_t id, UpdateEntity type)
                     {
                         if (!itr->second->has(e) && e->hasComponents(itr->second->getFilter()))
                         {
-                            itr->second->mEntities.push_back(e);
+                            itr->second->add(e);
                         }
                     }
                 } break;
@@ -152,14 +152,7 @@ void EntityManager::updateEntity(std::size_t id, UpdateEntity type)
                     {
                         if (itr->second->has(e) && !e->hasComponents(itr->second->getFilter()))
                         {
-                            for (unsigned int i = 0; i < itr->second->mEntities.size(); i++)
-                            {
-                                if (itr->second->mEntities[i] == e)
-                                {
-                                    itr->second->mEntities.erase(itr->second->mEntities.begin() + i);
-                                    return;
-                                }
-                            }
+                            itr->second->remove(e);
                         }
                     }
                 } break;
@@ -171,13 +164,7 @@ void EntityManager::updateEntity(std::size_t id, UpdateEntity type)
                     {
                         if (itr->second->has(e))
                         {
-                            for (unsigned int i = 0; i < itr->second->mEntities.size(); i++)
-                            {
-                                if (itr->second->mEntities[i] == e)
-                                {
-                                    itr->second->mEntities.erase(itr->second->mEntities.begin() + i);
-                                }
-                            }
+                            itr->second->remove(e);
                         }
                     }
                 } break;

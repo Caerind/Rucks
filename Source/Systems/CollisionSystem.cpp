@@ -21,8 +21,9 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     sf::Vector2f defaultMovement = movement;
 
     // Move the Collision Box
-    e->getComponent<CollisionComponent>().setCenter(e->getComponent<TransformComponent>().getPosition() + movement);
-    sf::FloatRect rect = e->getComponent<CollisionComponent>().getCollisionBox();
+    sf::FloatRect rect = e->getComponent<CollisionComponent>().getBounds();
+    rect.left += movement.x;
+    rect.top += movement.y;
 
     std::vector<sf::FloatRect> rects;
 
@@ -35,23 +36,20 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     // Intersecting entities
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (mEntities[i]->getId() != e->getId() && mEntities[i]->getComponent<CollisionComponent>().getCollisionBox().intersects(rect))
+        if (mEntities[i]->getId() != e->getId() && mEntities[i]->getComponent<CollisionComponent>().getBounds().intersects(rect))
         {
-            rects.push_back(mEntities[i]->getComponent<CollisionComponent>().getCollisionBox());
+            rects.push_back(mEntities[i]->getComponent<CollisionComponent>().getBounds());
         }
     }
 
     if (rects.size() > 0)
     {
-        movement = sf::Vector2f(0.f,0.f);
+        movement = sf::Vector2f();
     }
     else
     {
-        // TODO (#7#): Better Collision Handling
+        // TODO : Better Collision Handling
     }
-
-    e->getComponent<TransformComponent>().move(movement);
-    e->getComponent<CollisionComponent>().setCenter(e->getComponent<TransformComponent>().getPosition());
 
     return movement != defaultMovement;
 }
@@ -70,7 +68,7 @@ bool CollisionSystem::projectileCollision(sf::FloatRect const& rect, es::Entity:
     std::vector<es::Entity::Ptr> es;
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
-        if (mEntities[i]->getComponent<CollisionComponent>().getCollisionBox().intersects(rect))
+        if (mEntities[i]->getComponent<CollisionComponent>().intersects(rect))
         {
             es.push_back(mEntities[i]);
         }

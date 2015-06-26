@@ -2,7 +2,7 @@
 #define COLLISIONSYSTEM_HPP
 
 #include "../../Lib/EntitySystem/EntitySystem.hpp"
-#include "../Components/Components.hpp"
+#include "../Components.hpp"
 #include "../Chunk/ChunkManager.hpp"
 #include <SFML/System/Vector2.hpp>
 

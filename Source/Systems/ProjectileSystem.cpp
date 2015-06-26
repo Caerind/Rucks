@@ -28,7 +28,7 @@ void ProjectileSystem::update(sf::Time dt)
         if (p.getDistanceTraveled() > 100.f)
         {
             es::Entity::Ptr e = nullptr;
-            sf::FloatRect r = mEntities[i]->getComponent<TransformComponent>().getBoundingBox();
+            sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
             if (World::instance().getEntities().getSystem<CollisionSystem>().projectileCollision(r,e))
             {
                 if (e != nullptr) // If we have touched an entity with life component
@@ -41,9 +41,9 @@ void ProjectileSystem::update(sf::Time dt)
 
         // Add Distance
         p.addDistanceTraveled(mvt);
-        if (p.fallDown())
+        if (p.fallDown() && p.getType() == ProjectileComponent::Type::Arrow)
         {
-            // TODO (#5#): Handle fall down
+            World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),Item());
             remove = true;
         }
 

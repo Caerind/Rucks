@@ -1,48 +1,27 @@
 #ifndef MOVEMENTCOMPONENT_HPP
 #define MOVEMENTCOMPONENT_HPP
 
-#include <cmath>
+#include "../../Lib/EntitySystem/Component.hpp"
 
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Time.hpp>
-
-#include "../../Lib/EntitySystem/Component.hpp"
+#include <Thor/Vectors/VectorAlgebra2D.hpp>
 
 class MovementComponent : public es::Component
 {
     public:
-        MovementComponent(float speed = 100.f);
-
-        enum Direction
-        {
-            N,
-            W,
-            S,
-            E,
-        };
+        MovementComponent();
 
         static std::string getId();
 
         void setSpeed(float speed);
         float getSpeed() const;
 
-        void setDirection(Direction direction);
-        void setDirection(sf::Vector2f const& position, sf::Vector2f const& lookAt);
-        Direction getDirection() const;
-
-        void lastMovement(sf::Vector2f const& movement, sf::Time dt);
-        void stopWalking();
-        void walking(sf::Time dt);
-        sf::Time getWalkTime() const;
-
-        void update(sf::Time dt, sf::Vector2f const& movement, sf::Vector2f const& position, sf::Vector2f const& lookAt);
-
-        static sf::Vector2f getMovementFromDirection(Direction d);
+        void setDirection(sf::Vector2f const& direction);
+        sf::Vector2f getDirection() const;
 
     private:
         float mSpeed;
-        Direction mDirection;
-        sf::Time mWalkTime;
+        sf::Vector2f mDirection;
 };
 
 #endif // MOVEMENTCOMPONENT_HPP

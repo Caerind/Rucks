@@ -49,8 +49,8 @@ class EntityManager
         void update(); // Remove EntitiesToRemove
 
         // System Management
-        template<typename T>
-        T& addSystem(T* system = nullptr);
+        template<typename T, typename ... Args>
+        T& addSystem(Args&& ... args);
 
         template<typename T>
         bool hasSystem() const;
@@ -77,18 +77,13 @@ class EntityManager
 };
 
 
-template<typename T>
-T& EntityManager::addSystem(T* system)
+template<typename T, typename ... Args>
+T& EntityManager::addSystem(Args&& ... args)
 {
-    if (system == nullptr)
-    {
-        system = new T();
-    }
-
-    system->mManager = this;
-    mSystems[T::getId()] = system;
-    updateSystem(system,system->getFilter());
-    return *system;
+    mSystems[T::getId()] = new T(std::forward<Args>(args)...);
+    mSystems[T::getId()]->mManager = this;
+    updateSystem(mSystems[T::getId()],mSystems[T::getId()]->getFilter());
+    return getSystem<T>();
 }
 
 template<typename T>

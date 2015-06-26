@@ -20,7 +20,8 @@ void ProjectileComponent::setType(ProjectileComponent::Type type)
         if (e->hasComponent<SpriteComponent>())
         {
             e->getComponent<SpriteComponent>().setTexture(getTextureId(type));
-            e->getComponent<SpriteComponent>().setSheetSize(getSheetSize(type));
+            // TODO : Fix it
+            //e->getComponent<SpriteComponent>().setSheetSize(getSheetSize(type));
             e->getComponent<SpriteComponent>().setTextureRect(getTextureRect(type));
         }
     }
