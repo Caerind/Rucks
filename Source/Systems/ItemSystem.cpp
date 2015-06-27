@@ -1,4 +1,5 @@
 #include "ItemSystem.hpp"
+#include "../World.hpp"
 
 ItemSystem::ItemSystem()
 {
@@ -41,9 +42,22 @@ void ItemSystem::update()
         }
 
         // If an entity which isn't the player died : this entity drop his inventory
-        if (mEntities[i]->hasComponent<LifeComponent>() && !mEntities[i]->hasComponent<PlayerComponent>())
+        if (mEntities[i]->hasComponent<LifeComponent>() && !mEntities[i]->hasComponent<PlayerComponent>() && mEntities[i]->hasComponent<TransformComponent>())
         {
-            // TODO : Drop Inventory
+            if (mEntities[i]->getComponent<LifeComponent>().isDead())
+            {
+                while (mEntities[i]->getComponent<InventoryComponent>().getItemCount() > 0)
+                {
+                    Item::Ptr item = mEntities[i]->getComponent<InventoryComponent>().moveLastItem();
+                    if (item != nullptr)
+                    {
+                        sf::Vector2f position = mEntities[i]->getComponent<TransformComponent>().getPosition();
+                        position.x += thor::random(-20.f,20.f);
+                        position.y += thor::random(-20.f,20.f);
+                        World::instance().getPrefab().createItem(position,item);
+                    }
+                }
+            }
         }
     }
 }

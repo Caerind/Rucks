@@ -13,6 +13,7 @@ class InventoryComponent : public es::Component
         static std::string getId();
 
         void addItem(Item::Ptr item);
+        Item::Ptr moveLastItem();
 
         void setSize(std::size_t size);
         std::size_t getSize() const;

@@ -5,6 +5,8 @@
 
 #include "../Components.hpp"
 
+#include <Thor/Math/Random.hpp>
+
 class ItemSystem : public es::System
 {
     public:
