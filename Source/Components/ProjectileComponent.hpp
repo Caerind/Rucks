@@ -2,6 +2,8 @@
 #define PROJECTILECOMPONENT_HPP
 
 #include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Lib/EntitySystem/Entity.hpp"
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
@@ -18,6 +20,9 @@ class ProjectileComponent : public es::Component
         ProjectileComponent();
 
         static std::string getId();
+
+        void setStricker(es::Entity::Ptr stricker);
+        es::Entity::Ptr getStricker() const;
 
         void setType(Type type);
         Type getType() const;
@@ -53,6 +58,8 @@ class ProjectileComponent : public es::Component
         sf::Vector2f mDirection;
 
         float mDistanceTraveled;
+
+        es::Entity::Ptr mStricker;
 };
 
 #endif // PROJECTILECOMPONENT_HPP

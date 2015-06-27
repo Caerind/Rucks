@@ -2,8 +2,8 @@
 
 RenderSystem::RenderSystem()
 {
-    mFilter.push_back(TransformComponent::getId());
-    mFilter.push_back(SpriteComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(SpriteComponent::getId());
 
     mRenderDebug = false;
 }
@@ -18,8 +18,9 @@ void RenderSystem::render(sf::RenderTarget& target)
     std::sort(mEntities.begin(), mEntities.end(),
     [](es::Entity::Ptr a, es::Entity::Ptr b) -> bool
     {
-        // TODO : Sort
-        return a->getComponent<TransformComponent>().getPosition().y < b->getComponent<TransformComponent>().getPosition().y;
+        float aPos = a->getComponent<TransformComponent>().getPosition().y + a->getComponent<SpriteComponent>().getOrigin().y;
+        float bPos = b->getComponent<TransformComponent>().getPosition().y + b->getComponent<SpriteComponent>().getOrigin().y;
+        return aPos < bPos;
     });
 
     for (unsigned int i = 0; i < mEntities.size(); i++)

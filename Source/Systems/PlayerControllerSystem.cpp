@@ -7,9 +7,9 @@ PlayerControllerSystem::PlayerControllerSystem()
 : es::System()
 , ah::ActionTarget(Configuration::instance().getPlayerInput())
 {
-    mFilter.push_back(TransformComponent::getId());
-    mFilter.push_back(MovementComponent::getId());
-    mFilter.push_back(PlayerComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(MovementComponent::getId());
+    mFilter.requires(PlayerComponent::getId());
 }
 
 std::string PlayerControllerSystem::getId()
@@ -24,7 +24,7 @@ void PlayerControllerSystem::update()
     sf::Vector2f mPos = ah::Application::instance().getMousePositionView(World::instance().getView());
 
     es::ComponentFilter filterMonster;
-    filterMonster.push_back(MonsterComponent::getId());
+    filterMonster.requires(MonsterComponent::getId());
     es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
     for (unsigned int i = 0; i < mEntities.size(); i++)

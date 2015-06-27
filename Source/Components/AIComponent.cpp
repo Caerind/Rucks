@@ -26,9 +26,9 @@ bool AIComponent::hasTarget()
     if (mTarget != nullptr)
     {
         es::ComponentFilter targetFilter;
-        targetFilter.push_back(TransformComponent::getId());
-        targetFilter.push_back(SpriteComponent::getId());
-        targetFilter.push_back(LifeComponent::getId());
+        targetFilter.requires(TransformComponent::getId());
+        targetFilter.requires(SpriteComponent::getId());
+        targetFilter.requires(LifeComponent::getId());
         if (mTarget->hasComponents(targetFilter) && hasParent())
         {
             sf::Vector2f ePos = mParent->getComponent<TransformComponent>().getPosition();

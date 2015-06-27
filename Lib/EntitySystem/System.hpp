@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Component.hpp"
+#include "ComponentFilter.hpp"
 #include "Entity.hpp"
 #include "EntityManager.hpp"
 

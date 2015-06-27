@@ -26,7 +26,7 @@ class Entity
         template<typename T>
         bool hasComponent() const;
         bool hasComponent(std::string const& type) const;
-        bool hasComponents(ComponentFilter const& filter) const;
+        bool hasComponents(ComponentFilter const& filter);
 
         template<typename T>
         void removeComponent();

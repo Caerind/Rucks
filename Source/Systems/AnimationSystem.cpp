@@ -2,9 +2,9 @@
 
 AnimationSystem::AnimationSystem()
 {
-    mFilter.push_back(SpriteComponent::getId());
-    mFilter.push_back(MovementComponent::getId());
-    mFilter.push_back(AnimationComponent::getId());
+    mFilter.requires(SpriteComponent::getId());
+    mFilter.requires(MovementComponent::getId());
+    mFilter.requires(AnimationComponent::getId());
 }
 
 std::string AnimationSystem::getId()

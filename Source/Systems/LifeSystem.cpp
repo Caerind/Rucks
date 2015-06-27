@@ -2,7 +2,7 @@
 
 LifeSystem::LifeSystem()
 {
-    mFilter.push_back(LifeComponent::getId());
+    mFilter.requires(LifeComponent::getId());
 }
 
 std::string LifeSystem::getId()

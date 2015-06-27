@@ -20,8 +20,7 @@ class DebugScreen : public sf::Drawable
 
         void setDebugInfo(std::string const& id, std::string const& value);
 
-        void showDebugScreen();
-        void hideDebugScreen();
+        void showDebugScreen(bool show);
         bool isDebugScreenVisible();
 
     public:

@@ -107,8 +107,8 @@ void WeaponComponent::attack(sf::Vector2f const& direction)
         if (hasParent())
         {
             pos += mParent->getComponent<TransformComponent>().getPosition();
+            World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
         }
-        World::instance().getPrefab().createProjectile(pos, mWeapon, direction);
     }
 }
 

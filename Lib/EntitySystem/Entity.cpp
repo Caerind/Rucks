@@ -15,16 +15,9 @@ bool Entity::hasComponent(std::string const& type) const
     return mComponents.find(type) != mComponents.end();
 }
 
-bool Entity::hasComponents(ComponentFilter const& filter) const
+bool Entity::hasComponents(ComponentFilter const& filter)
 {
-    for (unsigned int i = 0; i < filter.size(); i++)
-    {
-        if (!hasComponent(filter[i]))
-        {
-            return false;
-        }
-    }
-    return true;
+    return filter.passFilter(this);
 }
 
 void Entity::removeComponents()

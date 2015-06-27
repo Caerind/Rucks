@@ -19,7 +19,7 @@ int main()
 
     // Load Application
     ah::Application::instance().loadFont("Coolveticca","Assets/Fonts/Coolveticca.ttf");
-    ah::Application::instance().showDebugScreen();
+    ah::Application::instance().showDebugScreen(true);
     ah::Application::instance().setFont(ah::Application::instance().getFont("Coolveticca"));
     ah::Application::instance().useConsole(true);
 

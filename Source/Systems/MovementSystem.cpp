@@ -3,8 +3,8 @@
 
 MovementSystem::MovementSystem()
 {
-    mFilter.push_back(TransformComponent::getId());
-    mFilter.push_back(MovementComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(MovementComponent::getId());
 }
 
 std::string MovementSystem::getId()

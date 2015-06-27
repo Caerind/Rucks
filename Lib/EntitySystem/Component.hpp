@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 namespace es
 {
@@ -32,7 +31,6 @@ class Component
 };
 
 typedef std::map<std::string,Component*> ComponentArray;
-typedef std::vector<std::string> ComponentFilter;
 
 } // namespace es
 

@@ -2,7 +2,7 @@
 
 CollisionSystem::CollisionSystem()
 {
-    mFilter.push_back(CollisionComponent::getId());
+    mFilter.requires(CollisionComponent::getId());
     mChunks = nullptr;
 }
 

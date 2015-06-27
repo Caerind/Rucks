@@ -49,6 +49,11 @@ void Application::pushState(std::string const& stateId)
 
 Application::Application() : mStates(*this), mFpsFrames(0)
 {
+    setAction("ToggleDebugScreen",thor::Action(sf::Keyboard::F3,thor::Action::PressOnce));
+    bind("ToggleDebugScreen",[&](ah::ActionTarget::Context context)
+    {
+       showDebugScreen(!isDebugScreenVisible());
+    });
 }
 
 Application::~Application()

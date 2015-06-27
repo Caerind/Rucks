@@ -3,7 +3,7 @@
 
 ItemSystem::ItemSystem()
 {
-    mFilter.push_back(InventoryComponent::getId());
+    mFilter.requires(InventoryComponent::getId());
 }
 
 std::string ItemSystem::getId()
@@ -23,10 +23,10 @@ void ItemSystem::update()
             if (hasManager() && !mEntities[i]->getComponent<InventoryComponent>().isFull())
             {
                 es::ComponentFilter itemFilter;
-                itemFilter.push_back(TransformComponent::getId());
-                itemFilter.push_back(SpriteComponent::getId());
-                itemFilter.push_back(BoxComponent::getId());
-                itemFilter.push_back(ItemComponent::getId());
+                itemFilter.requires(TransformComponent::getId());
+                itemFilter.requires(SpriteComponent::getId());
+                itemFilter.requires(BoxComponent::getId());
+                itemFilter.requires(ItemComponent::getId());
 
                 es::EntityArray items = mManager->getByFilter(itemFilter);
 

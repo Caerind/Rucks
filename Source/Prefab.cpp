@@ -227,9 +227,22 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     return e;
 }
 
-es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, Weapon::Ptr weapon, sf::Vector2f const& direction)
+es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction)
 {
-    if (direction == sf::Vector2f() || weapon == nullptr)
+    if (direction == sf::Vector2f() || stricker == nullptr)
+    {
+        return nullptr;
+    }
+    if (!stricker->hasComponent<WeaponComponent>())
+    {
+        return nullptr;
+    }
+    Weapon::Ptr weapon = stricker->getComponent<WeaponComponent>().getWeapon();
+    if (weapon == nullptr)
+    {
+        return nullptr;
+    }
+    if (!weapon->isLongRange())
     {
         return nullptr;
     }
@@ -258,6 +271,7 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, Weapon::P
 
     // Projectile
     e->addComponent<ProjectileComponent>();
+    e->getComponent<ProjectileComponent>().setStricker(stricker);
     e->getComponent<ProjectileComponent>().setType(weapon->getProjectileType());
     e->getComponent<ProjectileComponent>().setDirection(direction);
     e->getComponent<ProjectileComponent>().setRange(weapon->getRange());

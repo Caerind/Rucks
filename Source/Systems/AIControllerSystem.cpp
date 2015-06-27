@@ -4,13 +4,13 @@
 
 AIControllerSystem::AIControllerSystem()
 {
-    mFilter.push_back(TransformComponent::getId());
-    mFilter.push_back(SpriteComponent::getId());
-    mFilter.push_back(BoxComponent::getId());
-    mFilter.push_back(CollisionComponent::getId());
-    mFilter.push_back(MovementComponent::getId());
-    mFilter.push_back(AnimationComponent::getId());
-    mFilter.push_back(AIComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(SpriteComponent::getId());
+    mFilter.requires(BoxComponent::getId());
+    mFilter.requires(CollisionComponent::getId());
+    mFilter.requires(MovementComponent::getId());
+    mFilter.requires(AnimationComponent::getId());
+    mFilter.requires(AIComponent::getId());
 }
 
 std::string AIControllerSystem::getId()
@@ -48,9 +48,9 @@ void AIControllerSystem::findTarget(es::Entity::Ptr e)
     if (hasManager())
     {
         es::ComponentFilter targetFilter;
-        targetFilter.push_back(TransformComponent::getId());
-        targetFilter.push_back(SpriteComponent::getId());
-        targetFilter.push_back(LifeComponent::getId());
+        targetFilter.requires(TransformComponent::getId());
+        targetFilter.requires(SpriteComponent::getId());
+        targetFilter.requires(LifeComponent::getId());
         targetList = mManager->getByFilter(targetFilter);
     }
     es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();

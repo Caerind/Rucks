@@ -3,11 +3,23 @@
 
 ProjectileComponent::ProjectileComponent()
 {
+    mStricker = nullptr;
+    mDistanceTraveled = 0.f;
 }
 
 std::string ProjectileComponent::getId()
 {
     return "ProjectileComponent";
+}
+
+void ProjectileComponent::setStricker(es::Entity::Ptr stricker)
+{
+    mStricker = stricker;
+}
+
+es::Entity::Ptr ProjectileComponent::getStricker() const
+{
+    return mStricker;
 }
 
 void ProjectileComponent::setType(ProjectileComponent::Type type)

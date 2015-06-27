@@ -3,11 +3,11 @@
 
 ProjectileSystem::ProjectileSystem()
 {
-    mFilter.push_back(TransformComponent::getId());
-    mFilter.push_back(SpriteComponent::getId());
-    mFilter.push_back(MovementComponent::getId());
-    mFilter.push_back(BoxComponent::getId());
-    mFilter.push_back(ProjectileComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(SpriteComponent::getId());
+    mFilter.requires(MovementComponent::getId());
+    mFilter.requires(BoxComponent::getId());
+    mFilter.requires(ProjectileComponent::getId());
 }
 
 std::string ProjectileSystem::getId()
@@ -24,16 +24,16 @@ void ProjectileSystem::update()
         ProjectileComponent& p = mEntities[i]->getComponent<ProjectileComponent>();
 
         // Collision
-        if (p.getDistanceTraveled() > 100.f)
+        if (p.getDistanceTraveled() > 150.f)
         {
             es::Entity::Ptr e = nullptr;
             sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
             if (World::instance().getEntities().getSystem<CollisionSystem>().projectileCollision(r,e))
             {
-                if (e != nullptr) // If we have touched an entity with life component
+                if (e != nullptr && p.getStricker() != nullptr) // If we have touched an entity with life component
                 {
 
-                    if (e->hasComponent<LifeComponent>())
+                    if (e->hasComponent<LifeComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>())
                     {
                         e->getComponent<LifeComponent>().inflige(p.getDamage());
                     }
