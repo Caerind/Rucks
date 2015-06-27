@@ -4,6 +4,8 @@
 #include "../../Lib/EntitySystem/System.hpp"
 #include "../Components.hpp"
 
+#include <SFML/System/Clock.hpp>
+
 class LifeSystem : public es::System
 {
     public:
@@ -12,6 +14,9 @@ class LifeSystem : public es::System
         static std::string getId();
 
         void update();
+
+    private:
+        sf::Clock mRegenerationClock;
 };
 
 #endif // LIFESYSTEM_HPP

@@ -10,6 +10,8 @@ PlayerControllerSystem::PlayerControllerSystem()
     mFilter.requires(TransformComponent::getId());
     mFilter.requires(MovementComponent::getId());
     mFilter.requires(PlayerComponent::getId());
+    mFilter.requires(WeaponComponent::getId());
+    mFilter.requires(SpellComponent::getId());
 }
 
 std::string PlayerControllerSystem::getId()
@@ -68,6 +70,15 @@ void PlayerControllerSystem::update()
                         }
                     }
                 }
+            }
+        }
+
+        if (isActive("spell"))
+        {
+            SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
+            if (s.canSpell())
+            {
+                s.spell(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
             }
         }
 

@@ -100,14 +100,17 @@ sf::Time WeaponComponent::getCooldown() const
 
 void WeaponComponent::attack(sf::Vector2f const& direction)
 {
-    mTimeSinceLastAttack.restart();
-    if (isLongRange())
+    if (canAttack())
     {
-        sf::Vector2f pos = mWeaponSprite.getPosition();
-        if (hasParent())
+        mTimeSinceLastAttack.restart();
+        if (isLongRange())
         {
-            pos += mParent->getComponent<TransformComponent>().getPosition();
-            World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
+            sf::Vector2f pos = mWeaponSprite.getPosition();
+            if (hasParent())
+            {
+                pos += mParent->getComponent<TransformComponent>().getPosition();
+                World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
+            }
         }
     }
 }

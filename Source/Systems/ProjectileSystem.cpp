@@ -24,23 +24,22 @@ void ProjectileSystem::update()
         ProjectileComponent& p = mEntities[i]->getComponent<ProjectileComponent>();
 
         // Collision
-        if (p.getDistanceTraveled() > 150.f)
+        es::Entity::Ptr e = nullptr;
+        sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
+        if (World::instance().getEntities().getSystem<CollisionSystem>().projectileCollision(r,e))
         {
-            es::Entity::Ptr e = nullptr;
-            sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
-            if (World::instance().getEntities().getSystem<CollisionSystem>().projectileCollision(r,e))
+            if (e != nullptr && p.getStricker() != nullptr) // If we have touched an entity with life component
             {
-                if (e != nullptr && p.getStricker() != nullptr) // If we have touched an entity with life component
+                if (e->hasComponent<LifeComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>() && e != p.getStricker())
                 {
-
-                    if (e->hasComponent<LifeComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>())
-                    {
-                        e->getComponent<LifeComponent>().inflige(p.getDamage());
-                    }
+                    e->getComponent<LifeComponent>().inflige(p.getDamage());
                 }
-                else // If we have touched a collide tile
-                {
-                }
+            }
+            else // If we have touched a collide tile
+            {
+            }
+            if (e != p.getStricker())
+            {
                 remove = true;
             }
         }

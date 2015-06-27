@@ -6,7 +6,6 @@
 #include "Systems/MovementSystem.hpp"
 #include "Systems/ItemSystem.hpp"
 #include "Systems/LifeSystem.hpp"
-
 #include "Systems/AIControllerSystem.hpp"
 #include "Systems/AnimationSystem.hpp"
 #include "Systems/CollisionSystem.hpp"

@@ -14,6 +14,7 @@ class ProjectileComponent : public es::Component
         {
             None,
             Arrow,
+            Fireball,
             // TODO (#7#): More Projectiles !
         };
 

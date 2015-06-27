@@ -29,5 +29,26 @@ void LifeSystem::update()
                 mManager->remove(mEntities[i]);
             }
         }
+        else
+        {
+            if (mRegenerationClock.getElapsedTime() > sf::seconds(1.f))
+            {
+                if (mEntities[i]->hasComponent<AIComponent>())
+                {
+                    if (!mEntities[i]->getComponent<AIComponent>().hasTarget())
+                    {
+                        mEntities[i]->getComponent<LifeComponent>().restore(1);
+                    }
+                }
+                else if (mEntities[i]->hasComponent<PlayerComponent>())
+                {
+                    mEntities[i]->getComponent<LifeComponent>().restore(1);
+                }
+            }
+        }
+    }
+    if (mRegenerationClock.getElapsedTime() > sf::seconds(1.f))
+    {
+        mRegenerationClock.restart();
     }
 }

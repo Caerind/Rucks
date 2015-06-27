@@ -18,6 +18,7 @@ class Prefab
         es::Entity::Ptr createPacific(sf::Vector2f const& position);
         es::Entity::Ptr createFighter(sf::Vector2f const& position);
         es::Entity::Ptr createProjectile(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction);
+        es::Entity::Ptr createFireball(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction);
         es::Entity::Ptr createItem(sf::Vector2f const& position, Item::Ptr item);
 
     private:
