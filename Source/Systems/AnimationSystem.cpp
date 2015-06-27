@@ -34,23 +34,22 @@ void AnimationSystem::update()
         mEntities[i]->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(col * sheetSize.x, dir * sheetSize.y, sheetSize.x, sheetSize.y));
 
         // Update The Weapon Animation
-        // TODO : Fix it
-        /*
         if (mEntities[i]->hasComponent<WeaponComponent>() && !mEntities[i]->hasComponent<MonsterComponent>())
         {
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
-            handleWeaponOnMoving(w,sf::Vector2i(col,dir));
-            if (!w.canAttack()) // !canAttack = Special Weapon Animation
+            if (w.hasWeapon())
             {
-                handleWeaponOnAttack(w,dir);
+                handleWeaponOnMoving(w,sf::Vector2i(col,dir));
+                if (!w.canAttack()) // !canAttack = Special Weapon Animation
+                {
+                    handleWeaponOnAttack(w,dir);
+                }
+                // TODO (#7#): Double Sprite Animation
             }
-            // TODO (#7#): Double Sprite Animation
         }
-        */
     }
 }
 
-/*
 void AnimationSystem::handleWeaponOnMoving(WeaponComponent& w, sf::Vector2i sPos)
 {
     // Direction : N
@@ -128,4 +127,3 @@ void AnimationSystem::handleWeaponOnAttack(WeaponComponent& w, unsigned int dir)
         }
     }
 }
-*/

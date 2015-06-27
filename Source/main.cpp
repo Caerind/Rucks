@@ -18,6 +18,10 @@ int main()
     ah::Application::instance().useCustomMouseCursor();
 
     // Load Application
+    ah::Application::instance().loadFont("Coolveticca","Assets/Fonts/Coolveticca.ttf");
+    ah::Application::instance().showDebugScreen();
+    ah::Application::instance().setFont(ah::Application::instance().getFont("Coolveticca"));
+    ah::Application::instance().useConsole(true);
 
     //Register Actions
     ah::Application::instance().setAction("close",thor::Action(sf::Event::Closed));

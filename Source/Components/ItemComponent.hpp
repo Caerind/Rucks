@@ -11,14 +11,14 @@ class ItemComponent : public es::Component
 
         static std::string getId();
 
-        void setItem(Item item);
-        Item getItem() const;
-        Item moveItem(); // get + remove
+        void setItem(Item::Ptr item);
+        Item::Ptr getItem() const;
+        Item::Ptr moveItem(); // get + remove
         void removeItem();
         bool hasItem() const;
 
     private:
-        Item mItem;
+        Item::Ptr mItem;
         bool mHasItem;
 };
 

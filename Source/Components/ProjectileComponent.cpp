@@ -1,9 +1,8 @@
 #include "ProjectileComponent.hpp"
 #include "../World.hpp"
 
-ProjectileComponent::ProjectileComponent(ProjectileComponent::Type type)
+ProjectileComponent::ProjectileComponent()
 {
-    mType = type;
 }
 
 std::string ProjectileComponent::getId()
@@ -14,17 +13,6 @@ std::string ProjectileComponent::getId()
 void ProjectileComponent::setType(ProjectileComponent::Type type)
 {
     mType = type;
-    es::Entity::Ptr e = World::instance().getEntities().get(getParentId());
-    if (e != nullptr)
-    {
-        if (e->hasComponent<SpriteComponent>())
-        {
-            e->getComponent<SpriteComponent>().setTexture(getTextureId(type));
-            // TODO : Fix it
-            //e->getComponent<SpriteComponent>().setSheetSize(getSheetSize(type));
-            e->getComponent<SpriteComponent>().setTextureRect(getTextureRect(type));
-        }
-    }
 }
 
 ProjectileComponent::Type ProjectileComponent::getType() const
@@ -52,25 +40,14 @@ unsigned int ProjectileComponent::getDamage() const
     return mDamage;
 }
 
-void ProjectileComponent::setSpeed(float speed)
-{
-    mSpeed = speed;
-}
-
-float ProjectileComponent::getSpeed() const
-{
-    return mSpeed;
-}
-
 void ProjectileComponent::setDirection(sf::Vector2f const& direction)
 {
     mDirection = thor::unitVector<float>(direction);
-    es::Entity::Ptr e = World::instance().getEntities().get(getParentId());
-    if (e != nullptr)
+    if (hasParent())
     {
-        if (e->hasComponent<TransformComponent>())
+        if (mParent->hasComponent<TransformComponent>())
         {
-            e->getComponent<TransformComponent>().setRotation(static_cast<float>(atan2(direction.y,direction.x) * 180 / 3.14159265) + 90.f);
+            mParent->getComponent<TransformComponent>().setRotation(static_cast<float>(atan2(direction.y,direction.x) * 180 / 3.14159265) + 90.f);
         }
     }
 }
@@ -100,6 +77,8 @@ bool ProjectileComponent::fallDown() const
     return mDistanceTraveled >= mRange;
 }
 
+/*
+
 std::string ProjectileComponent::getTextureId(Type type)
 {
     return "projectiles";
@@ -119,6 +98,8 @@ sf::IntRect ProjectileComponent::getTextureRect(Type type)
 {
     return sf::IntRect(type * 16, 0, 16, 32);
 }
+
+*/
 
 void ProjectileComponent::loadProjectileTextures()
 {

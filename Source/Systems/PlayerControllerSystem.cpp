@@ -23,11 +23,9 @@ void PlayerControllerSystem::update()
 
     sf::Vector2f mPos = ah::Application::instance().getMousePositionView(World::instance().getView());
 
-    // TODO : Fix it
-    /*es::ComponentFilter filterMonster;
+    es::ComponentFilter filterMonster;
     filterMonster.push_back(MonsterComponent::getId());
     es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
-    */
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
@@ -52,20 +50,18 @@ void PlayerControllerSystem::update()
         mEntities[i]->getComponent<MovementComponent>().setDirection(direction);
         mEntities[i]->getComponent<AnimationComponent>().setDirection(mPos);
 
-        // TODO : Fix it
-        /*
         if (isActive("action"))
         {
-            // Attack Monster
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
             if (w.canAttack())
             {
                 w.attack(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
                 if (!w.isLongRange())
                 {
+                    // Attack Monster
                     for (unsigned int j = 0; j < monster.size(); j++)
                     {
-                        if (thor::length(ePos - monster[j]->getComponent<TransformComponent>().getPosition()) < w.getRange()
+                        if (thor::length(mEntities[i]->getComponent<TransformComponent>().getPosition() - monster[j]->getComponent<TransformComponent>().getPosition()) < w.getRange()
                         && monster[j]->getComponent<BoxComponent>().getBounds().contains(mPos))
                         {
                             monster[j]->getComponent<LifeComponent>().inflige(w.getDamage());
@@ -74,7 +70,6 @@ void PlayerControllerSystem::update()
                 }
             }
         }
-        */
 
         World::instance().getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());
     }

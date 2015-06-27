@@ -2,6 +2,7 @@
 
 ItemComponent::ItemComponent()
 {
+    mItem = nullptr;
     mHasItem = false;
 }
 
@@ -10,32 +11,42 @@ std::string ItemComponent::getId()
     return "ItemComponent";
 }
 
-void ItemComponent::setItem(Item item)
+void ItemComponent::setItem(Item::Ptr item)
 {
     mItem = item;
-    mHasItem = true;
+    if (mItem != nullptr)
+    {
+        mHasItem = true;
+    }
+    else
+    {
+        mHasItem = false;
+    }
 }
 
-Item ItemComponent::getItem() const
+Item::Ptr ItemComponent::getItem() const
 {
-    return mItem;
-}
-
-Item ItemComponent::moveItem()
-{
-    Item i;
     if (mHasItem)
     {
-        i = mItem;
+        return mItem;
     }
-    mItem = Item();
-    mHasItem = false;
+    return nullptr;
+}
+
+Item::Ptr ItemComponent::moveItem()
+{
+    Item::Ptr i = nullptr;
+    if (hasItem())
+    {
+        i = std::make_shared<Item>(*getItem());
+    }
+    removeItem();
     return i;
 }
 
 void ItemComponent::removeItem()
 {
-    mItem = Item();
+    mItem = nullptr;
     mHasItem = false;
 }
 

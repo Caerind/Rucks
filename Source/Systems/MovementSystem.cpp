@@ -21,7 +21,13 @@ void MovementSystem::update(sf::Time dt)
 
         if (mEntities[i]->hasComponent<CollisionComponent>())
         {
-            World::instance().getEntities().getSystem<CollisionSystem>().handle(mEntities[i],mvt);
+            if (World::instance().getEntities().getSystem<CollisionSystem>().handle(mEntities[i],mvt))
+            {
+                if (mEntities[i]->hasComponent<AIComponent>())
+                {
+                    mEntities[i]->getComponent<AIComponent>().setTarget(nullptr);
+                }
+            }
         }
 
         mEntities[i]->getComponent<TransformComponent>().move(mvt);
@@ -36,6 +42,11 @@ void MovementSystem::update(sf::Time dt)
             {
                 mEntities[i]->getComponent<AnimationComponent>().resetWalkTime();
             }
+        }
+
+        if (mEntities[i]->hasComponent<ProjectileComponent>())
+        {
+            mEntities[i]->getComponent<ProjectileComponent>().addDistanceTraveled(mvt);
         }
     }
 }

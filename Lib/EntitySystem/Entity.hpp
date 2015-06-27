@@ -4,7 +4,6 @@
 #include <cassert>
 #include <memory>
 #include <string>
-//#include <iostream>
 
 #include "Component.hpp"
 #include "EntityManager.hpp"
@@ -74,6 +73,8 @@ void Entity::removeComponent()
     auto itr = mComponents.find(T::getId());
     if (itr != mComponents.end())
     {
+        delete itr->second;
+        itr->second = nullptr;
         mComponents.erase(itr);
 
         if (hasManager())
@@ -86,7 +87,6 @@ void Entity::removeComponent()
 template<typename T>
 T& Entity::getComponent()
 {
-    //std::cerr << T::getId() << std::endl;
     assert(hasComponent<T>());
 
     return static_cast<T&>(*mComponents[T::getId()]);

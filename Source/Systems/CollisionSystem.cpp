@@ -46,10 +46,6 @@ bool CollisionSystem::handle(es::Entity::Ptr e, sf::Vector2f& movement)
     {
         movement = sf::Vector2f();
     }
-    else
-    {
-        // TODO : Better Collision Handling
-    }
 
     return movement != defaultMovement;
 }

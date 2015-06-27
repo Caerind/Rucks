@@ -24,7 +24,7 @@ class DebugScreen : public sf::Drawable
         void hideDebugScreen();
         bool isDebugScreenVisible();
 
-    protected:
+    public:
         void setFont(sf::Font& font);
         void setCharsize(std::size_t charsize);
 

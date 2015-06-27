@@ -15,7 +15,7 @@ class ProjectileComponent : public es::Component
             // TODO (#7#): More Projectiles !
         };
 
-        ProjectileComponent(Type type = Type::None);
+        ProjectileComponent();
 
         static std::string getId();
 
@@ -27,9 +27,6 @@ class ProjectileComponent : public es::Component
 
         void setDamage(unsigned int damage);
         unsigned int getDamage() const;
-
-        void setSpeed(float speed);
-        float getSpeed() const;
 
         void setDirection(sf::Vector2f const& direction);
         sf::Vector2f getDirection() const;
@@ -49,9 +46,10 @@ class ProjectileComponent : public es::Component
 
     private:
         Type mType;
+
         float mRange;
         unsigned int mDamage;
-        float mSpeed;
+
         sf::Vector2f mDirection;
 
         float mDistanceTraveled;

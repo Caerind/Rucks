@@ -12,7 +12,7 @@ class ProjectileSystem : public es::System
 
         static std::string getId();
 
-        void update(sf::Time dt);
+        void update();
 };
 
 #endif // PROJECTILESYSTEM_HPP

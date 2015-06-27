@@ -101,6 +101,7 @@ void EntityManager::removeSystem()
         itr->second->mEntities.clear();
         itr->second->mManager = nullptr;
         delete itr->second;
+        itr->second = nullptr;
         mSystems.erase(itr);
     }
 }

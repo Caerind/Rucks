@@ -34,17 +34,13 @@ void World::initialize()
     mEntities.addSystem<LifeSystem>();
     mEntities.addSystem<ItemSystem>();
     mEntities.addSystem<AIControllerSystem>();
-
-    // TODO : Fix it
-    /*
     mEntities.addSystem<ProjectileSystem>();
-    */
 
     mEntities.getSystem<RenderSystem>().renderDebug(true);
 
     // Load Entities
     mPrefab.createPlayer(sf::Vector2f(100,100));
-    mPrefab.createItem(sf::Vector2f(200,200), Item());
+    mPrefab.createItem(sf::Vector2f(200,200), std::make_shared<Item>());
     mPrefab.createMonster(sf::Vector2f(400,400),MonsterComponent::Type::Bat);
     mPrefab.createMonster(sf::Vector2f(425,375),MonsterComponent::Type::Bee);
     mPrefab.createPacific(sf::Vector2f(50,50));
@@ -57,8 +53,6 @@ void World::terminate()
     mEntities.removeAll();
 
     // Release resources
-    // TODO : Release Resources
-    /*
     mResources.releaseTexture("tileset");
     mResources.releaseTexture("soldier1");
     mResources.releaseTexture("soldier2");
@@ -66,7 +60,6 @@ void World::terminate()
     MonsterComponent::releaseMonsterTextures();
     WeaponComponent::releaseWeaponTextures();
     ProjectileComponent::releaseProjectileTextures();
-    */
 }
 
 bool World::loadFromFile(std::string const& filename)
@@ -105,20 +98,13 @@ void World::update(sf::Time dt)
 
     mEntities.getSystem<PlayerControllerSystem>().update();
     mEntities.getSystem<AIControllerSystem>().update();
-    mEntities.getSystem<MovementSystem>().update(dt);
+    mEntities.getSystem<MovementSystem>().update(dt); // Controller Before Movement
     mEntities.getSystem<AnimationSystem>().update();
 
-    mEntities.getSystem<ItemSystem>().update();
+    mEntities.getSystem<ProjectileSystem>().update();
 
-    //
-    //
-
+    mEntities.getSystem<ItemSystem>().update(); // Just before the life system to allow drop inventory
     mEntities.getSystem<LifeSystem>().update(); // Update in last
-
-    // TODO : Fix it
-    /*
-    mEntities.getSystem<ProjectileSystem>().update(dt);
-    */
 
     mChunks.update(mView);
 }

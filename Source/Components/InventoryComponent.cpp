@@ -9,7 +9,7 @@ std::string InventoryComponent::getId()
     return "InventoryComponent";
 }
 
-void InventoryComponent::addItem(Item item)
+void InventoryComponent::addItem(Item::Ptr item)
 {
     mItems.push_back(item);
 }
@@ -31,5 +31,5 @@ std::size_t InventoryComponent::getItemCount() const
 
 bool InventoryComponent::isFull() const
 {
-    return mSize == mItems.size();
+    return mSize <= mItems.size();
 }

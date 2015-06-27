@@ -3,6 +3,8 @@
 
 #include "../../Lib/EntitySystem/Component.hpp"
 
+#include "../Game/Weapon.hpp"
+
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -12,21 +14,15 @@
 class WeaponComponent : public es::Component, public sf::Transformable, public sf::Drawable
 {
     public:
-        enum Type
-        {
-            None,
-            Sword,
-            Bow,
-            // TODO (#7#): More Weapons !
-        };
-
-        WeaponComponent(Type type = Type::None);
-        WeaponComponent(float range, unsigned int damage, sf::Time cooldown);
+        WeaponComponent();
 
         static std::string getId();
 
-        void setType(Type type);
-        Type getType() const;
+        void setWeapon(Weapon::Ptr weapon);
+        Weapon::Ptr getWeapon() const;
+        bool hasWeapon() const;
+        void removeWeapon();
+        Weapon::Ptr moveWeapon(); // get + remove
 
         bool isLongRange() const;
 
@@ -39,24 +35,18 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
         void setCooldown(sf::Time cooldown);
         sf::Time getCooldown() const;
 
-        void attack(sf::Vector2f const& direction);
+        void attack(sf::Vector2f const& direction = sf::Vector2f());
         bool canAttack();
         sf::Time getTimeSinceLastAttack() const;
 
         void setWeaponTransform(float x, float y, float rotation);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-        static float getRange(Type type);
-        static unsigned int getDamage(Type type);
-        static sf::Time getCooldown(Type type);
-        static std::string getTextureId(Type type);
-        static sf::IntRect getTextureRect(Type type);
-
         static void loadWeaponTextures();
         static void releaseWeaponTextures();
 
     private:
-        Type mType;
+        Weapon::Ptr mWeapon;
 
         float mRange;
         unsigned int mDamage;

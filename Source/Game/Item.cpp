@@ -23,3 +23,8 @@ int Item::getPrice() const
 {
     return mPrice;
 }
+
+bool Item::isWeapon() const
+{
+    return false;
+}

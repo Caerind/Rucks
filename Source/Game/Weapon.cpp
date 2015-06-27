@@ -2,7 +2,33 @@
 
 Weapon::Weapon()
 {
+    mType = Type::None;
 }
+
+void Weapon::setType(Type type)
+{
+    mType = type;
+}
+
+Weapon::Type Weapon::getType() const
+{
+    return mType;
+}
+
+bool Weapon::isLongRange() const
+{
+    return mType == Type::Bow;
+}
+
+ProjectileComponent::Type Weapon::getProjectileType() const
+{
+    switch (mType)
+    {
+        case Type::Bow: return ProjectileComponent::Type::Arrow; break;
+    }
+    return ProjectileComponent::Type::None;
+}
+
 
 void Weapon::setRange(float range)
 {
@@ -32,4 +58,9 @@ void Weapon::setCooldown(sf::Time cooldown)
 sf::Time Weapon::getCooldown() const
 {
     return mCooldown;
+}
+
+bool Weapon::isWeapon() const
+{
+    return true;
 }

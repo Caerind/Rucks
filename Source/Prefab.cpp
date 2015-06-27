@@ -46,9 +46,17 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
 
     // Inventory
     e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
 
     // Weapon
-    //e->addComponent<WeaponComponent>(WeaponComponent::Type::Bow);
+    Weapon::Ptr w = std::make_shared<Weapon>();
+    w->setRange(200.f);
+    w->setDamage(30);
+    w->setCooldown(sf::seconds(0.2f));
+    w->setType(Weapon::Type::Bow);
+    e->addComponent<WeaponComponent>();
+    e->getComponent<WeaponComponent>().setWeapon(w);
+    e->getComponent<WeaponComponent>().setOrigin(16.f,64.f);
 
     return e;
 }
@@ -100,9 +108,14 @@ es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterCompo
 
     // Inventory
     e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
 
     // Weapon
-    //e->addComponent<WeaponComponent>(MonsterComponent::getRange(type),MonsterComponent::getDamage(type),MonsterComponent::getCooldown(type));
+    e->addComponent<WeaponComponent>();
+    e->getComponent<WeaponComponent>().setRange(50.f);
+    e->getComponent<WeaponComponent>().setDamage(5);
+    e->getComponent<WeaponComponent>().setCooldown(sf::seconds(0.3f));
+
     return e;
 }
 
@@ -150,9 +163,7 @@ es::Entity::Ptr Prefab::createPacific(sf::Vector2f const& position)
 
     // Inventory
     e->addComponent<InventoryComponent>();
-
-    // Weapon
-    //e->addComponent<WeaponComponent>(WeaponComponent::Type::Bow);
+    e->getComponent<InventoryComponent>().setSize(20);
 
     return e;
 }
@@ -201,37 +212,61 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
 
     // Inventory
     e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
 
     // Weapon
-    //e->addComponent<WeaponComponent>(WeaponComponent::Type::Sword);
+    Weapon::Ptr w = std::make_shared<Weapon>();
+    w->setRange(50.f);
+    w->setDamage(25);
+    w->setCooldown(sf::seconds(0.2f));
+    w->setType(Weapon::Type::Sword);
+    e->addComponent<WeaponComponent>();
+    e->getComponent<WeaponComponent>().setWeapon(w);
+    e->getComponent<WeaponComponent>().setOrigin(16.f,64.f);
 
     return e;
 }
 
-es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, ProjectileComponent::Type type, sf::Vector2f const& direction)
+es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, Weapon::Ptr weapon, sf::Vector2f const& direction)
 {
+    if (direction == sf::Vector2f() || weapon == nullptr)
+    {
+        return nullptr;
+    }
+
     es::Entity::Ptr e = mManager.create();
 
     // Transform
-    /*e->addComponent<TransformComponent>();
+    e->addComponent<TransformComponent>();
     e->getComponent<TransformComponent>().setPosition(position);
 
-    e->addComponent<SpriteComponent>(ProjectileComponent::getTextureId(type));
-    e->getComponent<SpriteComponent>().setTextureRect(ProjectileComponent::getTextureRect(type));
+    // Sprite
+    e->addComponent<SpriteComponent>();
+    e->getComponent<SpriteComponent>().setTexture("projectiles");
+    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(weapon->getProjectileType() * 16, 0, 16, 32));
+    e->getComponent<SpriteComponent>().setOrigin(8.f,16.f);
+
+    // Box
     e->addComponent<BoxComponent>();
+    e->getComponent<BoxComponent>().setSize(sf::Vector2f(16.f,32.f));
+    e->getComponent<BoxComponent>().setOrigin(sf::Vector2f(8.f,16.f));
+
+    // Movement
     e->addComponent<MovementComponent>();
     e->getComponent<MovementComponent>().setSpeed(250.f);
+    e->getComponent<MovementComponent>().setDirection(direction);
 
-    e->addComponent<ProjectileComponent>(type);
+    // Projectile
+    e->addComponent<ProjectileComponent>();
+    e->getComponent<ProjectileComponent>().setType(weapon->getProjectileType());
     e->getComponent<ProjectileComponent>().setDirection(direction);
-    e->getComponent<ProjectileComponent>().setRange(800);
-    e->getComponent<ProjectileComponent>().setSpeed(300);
-    e->getComponent<ProjectileComponent>().setDamage(10);
-    */
+    e->getComponent<ProjectileComponent>().setRange(weapon->getRange());
+    e->getComponent<ProjectileComponent>().setDamage(weapon->getDamage());
+
     return e;
 }
 
-es::Entity::Ptr Prefab::createItem(sf::Vector2f const& position, Item item)
+es::Entity::Ptr Prefab::createItem(sf::Vector2f const& position, Item::Ptr item)
 {
     es::Entity::Ptr e = mManager.create();
 

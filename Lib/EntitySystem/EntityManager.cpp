@@ -94,7 +94,9 @@ void EntityManager::update()
                 mEntities.erase(mEntities.begin() + j);
             }
         }
+        mEntitiesToRemove[i] = nullptr;
     }
+    mEntitiesToRemove.clear();
 }
 
 bool EntityManager::hasSystem(std::string const& type) const
@@ -109,6 +111,7 @@ void EntityManager::removeSystems()
         itr->second->mEntities.clear();
         itr->second->mManager = nullptr;
         delete itr->second;
+        itr->second = nullptr;
         mSystems.erase(itr);
     }
     mSystems.clear();

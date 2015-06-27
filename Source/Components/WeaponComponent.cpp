@@ -1,17 +1,9 @@
 #include "WeaponComponent.hpp"
 #include "../World.hpp"
 
-WeaponComponent::WeaponComponent(WeaponComponent::Type type)
+WeaponComponent::WeaponComponent()
 {
-    setType(type);
-}
-
-WeaponComponent::WeaponComponent(float range, unsigned int damage, sf::Time cooldown)
-{
-    setType(WeaponComponent::Type::None);
-    mRange = range;
-    mDamage = damage;
-    mCooldown = cooldown;
+    mWeapon = nullptr;
 }
 
 std::string WeaponComponent::getId()
@@ -19,27 +11,47 @@ std::string WeaponComponent::getId()
     return "WeaponComponent";
 }
 
-void WeaponComponent::setType(WeaponComponent::Type type)
+void WeaponComponent::setWeapon(Weapon::Ptr weapon)
 {
-    mType = type;
-    mRange = getRange(type);
-    mDamage = getDamage(type);
-    mCooldown = getCooldown(type);
-    mWeaponSprite.setTexture(World::instance().getResources().getTexture(getTextureId(type)));
-    mWeaponSprite.setTextureRect(getTextureRect(type));
-    mWeaponSprite.setOrigin(16,64);
+    mWeapon = weapon;
+    if (weapon != nullptr)
+    {
+        mWeaponSprite.setTexture(World::instance().getResources().getTexture("weapons"));
+        mWeaponSprite.setTextureRect(sf::IntRect(mWeapon->getType() * 32, 0, 32, 64));
+    }
 }
 
-WeaponComponent::Type WeaponComponent::getType() const
+Weapon::Ptr WeaponComponent::getWeapon() const
 {
-    return mType;
+    return mWeapon;
+}
+
+bool WeaponComponent::hasWeapon() const
+{
+    return mWeapon != nullptr;
+}
+
+void WeaponComponent::removeWeapon()
+{
+    mWeapon = nullptr;
+}
+
+Weapon::Ptr WeaponComponent::moveWeapon()
+{
+    Weapon::Ptr w = nullptr;
+    if (hasWeapon())
+    {
+        w = std::make_shared<Weapon>(*getWeapon());
+    }
+    removeWeapon();
+    return w;
 }
 
 bool WeaponComponent::isLongRange() const
 {
-    if (mType == WeaponComponent::Type::Bow)
+    if (hasWeapon())
     {
-        return true;
+        return mWeapon->isLongRange();
     }
     return false;
 }
@@ -51,6 +63,10 @@ void WeaponComponent::setRange(float range)
 
 float WeaponComponent::getRange() const
 {
+    if (hasWeapon())
+    {
+        return mWeapon->getRange();
+    }
     return mRange;
 }
 
@@ -61,6 +77,10 @@ void WeaponComponent::setDamage(unsigned int damage)
 
 unsigned int WeaponComponent::getDamage() const
 {
+    if (hasWeapon())
+    {
+        return mWeapon->getDamage();
+    }
     return mDamage;
 }
 
@@ -71,6 +91,10 @@ void WeaponComponent::setCooldown(sf::Time cooldown)
 
 sf::Time WeaponComponent::getCooldown() const
 {
+    if (hasWeapon())
+    {
+        return mWeapon->getCooldown();
+    }
     return mCooldown;
 }
 
@@ -79,13 +103,21 @@ void WeaponComponent::attack(sf::Vector2f const& direction)
     mTimeSinceLastAttack.restart();
     if (isLongRange())
     {
-        sf::Vector2f pos = World::instance().getEntities().get(getParentId())->getComponent<TransformComponent>().getPosition() + mWeaponSprite.getPosition();
-        World::instance().getPrefab().createProjectile(pos, ProjectileComponent::Type::Arrow, direction);
+        sf::Vector2f pos = mWeaponSprite.getPosition();
+        if (hasParent())
+        {
+            pos += mParent->getComponent<TransformComponent>().getPosition();
+        }
+        World::instance().getPrefab().createProjectile(pos, mWeapon, direction);
     }
 }
 
 bool WeaponComponent::canAttack()
 {
+    if (hasWeapon())
+    {
+        return mTimeSinceLastAttack.getElapsedTime() >= mWeapon->getCooldown();
+    }
     return mTimeSinceLastAttack.getElapsedTime() >= mCooldown;
 }
 
@@ -106,6 +138,7 @@ void WeaponComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
     target.draw(mWeaponSprite,states);
 }
 
+/*
 float WeaponComponent::getRange(WeaponComponent::Type type)
 {
     return 50.f;
@@ -134,7 +167,7 @@ std::string WeaponComponent::getTextureId(WeaponComponent::Type type)
 sf::IntRect WeaponComponent::getTextureRect(WeaponComponent::Type type)
 {
     return sf::IntRect(type * 32, 0, 32, 64);
-}
+}*/
 
 void WeaponComponent::loadWeaponTextures()
 {

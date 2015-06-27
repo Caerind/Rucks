@@ -12,7 +12,7 @@ class InventoryComponent : public es::Component
 
         static std::string getId();
 
-        void addItem(Item item);
+        void addItem(Item::Ptr item);
 
         void setSize(std::size_t size);
         std::size_t getSize() const;
@@ -22,7 +22,7 @@ class InventoryComponent : public es::Component
 
     private:
         std::size_t mSize;
-        std::vector<Item> mItems;
+        std::vector<Item::Ptr> mItems;
 };
 
 #endif // INVENTORYCOMPONENT_HPP

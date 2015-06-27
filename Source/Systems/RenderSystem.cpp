@@ -30,12 +30,11 @@ void RenderSystem::render(sf::RenderTarget& target)
         // Weapon
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
-            // TODO : Handle Weapon Rendering
-            /*MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
-            if (dir == MovementComponent::Direction::W || dir == MovementComponent::Direction::N)
+            AnimationComponent::Direction dir = mEntities[i]->getComponent<AnimationComponent>().getDirection();
+            if (dir == AnimationComponent::Direction::W || dir == AnimationComponent::Direction::N)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
-            }*/
+            }
         }
 
         // Sprite
@@ -44,12 +43,11 @@ void RenderSystem::render(sf::RenderTarget& target)
         // Weapon
         if (mEntities[i]->hasComponent<WeaponComponent>() && mEntities[i]->hasComponent<MovementComponent>())
         {
-            // TODO : Handle Weapon Rendering
-            /*MovementComponent::Direction dir = mEntities[i]->getComponent<MovementComponent>().getDirection();
-            if (dir == MovementComponent::Direction::S || dir == MovementComponent::Direction::E)
+            AnimationComponent::Direction dir = mEntities[i]->getComponent<AnimationComponent>().getDirection();
+            if (dir == AnimationComponent::Direction::S || dir == AnimationComponent::Direction::E)
             {
                 target.draw(mEntities[i]->getComponent<WeaponComponent>(),states);
-            }*/
+            }
         }
 
         // Life Bar

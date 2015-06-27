@@ -29,7 +29,11 @@ bool Entity::hasComponents(ComponentFilter const& filter) const
 
 void Entity::removeComponents()
 {
-    mComponents.clear();
+    for (auto itr = mComponents.begin(); itr != mComponents.end(); itr++)
+    {
+        delete itr->second;
+        itr->second = nullptr;
+    }
     if (hasManager())
     {
         mManager->updateEntity(mId,EntityManager::UpdateEntity::RemoveComponents);

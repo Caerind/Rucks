@@ -5,6 +5,8 @@ ProjectileSystem::ProjectileSystem()
 {
     mFilter.push_back(TransformComponent::getId());
     mFilter.push_back(SpriteComponent::getId());
+    mFilter.push_back(MovementComponent::getId());
+    mFilter.push_back(BoxComponent::getId());
     mFilter.push_back(ProjectileComponent::getId());
 }
 
@@ -13,16 +15,13 @@ std::string ProjectileSystem::getId()
     return "ProjectileSystem";
 }
 
-void ProjectileSystem::update(sf::Time dt)
+void ProjectileSystem::update()
 {
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
         bool remove = false;
 
         ProjectileComponent& p = mEntities[i]->getComponent<ProjectileComponent>();
-        sf::Vector2f mvt;
-        mvt = p.getSpeed() * dt.asSeconds() * p.getDirection();
-        mEntities[i]->getComponent<TransformComponent>().move(mvt);
 
         // Collision
         if (p.getDistanceTraveled() > 100.f)
@@ -33,17 +32,23 @@ void ProjectileSystem::update(sf::Time dt)
             {
                 if (e != nullptr) // If we have touched an entity with life component
                 {
-                    e->getComponent<LifeComponent>().inflige(p.getDamage());
+
+                    if (e->hasComponent<LifeComponent>())
+                    {
+                        e->getComponent<LifeComponent>().inflige(p.getDamage());
+                    }
+                }
+                else // If we have touched a collide tile
+                {
                 }
                 remove = true;
             }
         }
 
-        // Add Distance
-        p.addDistanceTraveled(mvt);
+        // Arrow on the ground
         if (p.fallDown() && p.getType() == ProjectileComponent::Type::Arrow)
         {
-            World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),Item());
+            World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),std::make_shared<Item>());
             remove = true;
         }
 

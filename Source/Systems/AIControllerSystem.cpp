@@ -29,14 +29,10 @@ void AIControllerSystem::update()
 
         if (mEntities[i]->getComponent<AIComponent>().hasTarget())
         {
+            handleMovement(mEntities[i]);
             if (mEntities[i]->hasComponent<WeaponComponent>())
             {
-                handleGoToTarget(mEntities[i]);
                 handleAttack(mEntities[i]);
-            }
-            else
-            {
-                handleEscapeTarget(mEntities[i]);
             }
         }
         else
@@ -89,7 +85,7 @@ void AIControllerSystem::findTarget(es::Entity::Ptr e)
     e->getComponent<AIComponent>().setTarget(target);
 }
 
-void AIControllerSystem::handleGoToTarget(es::Entity::Ptr e)
+void AIControllerSystem::handleMovement(es::Entity::Ptr e)
 {
     if (e->getComponent<AIComponent>().hasTarget())
     {
@@ -97,29 +93,30 @@ void AIControllerSystem::handleGoToTarget(es::Entity::Ptr e)
         sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
         sf::Vector2f diff = tPos - ePos;
 
-        e->getComponent<AnimationComponent>().setDirection(tPos);
-
-        float dist = 32.f;
         if (e->hasComponent<WeaponComponent>())
         {
-            dist = e->getComponent<WeaponComponent>().getRange() - 16.f;
-        }
-
-        if (thor::length(diff) > dist)
-        {
-            e->getComponent<MovementComponent>().setDirection(diff);
+            float dist = e->getComponent<WeaponComponent>().getRange() - 16.f;
+            e->getComponent<AnimationComponent>().setDirection(tPos);
+            if (thor::length(diff) > dist)
+            {
+                e->getComponent<MovementComponent>().setDirection(diff);
+            }
+            else
+            {
+                e->getComponent<MovementComponent>().setDirection(sf::Vector2f());
+            }
         }
         else
         {
-            e->getComponent<MovementComponent>().setDirection(sf::Vector2f());
+            e->getComponent<MovementComponent>().setDirection(-diff);
+            e->getComponent<AnimationComponent>().setDirection(-tPos);
         }
     }
 }
 
 void AIControllerSystem::handleAttack(es::Entity::Ptr e)
 {
-    // TODO : Fix it
-    /*if (e->getComponent<AIComponent>().hasTarget() && e->hasComponent<WeaponComponent>())
+    if (e->getComponent<AIComponent>().hasTarget() && e->hasComponent<WeaponComponent>())
     {
         WeaponComponent& w = e->getComponent<WeaponComponent>();
         es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
@@ -130,15 +127,6 @@ void AIControllerSystem::handleAttack(es::Entity::Ptr e)
             w.attack(diff);
         }
     }
-    */
-}
-
-void AIControllerSystem::handleEscapeTarget(es::Entity::Ptr e)
-{
-    if (e->getComponent<AIComponent>().hasTarget())
-    {
-        // TODO : Escape
-    }
 }
 
 void AIControllerSystem::handleNoTarget(es::Entity::Ptr e)
@@ -146,6 +134,7 @@ void AIControllerSystem::handleNoTarget(es::Entity::Ptr e)
     if (e->hasComponent<AnimationComponent>())
     {
         e->getComponent<AnimationComponent>().setDirection(AnimationComponent::Direction::S);
+        e->getComponent<MovementComponent>().setDirection(sf::Vector2f());
         // TODO : Handle Boring
     }
 }
