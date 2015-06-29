@@ -45,6 +45,11 @@ bool BoxComponent::intersects(sf::FloatRect const& rect) const
     return getBounds().intersects(rect);
 }
 
+bool BoxComponent::contains(sf::Vector2f const& pos) const
+{
+    return getBounds().contains(pos);
+}
+
 void BoxComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RectangleShape shape;

@@ -22,6 +22,7 @@ class BoxComponent : public es::Component, public sf::Drawable, public sf::Trans
 
         sf::FloatRect getBounds() const;
         bool intersects(sf::FloatRect const& rect) const;
+        bool contains(sf::Vector2f const& pos) const;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

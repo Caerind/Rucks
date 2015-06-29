@@ -108,6 +108,8 @@ void World::update(sf::Time dt)
     mEntities.getSystem<LifeSystem>().update(); // Update in last
 
     mChunks.update(mView);
+
+    ah::Application::instance().setDebugInfo("entities",ah::to_string(mEntities.getEntitiesCount()));
 }
 
 void World::render(sf::RenderTarget& target)

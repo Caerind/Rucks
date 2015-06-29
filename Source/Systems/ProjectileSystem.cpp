@@ -30,9 +30,9 @@ void ProjectileSystem::update()
         {
             if (e != nullptr && p.getStricker() != nullptr) // If we have touched an entity with life component
             {
-                if (e->hasComponent<LifeComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>() && e != p.getStricker())
+                if (e->hasComponent<StatComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>() && e != p.getStricker())
                 {
-                    e->getComponent<LifeComponent>().inflige(p.getDamage());
+                    e->getComponent<StatComponent>().inflige(p.getDamage());
                 }
             }
             else // If we have touched a collide tile
@@ -44,10 +44,12 @@ void ProjectileSystem::update()
             }
         }
 
-        // Arrow on the ground
-        if (p.fallDown() && p.getType() == ProjectileComponent::Type::Arrow)
+        if (p.fallDown())
         {
-            World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),std::make_shared<Item>());
+            if (p.getType() == ProjectileComponent::Type::Arrow)
+            {
+                World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),std::make_shared<Item>());
+            }
             remove = true;
         }
 

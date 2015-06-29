@@ -37,9 +37,11 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
 
     // Life
-    e->addComponent<LifeComponent>(100,200);
-    e->getComponent<LifeComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<LifeComponent>().setOrigin(sf::Vector2f(0.f,30.f));
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
     // Player
     e->addComponent<PlayerComponent>();
@@ -50,20 +52,16 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
 
     // Weapon
     Weapon::Ptr w = std::make_shared<Weapon>();
-    w->setRange(50.f);
-    w->setDamage(25);
-    w->setCooldown(sf::seconds(0.2f));
     w->setType(Weapon::Type::Sword);
+    w->setDamage(20,25);
     e->addComponent<WeaponComponent>();
     e->getComponent<WeaponComponent>().setWeapon(w);
     e->getComponent<WeaponComponent>().setOrigin(16.f,64.f);
 
     // Spell
     e->addComponent<SpellComponent>();
-    e->getComponent<SpellComponent>().setType(SpellComponent::Type::Fireball);
-    e->getComponent<SpellComponent>().setRange(800.f);
-    e->getComponent<SpellComponent>().setDamage(50);
-    e->getComponent<SpellComponent>().setCooldown(sf::seconds(0.6f));
+    e->getComponent<SpellComponent>().learnSpell(new Fireball());
+    e->getComponent<SpellComponent>().setSpell(0);
 
     return e;
 }
@@ -101,9 +99,11 @@ es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterCompo
     e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
 
     // Life
-    e->addComponent<LifeComponent>(100,200);
-    e->getComponent<LifeComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<LifeComponent>().setOrigin(sf::Vector2f(0.f,30.f));
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
     // AI
     e->addComponent<AIComponent>();
@@ -120,8 +120,8 @@ es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterCompo
     // Weapon
     e->addComponent<WeaponComponent>();
     e->getComponent<WeaponComponent>().setRange(50.f);
-    e->getComponent<WeaponComponent>().setDamage(5);
-    e->getComponent<WeaponComponent>().setCooldown(sf::seconds(0.3f));
+    e->getComponent<WeaponComponent>().setDamage(5,7);
+    e->getComponent<WeaponComponent>().setCooldown(sf::seconds(0.2f));
 
     return e;
 }
@@ -159,9 +159,11 @@ es::Entity::Ptr Prefab::createPacific(sf::Vector2f const& position)
     e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
 
     // Life
-    e->addComponent<LifeComponent>(100,200);
-    e->getComponent<LifeComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<LifeComponent>().setOrigin(sf::Vector2f(0.f,30.f));
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
     // AI
     e->addComponent<AIComponent>();
@@ -208,9 +210,11 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
     e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
 
     // Life
-    e->addComponent<LifeComponent>(100,200);
-    e->getComponent<LifeComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<LifeComponent>().setOrigin(sf::Vector2f(0.f,30.f));
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
     // AI
     e->addComponent<AIComponent>();
@@ -223,9 +227,6 @@ es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
 
     // Weapon
     Weapon::Ptr w = std::make_shared<Weapon>();
-    w->setRange(200.f);
-    w->setDamage(30);
-    w->setCooldown(sf::seconds(0.2f));
     w->setType(Weapon::Type::Bow);
     e->addComponent<WeaponComponent>();
     e->getComponent<WeaponComponent>().setWeapon(w);
@@ -263,7 +264,7 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entit
     // Sprite
     e->addComponent<SpriteComponent>();
     e->getComponent<SpriteComponent>().setTexture("projectiles");
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(weapon->getProjectileType() * 16, 0, 16, 32));
+    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(1 * 16, 0, 16, 32));
     e->getComponent<SpriteComponent>().setOrigin(8.f,16.f);
 
     // Box
@@ -279,7 +280,7 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entit
     // Projectile
     e->addComponent<ProjectileComponent>();
     e->getComponent<ProjectileComponent>().setStricker(stricker);
-    e->getComponent<ProjectileComponent>().setType(weapon->getProjectileType());
+    e->getComponent<ProjectileComponent>().setType(ProjectileComponent::Type::Arrow);
     e->getComponent<ProjectileComponent>().setDirection(direction);
     e->getComponent<ProjectileComponent>().setRange(weapon->getRange());
     e->getComponent<ProjectileComponent>().setDamage(weapon->getDamage());
@@ -322,13 +323,15 @@ es::Entity::Ptr Prefab::createFireball(sf::Vector2f const& position, es::Entity:
     e->getComponent<MovementComponent>().setSpeed(250.f);
     e->getComponent<MovementComponent>().setDirection(direction);
 
+    Spell* spell = stricker->getComponent<SpellComponent>().getSpell();
+
     // Projectile
     e->addComponent<ProjectileComponent>();
     e->getComponent<ProjectileComponent>().setStricker(stricker);
     e->getComponent<ProjectileComponent>().setType(ProjectileComponent::Type::Fireball);
     e->getComponent<ProjectileComponent>().setDirection(direction);
-    e->getComponent<ProjectileComponent>().setRange(stricker->getComponent<SpellComponent>().getRange());
-    e->getComponent<ProjectileComponent>().setDamage(stricker->getComponent<SpellComponent>().getDamage());
+    e->getComponent<ProjectileComponent>().setRange(spell->getRange());
+    e->getComponent<ProjectileComponent>().setDamage(spell->getDamage()); // TODO : Add Intelligence
 
     return e;
 }

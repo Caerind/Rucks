@@ -7,11 +7,65 @@ SpellComponent::SpellComponent()
 {
 }
 
+SpellComponent::~SpellComponent()
+{
+    for (std::size_t i = 0; i < mSpells.size(); i++)
+    {
+        delete mSpells[i];
+        mSpells[i] = nullptr;
+    }
+    mSpells.clear();
+}
+
 std::string SpellComponent::getId()
 {
     return "SpellComponent";
 }
 
+void SpellComponent::learnSpell(Spell* spell)
+{
+    mSpells.push_back(spell);
+}
+
+std::size_t SpellComponent::getSpellCount() const
+{
+    return mSpells.size();
+}
+
+void SpellComponent::setSpell(std::size_t id)
+{
+    mActiveSpell = id;
+}
+
+void SpellComponent::setSpell(std::string const& name)
+{
+    for (std::size_t i = 0; i < mSpells.size(); i++)
+    {
+        if (mSpells[i] != nullptr)
+        {
+            if (mSpells[i]->getName() == name)
+            {
+                mActiveSpell = i;
+            }
+        }
+    }
+}
+
+Spell* SpellComponent::getSpell()
+{
+    if (mActiveSpell >= 0 && mActiveSpell < mSpells.size())
+    {
+        return mSpells[mActiveSpell];
+    }
+    return nullptr;
+}
+
+std::vector<Spell*> SpellComponent::getSpells()
+{
+    return mSpells;
+}
+
+/*
 void SpellComponent::setType(Type type)
 {
     mType = type;
@@ -70,9 +124,9 @@ void SpellComponent::spell(sf::Vector2f const& direction)
 
             case Type::Heal:
             {
-                if (mParent->hasComponent<LifeComponent>())
+                if (mParent->hasComponent<StatComponent>())
                 {
-                    mParent->getComponent<LifeComponent>().restore(mDamage);
+                    mParent->getComponent<StatComponent>().restoreLife(mDamage);
                 }
             } break;
         }
@@ -88,3 +142,4 @@ sf::Time SpellComponent::getTimeSinceLastSpell() const
 {
     return mTimeSinceLastSpell.getElapsedTime();
 }
+*/

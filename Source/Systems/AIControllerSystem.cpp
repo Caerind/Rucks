@@ -50,7 +50,7 @@ void AIControllerSystem::findTarget(es::Entity::Ptr e)
         es::ComponentFilter targetFilter;
         targetFilter.requires(TransformComponent::getId());
         targetFilter.requires(SpriteComponent::getId());
-        targetFilter.requires(LifeComponent::getId());
+        targetFilter.requires(StatComponent::getId());
         targetList = mManager->getByFilter(targetFilter);
     }
     es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
@@ -61,7 +61,7 @@ void AIControllerSystem::findTarget(es::Entity::Ptr e)
         {
             sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
             if (targetList[i]->getId() != e->getId()
-            && targetList[i]->getComponent<LifeComponent>().isAlive()
+            && targetList[i]->getComponent<StatComponent>().isAlive()
             && thor::length(ePos - tePos) < e->getComponent<AIComponent>().getViewDistance())
             {
                 if (targetList[i]->hasComponent<MonsterComponent>() != e->hasComponent<MonsterComponent>())
@@ -123,10 +123,13 @@ void AIControllerSystem::handleAttack(es::Entity::Ptr e)
         sf::Vector2f diff = target->getComponent<TransformComponent>().getPosition() - e->getComponent<TransformComponent>().getPosition();
         if (thor::length(diff) < w.getRange() && w.canAttack())
         {
-            w.attack(diff);
-            if (!w.isLongRange())
+            if (w.isLongRange())
             {
-                target->getComponent<LifeComponent>().inflige(w.getDamage());
+                w.attack(diff);
+            }
+            else
+            {
+                w.attack(target);
             }
         }
     }

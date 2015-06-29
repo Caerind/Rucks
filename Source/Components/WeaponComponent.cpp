@@ -1,5 +1,6 @@
 #include "WeaponComponent.hpp"
 #include "../World.hpp"
+#include "../../Lib/Aharos/Application.hpp"
 
 WeaponComponent::WeaponComponent()
 {
@@ -70,18 +71,61 @@ float WeaponComponent::getRange() const
     return mRange;
 }
 
-void WeaponComponent::setDamage(unsigned int damage)
+void WeaponComponent::setDamage(sf::Vector2i damageRange)
 {
-    mDamage = damage;
+    mDamage = damageRange;
 }
 
-unsigned int WeaponComponent::getDamage() const
+void WeaponComponent::setDamage(int damageMin, int damageMax)
+{
+    mDamage.x = damageMin;
+    mDamage.y = damageMax;
+}
+
+void WeaponComponent::setDamageMin(int damageMin)
+{
+    mDamage.x = damageMin;
+}
+
+void WeaponComponent::setDamageMax(int damageMax)
+{
+    mDamage.y = damageMax;
+}
+
+int WeaponComponent::getDamageMin() const
+{
+    if (hasWeapon())
+    {
+        return mWeapon->getDamageMin();
+    }
+    return mDamage.x;
+}
+
+int WeaponComponent::getDamageMax() const
+{
+    if (hasWeapon())
+    {
+        return mWeapon->getDamageMax();
+    }
+    return mDamage.y;
+}
+
+sf::Vector2i WeaponComponent::getDamageRange() const
+{
+    if (hasWeapon())
+    {
+        return mWeapon->getDamageRange();
+    }
+    return mDamage;
+}
+
+int WeaponComponent::getDamage() const
 {
     if (hasWeapon())
     {
         return mWeapon->getDamage();
     }
-    return mDamage;
+    return thor::random(mDamage.x,mDamage.y);
 }
 
 void WeaponComponent::setCooldown(sf::Time cooldown)
@@ -98,21 +142,43 @@ sf::Time WeaponComponent::getCooldown() const
     return mCooldown;
 }
 
-void WeaponComponent::attack(sf::Vector2f const& direction)
+void WeaponComponent::attack()
 {
-    if (canAttack())
+    mTimeSinceLastAttack.restart();
+}
+
+void WeaponComponent::attack(es::Entity::Ptr target)
+{
+    if (canAttack() && !isLongRange() && hasParent() && target != nullptr)
     {
-        mTimeSinceLastAttack.restart();
-        if (isLongRange())
+        if (getRange() >= thor::length(target->getComponent<TransformComponent>().getPosition() - mParent->getComponent<TransformComponent>().getPosition()))
         {
-            sf::Vector2f pos = mWeaponSprite.getPosition();
-            if (hasParent())
+            if (target->hasComponent<StatComponent>() && mParent->hasComponent<StatComponent>())
             {
-                pos += mParent->getComponent<TransformComponent>().getPosition();
-                World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
+                StatComponent& sT = target->getComponent<StatComponent>();
+                StatComponent& sP = mParent->getComponent<StatComponent>();
+                if (sT.isAlive())
+                {
+                    int damage = getDamage() + sP.getStrength(); // TODO : Better Formumle for Damage
+                    if (sT.inflige(damage))
+                    {
+                        sP.addExperience(10); // TODO : Add Experience
+                    }
+                }
             }
         }
     }
+    mTimeSinceLastAttack.restart();
+}
+
+void WeaponComponent::attack(sf::Vector2f const& direction)
+{
+    if (canAttack() && isLongRange() && hasParent())
+    {
+        sf::Vector2f pos = mWeaponSprite.getPosition() + mParent->getComponent<TransformComponent>().getPosition();
+        World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
+    }
+    mTimeSinceLastAttack.restart();
 }
 
 bool WeaponComponent::canAttack()
@@ -137,40 +203,12 @@ void WeaponComponent::setWeaponTransform(float x, float y, float rotation)
 
 void WeaponComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
-    target.draw(mWeaponSprite,states);
-}
-
-/*
-float WeaponComponent::getRange(WeaponComponent::Type type)
-{
-    return 50.f;
-}
-
-unsigned int WeaponComponent::getDamage(WeaponComponent::Type type)
-{
-    switch (type)
+    if (mWeapon != nullptr)
     {
-        case WeaponComponent::Type::None: return 10;
-        case WeaponComponent::Type::Sword: return 20;
+        states.transform *= getTransform();
+        target.draw(mWeaponSprite,states);
     }
-    return 10;
 }
-
-sf::Time WeaponComponent::getCooldown(WeaponComponent::Type type)
-{
-    return sf::seconds(0.2f);
-}
-
-std::string WeaponComponent::getTextureId(WeaponComponent::Type type)
-{
-    return "weapons";
-}
-
-sf::IntRect WeaponComponent::getTextureRect(WeaponComponent::Type type)
-{
-    return sf::IntRect(type * 32, 0, 32, 64);
-}*/
 
 void WeaponComponent::loadWeaponTextures()
 {

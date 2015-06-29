@@ -7,7 +7,7 @@
 // Target Filter
 #include "TransformComponent.hpp"
 #include "SpriteComponent.hpp"
-#include "LifeComponent.hpp"
+#include "StatComponent.hpp"
 
 #include <Thor/Vectors/VectorAlgebra2D.hpp>
 

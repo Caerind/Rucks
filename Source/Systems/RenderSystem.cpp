@@ -52,9 +52,9 @@ void RenderSystem::render(sf::RenderTarget& target)
         }
 
         // Life Bar
-        if (mEntities[i]->hasComponent<LifeComponent>())
+        if (mEntities[i]->hasComponent<StatComponent>())
         {
-            target.draw(mEntities[i]->getComponent<LifeComponent>(), states);
+            target.draw(mEntities[i]->getComponent<StatComponent>(), states);
         }
 
         if (mRenderDebug)

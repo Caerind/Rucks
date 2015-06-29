@@ -42,9 +42,9 @@ void ItemSystem::update()
         }
 
         // If an entity which isn't the player died : this entity drop his inventory
-        if (mEntities[i]->hasComponent<LifeComponent>() && !mEntities[i]->hasComponent<PlayerComponent>() && mEntities[i]->hasComponent<TransformComponent>())
+        if (mEntities[i]->hasComponent<StatComponent>() && !mEntities[i]->hasComponent<PlayerComponent>() && mEntities[i]->hasComponent<TransformComponent>())
         {
-            if (mEntities[i]->getComponent<LifeComponent>().isDead())
+            if (mEntities[i]->getComponent<StatComponent>().isDead())
             {
                 while (mEntities[i]->getComponent<InventoryComponent>().getItemCount() > 0)
                 {

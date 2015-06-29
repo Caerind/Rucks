@@ -28,12 +28,12 @@ bool AIComponent::hasTarget()
         es::ComponentFilter targetFilter;
         targetFilter.requires(TransformComponent::getId());
         targetFilter.requires(SpriteComponent::getId());
-        targetFilter.requires(LifeComponent::getId());
+        targetFilter.requires(StatComponent::getId());
         if (mTarget->hasComponents(targetFilter) && hasParent())
         {
             sf::Vector2f ePos = mParent->getComponent<TransformComponent>().getPosition();
             sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition();
-            if (mTarget->getId() != mParent->getId() && mTarget->getComponent<LifeComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)
+            if (mTarget->getId() != mParent->getId() && mTarget->getComponent<StatComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)
             {
                 //resetBoredTime();
                 return true;

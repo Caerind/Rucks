@@ -4,7 +4,7 @@
 #include "Components/TransformComponent.hpp"
 #include "Components/BoxComponent.hpp"
 #include "Components/SpriteComponent.hpp"
-#include "Components/LifeComponent.hpp"
+#include "Components/StatComponent.hpp"
 #include "Components/CollisionComponent.hpp"
 #include "Components/MovementComponent.hpp"
 #include "Components/PlayerComponent.hpp"

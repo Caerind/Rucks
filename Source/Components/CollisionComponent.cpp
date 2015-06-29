@@ -45,6 +45,11 @@ bool CollisionComponent::intersects(sf::FloatRect const& rect) const
     return getBounds().intersects(rect);
 }
 
+bool CollisionComponent::contains(sf::Vector2f const& pos) const
+{
+    return getBounds().contains(pos);
+}
+
 void CollisionComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RectangleShape shape;

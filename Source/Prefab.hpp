@@ -4,6 +4,7 @@
 #include "../Lib/EntitySystem/EntitySystem.hpp"
 
 #include "Components.hpp"
+#include "Spells.hpp"
 
 #include "../Game/Item.hpp"
 #include "../Game/Weapon.hpp"

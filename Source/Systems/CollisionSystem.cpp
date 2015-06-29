@@ -73,7 +73,7 @@ bool CollisionSystem::projectileCollision(sf::FloatRect const& rect, es::Entity:
     {
         for (unsigned int i = 0; i < es.size(); i++)
         {
-            if (es[i]->hasComponent<LifeComponent>())
+            if (es[i]->hasComponent<StatComponent>())
             {
                 e = es[i];
                 return true;

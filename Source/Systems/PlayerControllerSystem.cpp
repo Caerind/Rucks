@@ -27,6 +27,8 @@ void PlayerControllerSystem::update()
 
     es::ComponentFilter filterMonster;
     filterMonster.requires(MonsterComponent::getId());
+    filterMonster.requires(BoxComponent::getId());
+    filterMonster.requires(StatComponent::getId());
     es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
     for (unsigned int i = 0; i < mEntities.size(); i++)
@@ -54,19 +56,27 @@ void PlayerControllerSystem::update()
         if (isActive("action"))
         {
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
+            sf::Vector2f diff = mPos - mEntities[i]->getComponent<TransformComponent>().getPosition();
             if (w.canAttack())
             {
-                w.attack(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
-                if (!w.isLongRange())
+                if (w.isLongRange())
                 {
-                    // Attack Monster
+                    w.attack(diff);
+                }
+                else
+                {
+                    bool attacked = false;
                     for (unsigned int j = 0; j < monster.size(); j++)
                     {
-                        if (thor::length(mEntities[i]->getComponent<TransformComponent>().getPosition() - monster[j]->getComponent<TransformComponent>().getPosition()) < w.getRange()
-                        && monster[j]->getComponent<BoxComponent>().getBounds().contains(mPos))
+                        if (monster[j]->getComponent<BoxComponent>().contains(mPos))
                         {
-                            monster[j]->getComponent<LifeComponent>().inflige(w.getDamage());
+                            w.attack(monster[j]);
+                            attacked = true;
                         }
+                    }
+                    if (!attacked)
+                    {
+                        w.attack();
                     }
                 }
             }
@@ -75,10 +85,10 @@ void PlayerControllerSystem::update()
         if (isActive("spell"))
         {
             SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
-            if (s.canSpell())
+            /*if (s.canSpell())
             {
                 s.spell(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
-            }
+            }*/
         }
 
         World::instance().getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());

@@ -4,6 +4,7 @@
 #include "Item.hpp"
 
 #include <SFML/System/Time.hpp>
+#include <Thor/Math/Random.hpp>
 
 #include "../Components/ProjectileComponent.hpp"
 
@@ -14,7 +15,6 @@ class Weapon : public Item
 
         enum Type
         {
-            None,
             Sword,
             Bow,
         };
@@ -25,12 +25,17 @@ class Weapon : public Item
         Type getType() const;
 
         bool isLongRange() const;
-        ProjectileComponent::Type getProjectileType() const;
 
         void setRange(float range);
         float getRange() const;
 
-        void setDamage(int damage);
+        void setDamage(sf::Vector2i damageRange);
+        void setDamage(int damageMin, int damageMax);
+        void setDamageMin(int damageMin);
+        void setDamageMax(int damageMax);
+        int getDamageMin() const;
+        int getDamageMax() const;
+        sf::Vector2i getDamageRange() const;
         int getDamage() const;
 
         void setCooldown(sf::Time cooldown);
@@ -42,7 +47,7 @@ class Weapon : public Item
         Type mType;
 
         float mRange;
-        int mDamage;
+        sf::Vector2i mDamage;
         sf::Time mCooldown;
 };
 
