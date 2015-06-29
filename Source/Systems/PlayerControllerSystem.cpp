@@ -82,13 +82,39 @@ void PlayerControllerSystem::update()
             }
         }
 
-        if (isActive("spell"))
+        SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
+        if (s.canSpell())
         {
-            SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
-            /*if (s.canSpell())
+            std::size_t id;
+            if (isActive("spell1"))
             {
-                s.spell(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
-            }*/
+                id = 0;
+            }
+            if (isActive("spell2"))
+            {
+                id = 1;
+            }
+            if (isActive("spell3"))
+            {
+                id = 2;
+            }
+            if (isActive("spell4"))
+            {
+                id = 3;
+            }
+            if (isActive("spell5"))
+            {
+                id = 4;
+            }
+
+            if (s.getSpell(id) != nullptr)
+            {
+                if (s.getSpell(id)->canSpell())
+                {
+                    s.setActiveSpell(id);
+                    s.spell();
+                }
+            }
         }
 
         World::instance().getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());

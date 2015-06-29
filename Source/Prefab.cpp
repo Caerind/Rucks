@@ -61,7 +61,6 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     // Spell
     e->addComponent<SpellComponent>();
     e->getComponent<SpellComponent>().learnSpell(new Fireball());
-    e->getComponent<SpellComponent>().setSpell(0);
 
     return e;
 }

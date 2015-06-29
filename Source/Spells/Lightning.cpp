@@ -7,7 +7,7 @@ Lightning::Lightning()
     mRange = 500.f;
     mDamage = sf::Vector2i(20,30);
     mCooldown = sf::seconds(2.f);
-    mCast = sf::seconds(0.2f);
+    mCast = sf::seconds(0.3f);
     mManaCost = 10;
 }
 

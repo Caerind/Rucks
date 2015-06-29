@@ -7,7 +7,7 @@ Flash::Flash()
     mRange = 500.f;
     mDamage = sf::Vector2i(0,0);
     mCooldown = sf::seconds(20.f);
-    mCast = sf::seconds(0.2f);
+    mCast = sf::seconds(0.3f);
     mManaCost = 30;
 }
 

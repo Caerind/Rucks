@@ -32,37 +32,28 @@ std::size_t SpellComponent::getSpellCount() const
     return mSpells.size();
 }
 
-void SpellComponent::setSpell(std::size_t id)
+void SpellComponent::setActiveSpell(std::size_t id)
 {
     mActiveSpell = id;
 }
 
-void SpellComponent::setSpell(std::string const& name)
+std::size_t SpellComponent::getActiveSpellId() const
 {
-    for (std::size_t i = 0; i < mSpells.size(); i++)
-    {
-        if (mSpells[i] != nullptr)
-        {
-            if (mSpells[i]->getName() == name)
-            {
-                mActiveSpell = i;
-            }
-        }
-    }
+    return mActiveSpell;
 }
 
-Spell* SpellComponent::getSpell()
+Spell* SpellComponent::getActiveSpell()
 {
-    if (mActiveSpell >= 0 && mActiveSpell < mSpells.size())
+    return getSpell(mActiveSpell);
+}
+
+Spell* SpellComponent::getSpell(std::size_t id)
+{
+    if (id >= 0 && id < mSpells.size())
     {
-        return mSpells[mActiveSpell];
+        return mSpells[id];
     }
     return nullptr;
-}
-
-std::vector<Spell*> SpellComponent::getSpells()
-{
-    return mSpells;
 }
 
 /*

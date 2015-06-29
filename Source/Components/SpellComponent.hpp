@@ -19,10 +19,11 @@ class SpellComponent : public es::Component
 
         std::size_t getSpellCount() const;
 
-        void setSpell(std::size_t id);
-        void setSpell(std::string const& name);
-        Spell* getSpell();
-        std::vector<Spell*> getSpells();
+        void setActiveSpell(std::size_t id);
+        std::size_t getActiveSpellId() const;
+        Spell* getActiveSpell();
+
+        Spell* getSpell(std::size_t id);
 
     private:
         std::size_t mActiveSpell;
