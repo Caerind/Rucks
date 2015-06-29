@@ -1,4 +1,5 @@
 #include "World.hpp"
+#include "../Lib/Aharos/Application.hpp"
 
 World World::mInstance;
 
@@ -39,9 +40,9 @@ void World::initialize()
     mEntities.getSystem<RenderSystem>().renderDebug(true);
 
     // Load Entities
-    mPrefab.createPlayer(sf::Vector2f(100,100));
+    mPrefab.createPlayer(sf::Vector2f(0,0));
     mPrefab.createItem(sf::Vector2f(200,200), std::make_shared<Item>());
-    mPrefab.createMonster(sf::Vector2f(400,400),MonsterComponent::Type::Bat);
+    mPrefab.createMonster(sf::Vector2f(400,300),MonsterComponent::Type::Bat);
     mPrefab.createMonster(sf::Vector2f(425,375),MonsterComponent::Type::Bee);
     mPrefab.createPacific(sf::Vector2f(50,50));
     mPrefab.createFighter(sf::Vector2f(50,200));

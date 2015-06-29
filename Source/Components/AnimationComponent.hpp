@@ -37,6 +37,8 @@ class AnimationComponent : public es::Component
         void setWalkDuration(sf::Time duration);
         sf::Time getWalkDuration() const;
 
+        static Direction getDirection(sf::Vector2f const& direction);
+
     private:
         sf::Vector2i mSheetSize;
         Direction mDirection;

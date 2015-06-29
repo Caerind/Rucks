@@ -48,7 +48,6 @@ void PlayerControllerSystem::update()
         {
             direction.x += 1.f;
         }
-        // TODO : Speed Down The Player If He Dont Goes In The Direction He Looks At
         mEntities[i]->getComponent<MovementComponent>().setDirection(direction);
         mEntities[i]->getComponent<AnimationComponent>().setDirection(mPos);
 

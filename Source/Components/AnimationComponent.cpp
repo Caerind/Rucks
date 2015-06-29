@@ -31,28 +31,7 @@ void AnimationComponent::setDirection(sf::Vector2f const& lookAt)
             diff -= mParent->getComponent<TransformComponent>().getPosition();
         }
     }
-    if (std::abs(diff.x) > std::abs(diff.y)) // W || E
-    {
-        if (diff.x >= 0)
-        {
-            mDirection = Direction::E;
-        }
-        else
-        {
-            mDirection = Direction::W;
-        }
-    }
-    else // N || S
-    {
-        if (diff.y >= 0)
-        {
-            mDirection = Direction::S;
-        }
-        else
-        {
-            mDirection = Direction::N;
-        }
-    }
+    mDirection = getDirection(diff);
 }
 
 void AnimationComponent::setDirection(Direction direction)
@@ -100,4 +79,31 @@ void AnimationComponent::setWalkDuration(sf::Time duration)
 sf::Time AnimationComponent::getWalkDuration() const
 {
     return mWalkDuration;
+}
+
+AnimationComponent::Direction AnimationComponent::getDirection(sf::Vector2f const& direction)
+{
+    if (std::abs(direction.x) > std::abs(direction.y)) // W || E
+    {
+        if (direction.x >= 0)
+        {
+            return Direction::E;
+        }
+        else
+        {
+            return Direction::W;
+        }
+    }
+    else // N || S
+    {
+        if (direction.y >= 0)
+        {
+            return Direction::S;
+        }
+        else
+        {
+            return Direction::N;
+        }
+    }
+    return Direction::S;
 }
