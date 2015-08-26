@@ -19,7 +19,7 @@ void MovementSystem::update(sf::Time dt)
         sf::Vector2f mvt;
         sf::Vector2f direction = mEntities[i]->getComponent<MovementComponent>().getDirection();
         float speed = mEntities[i]->getComponent<MovementComponent>().getSpeed();
-        if (mEntities[i]->hasComponent<PlayerComponent>() && mEntities[i]->hasComponent<AnimationComponent>())
+        if (mEntities[i]->hasComponent<AnimationComponent>())
         {
             AnimationComponent::Direction dirEnt = mEntities[i]->getComponent<AnimationComponent>().getDirection();
             AnimationComponent::Direction dirMvt = AnimationComponent::getDirection(direction);

@@ -159,7 +159,7 @@ void WeaponComponent::attack(es::Entity::Ptr target)
                 StatComponent& sP = mParent->getComponent<StatComponent>();
                 if (sT.isAlive())
                 {
-                    int damage = getDamage() + sP.getStrength(); // TODO : Better Formumle for Damage
+                    int damage = getDamage() + sP.getStrength(); // TODO : Better Formule for Damage
                     if (sT.inflige(damage))
                     {
                         sP.addExperience(10); // TODO : Add Experience

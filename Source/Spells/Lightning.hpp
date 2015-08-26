@@ -9,6 +9,7 @@ class Lightning : public Spell
         Lightning();
 
         virtual void activate();
+        virtual bool canSpell();
 };
 
 #endif // LIGHTNING_HPP

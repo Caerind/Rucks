@@ -9,6 +9,7 @@ class Fireball : public Spell
         Fireball();
 
         virtual void activate();
+        virtual bool canSpell();
 };
 
 #endif // FIREBALL_HPP

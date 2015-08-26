@@ -40,6 +40,8 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->addComponent<StatComponent>();
     e->getComponent<StatComponent>().setLife(100);
     e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setMana(1000);
+    e->getComponent<StatComponent>().setManaMax(1000);
     e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
     e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
@@ -61,6 +63,9 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     // Spell
     e->addComponent<SpellComponent>();
     e->getComponent<SpellComponent>().learnSpell(new Fireball());
+    e->getComponent<SpellComponent>().learnSpell(new Flash());
+    e->getComponent<SpellComponent>().learnSpell(new Heal());
+    e->getComponent<SpellComponent>().learnSpell(new Lightning());
 
     return e;
 }
@@ -322,7 +327,7 @@ es::Entity::Ptr Prefab::createFireball(sf::Vector2f const& position, es::Entity:
     e->getComponent<MovementComponent>().setSpeed(250.f);
     e->getComponent<MovementComponent>().setDirection(direction);
 
-    Spell* spell = stricker->getComponent<SpellComponent>().getSpell();
+    Spell* spell = stricker->getComponent<SpellComponent>().getActiveSpell();
 
     // Projectile
     e->addComponent<ProjectileComponent>();

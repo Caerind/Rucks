@@ -31,6 +31,11 @@ void PlayerControllerSystem::update()
     filterMonster.requires(StatComponent::getId());
     es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
 
+    es::ComponentFilter filterSpellTarget;
+    filterSpellTarget.requires(BoxComponent::getId());
+    filterSpellTarget.requires(StatComponent::getId());
+    es::EntityArray spellTarget = World::instance().getEntities().getByFilter(filterSpellTarget);
+
     for (unsigned int i = 0; i < mEntities.size(); i++)
     {
         sf::Vector2f direction;
@@ -83,41 +88,80 @@ void PlayerControllerSystem::update()
         }
 
         SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
-        if (s.canSpell())
+
+        es::Entity::Ptr target = nullptr;
+        for (std::size_t i = 0; i < spellTarget.size(); i++)
         {
-            std::size_t id;
+            if (spellTarget[i]->getComponent<BoxComponent>().contains(mPos))
+            {
+                target = spellTarget[i];
+            }
+        }
+        sf::Vector2f dir = thor::unitVector(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
+
+        if (s.canSpell()) // Isnt already casting
+        {
+            bool spell = false;
+            std::size_t id = 0;
             if (isActive("spell1"))
             {
+                spell = true;
                 id = 0;
             }
             if (isActive("spell2"))
             {
+                spell = true;
                 id = 1;
             }
             if (isActive("spell3"))
             {
+                spell = true;
                 id = 2;
             }
             if (isActive("spell4"))
             {
+                spell = true;
                 id = 3;
             }
             if (isActive("spell5"))
             {
+                spell = true;
                 id = 4;
             }
 
-            if (s.getSpell(id) != nullptr)
+            Spell* selectedSpell = s.getSpell(id);
+            if (spell && selectedSpell != nullptr)
             {
-                if (s.getSpell(id)->canSpell())
+                selectedSpell->setStricker(mEntities[i]);
+                selectedSpell->setTarget(target);
+                selectedSpell->setPosition(mPos);
+                selectedSpell->setDirection(dir);
+                if (selectedSpell->canSpell()) // Mana Cooldown Range
                 {
                     s.setActiveSpell(id);
                     s.spell();
                 }
             }
         }
+        else // Is casting
+        {
+            es::Entity::Ptr target = nullptr;
+            for (std::size_t i = 0; i < spellTarget.size(); i++)
+            {
+                if (spellTarget[i]->getComponent<BoxComponent>().contains(mPos))
+                {
+                    target = spellTarget[i];
+                }
+            }
+            sf::Vector2f dir = thor::unitVector(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
+
+            s.update(mEntities[i],target,mPos,dir);
+        }
+
 
         World::instance().getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());
+        SpellHUD& spellHUD = World::instance().getHUD().getSpells();
+        // TODO : update SPELL HUD
     }
 
 

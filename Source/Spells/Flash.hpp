@@ -9,6 +9,7 @@ class Flash : public Spell
         Flash();
 
         virtual void activate();
+        virtual bool canSpell();
 };
 
 #endif // FLASH_HPP

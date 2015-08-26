@@ -9,6 +9,7 @@ class Heal : public Spell
         Heal();
 
         virtual void activate();
+        virtual bool canSpell();
 };
 
 #endif // HEAL_HPP

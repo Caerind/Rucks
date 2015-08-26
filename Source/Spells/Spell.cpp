@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////
 Spell::Spell()
 {
+    mType = Type::None;
     mName = "";
     mRange = 0.f;
     mDamage = sf::Vector2i();
@@ -36,6 +37,11 @@ void Spell::setDirection(sf::Vector2f const& direction)
 void Spell::setPosition(sf::Vector2f const& position)
 {
     mPosition = position;
+}
+
+Spell::Type Spell::getType() const
+{
+    return mType;
 }
 
 ////////////////////////////////////////////////////////////
@@ -89,5 +95,11 @@ sf::Time Spell::getCast() const
 int Spell::getManaCost() const
 {
     return mManaCost;
+}
+
+sf::Time Spell::getRemainingTime() const
+{
+    sf::Time dt = mCooldown - mCooldownTimer.getElapsedTime();
+    return std::max(dt,sf::Time::Zero);
 }
 

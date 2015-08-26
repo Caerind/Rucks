@@ -121,6 +121,7 @@ void World::render(sf::RenderTarget& target)
     mEntities.getSystem<RenderSystem>().render(target);
     mChunks.draw(target, mView, 2);
     target.setView(defaultView);
+    target.draw(mHUD);
 }
 
 ah::ResourceHolder& World::getResources()
@@ -146,6 +147,11 @@ es::EntityManager& World::getEntities()
 Prefab& World::getPrefab()
 {
     return mPrefab;
+}
+
+HUD& World::getHUD()
+{
+    return mHUD;
 }
 
 bool World::isOnline() const

@@ -3,6 +3,7 @@
 
 Lightning::Lightning()
 {
+    mType = Type::Lightning;
     mName = "Lightning";
     mRange = 500.f;
     mDamage = sf::Vector2i(20,30);
@@ -13,12 +14,32 @@ Lightning::Lightning()
 
 void Lightning::activate()
 {
-    if (mTarget != nullptr)
+    assert(mTarget != nullptr && mTarget->hasComponent<StatComponent>());
+
+    if (mTarget->getComponent<StatComponent>().inflige(getDamage())) // TODO : Add Intelligence
     {
-        if (mTarget->hasComponent<StatComponent>())
-        {
-            mTarget->getComponent<StatComponent>().inflige(getDamage()); // TODO : Add Intelligence
-            // TODO : If get killed, add exp to the stricker
-        }
+        assert(mStricker != nullptr && mStricker->hasComponent<StatComponent>());
+        mStricker->getComponent<StatComponent>().addExperience(10); // TODO : Add Experience
     }
+
+    mCooldownTimer.restart();
+}
+
+bool Lightning::canSpell()
+{
+    if (mTarget == nullptr)
+    {
+        return false;
+    }
+    assert(mStricker->hasComponent<TransformComponent>());
+    assert(mStricker->hasComponent<StatComponent>());
+    assert(mTarget->hasComponent<TransformComponent>());
+    if (mStricker->getComponent<StatComponent>().getMana() >= getManaCost()
+    && mCooldownTimer.getElapsedTime() >= getCooldown()
+    && thor::length(mTarget->getComponent<TransformComponent>().getPosition() - mStricker->getComponent<TransformComponent>().getPosition()) <= getRange()
+    && mStricker->hasComponent<MonsterComponent>() == mTarget->hasComponent<MonsterComponent>())
+    {
+        return true;
+    }
+    return false;
 }

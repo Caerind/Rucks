@@ -18,6 +18,7 @@
 #include "Systems.hpp"
 #include "Components.hpp"
 #include "Prefab.hpp"
+#include "HUD/HUD.hpp"
 
 class World
 {
@@ -39,6 +40,7 @@ class World
         ChunkManager& getChunks();
         es::EntityManager& getEntities();
         Prefab& getPrefab();
+        HUD& getHUD();
 
         bool isOnline() const;
         bool isServer() const;
@@ -54,6 +56,7 @@ class World
         ChunkManager mChunks;
         es::EntityManager mEntities;
         Prefab mPrefab;
+        HUD mHUD;
 
         bool mIsOnline;
         bool mIsServer;

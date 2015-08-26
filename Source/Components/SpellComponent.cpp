@@ -5,6 +5,7 @@
 
 SpellComponent::SpellComponent()
 {
+    mWasRunning = false;
 }
 
 SpellComponent::~SpellComponent()
@@ -54,6 +55,56 @@ Spell* SpellComponent::getSpell(std::size_t id)
         return mSpells[id];
     }
     return nullptr;
+}
+
+bool SpellComponent::canSpell()
+{
+    return mCaster.isExpired();
+}
+
+void SpellComponent::spell()
+{
+    Spell* spell = getSpell(mActiveSpell);
+    if (canSpell() &&  spell != nullptr)
+    {
+        if (spell->canSpell())
+        {
+            if (hasParent())
+            {
+                if (mParent->hasComponent<StatComponent>())
+                {
+                    mParent->getComponent<StatComponent>().useMana(spell->getManaCost());
+                }
+            }
+            // TODO : Fix CallbackTimer
+            //mCaster.connect0(std::bind(&Spell::activate, spell));
+            mWasRunning = true;
+            mCaster.restart(spell->getCast());
+        }
+    }
+}
+
+void SpellComponent::update(es::Entity::Ptr stricker, es::Entity::Ptr target, sf::Vector2f const& position, sf::Vector2f const& direction)
+{
+    if (mWasRunning && mCaster.isExpired())
+    {
+        Spell* spell = getActiveSpell();
+        if (spell != nullptr)
+        {
+            spell->setStricker(stricker);
+            spell->setTarget(target);
+            spell->setPosition(position);
+            spell->setDirection(direction);
+
+            spell->activate();
+        }
+        mWasRunning = false;
+    }
+}
+
+sf::Time SpellComponent::getRemainingCastTime()
+{
+    return mCaster.getRemainingTime();
 }
 
 /*

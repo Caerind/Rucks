@@ -3,6 +3,7 @@
 
 Fireball::Fireball()
 {
+    mType = Type::Fireball;
     mName = "Fireball";
     mRange = 500.f;
     mDamage = sf::Vector2i(30,40);
@@ -13,11 +14,21 @@ Fireball::Fireball()
 
 void Fireball::activate()
 {
-    if (mDirection != sf::Vector2f() && mStricker != nullptr)
+    assert(mDirection != sf::Vector2f() && mStricker != nullptr && mStricker->hasComponent<TransformComponent>());
+
+    World::instance().getPrefab().createFireball(mStricker->getComponent<TransformComponent>().getPosition(), mStricker, mDirection);
+
+    mCooldownTimer.restart();
+}
+
+bool Fireball::canSpell()
+{
+    assert(mStricker->hasComponent<StatComponent>());
+    if (mStricker->getComponent<StatComponent>().getMana() >= getManaCost()
+    && mCooldownTimer.getElapsedTime() >= getCooldown()
+    && mDirection != sf::Vector2f())
     {
-        if (mStricker->hasComponent<TransformComponent>())
-        {
-            World::instance().getPrefab().createFireball(mStricker->getComponent<TransformComponent>().getPosition(), mStricker, mDirection);
-        }
+        return true;
     }
+    return false;
 }
