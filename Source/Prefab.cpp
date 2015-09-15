@@ -1,21 +1,38 @@
 #include "Prefab.hpp"
 
-Prefab::Prefab(es::EntityManager& manager) : mManager(manager)
+#include "Components.hpp"
+#include "Spells.hpp"
+
+#include "../Game/Item.hpp"
+#include "../Game/Weapon.hpp"
+
+Prefab::Prefab()
 {
 }
 
 es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
 {
-    es::Entity::Ptr e = mManager.create();
+    es::Entity::Ptr e = mEntities.create();
 
     // Transform
     e->addComponent<TransformComponent>();
     e->getComponent<TransformComponent>().setPosition(position);
 
-    // Sprite
-    e->addComponent<SpriteComponent>("soldier1");
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(0,0,64,64));
-    e->getComponent<SpriteComponent>().setOrigin(sf::Vector2f(32.f,32.f));
+    // Player
+    e->addComponent<PlayerComponent>();
+
+    // Faction
+    e->addComponent<FactionComponent>();
+    e->getComponent<FactionComponent>().setFactionId(1);
+
+    // Stat
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setMana(1000);
+    e->getComponent<StatComponent>().setManaMax(1000);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setPosition(sf::Vector2f(0.f,-30.f));
 
     // Box
     e->addComponent<BoxComponent>();
@@ -31,117 +48,114 @@ es::Entity::Ptr Prefab::createPlayer(sf::Vector2f const& position)
     e->addComponent<MovementComponent>();
     e->getComponent<MovementComponent>().setSpeed(200.f);
 
-    // Animation
-    e->addComponent<AnimationComponent>();
-    e->getComponent<AnimationComponent>().setSheetSize(sf::Vector2i(64,64));
-    e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
+    // Human
+    e->addComponent<HumanComponent>();
+    e->getComponent<HumanComponent>().setPosition(position);
 
-    // Life
+    // Weapon
+    Weapon::Ptr w = std::make_shared<Weapon>();
+    w->setType(Weapon::Type::Bow);
+    w->setDamage(20,25);
+    e->addComponent<WeaponComponent>();
+    e->getComponent<WeaponComponent>().setWeapon(w);
+
+    // Spell
+    e->addComponent<SpellComponent>();
+    e->getComponent<SpellComponent>().setSpell(0,new Fireball());
+    e->getComponent<SpellComponent>().setSpell(1,new Flash());
+    e->getComponent<SpellComponent>().setSpell(2,new Heal());
+    e->getComponent<SpellComponent>().setSpell(3,new Lightning());
+
+    // Inventory
+    e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
+
+    return e;
+}
+
+es::Entity::Ptr Prefab::createEnemy(sf::Vector2f const& position)
+{
+    es::Entity::Ptr e = mEntities.create();
+
+    // Transform
+    e->addComponent<TransformComponent>();
+    e->getComponent<TransformComponent>().setPosition(position);
+
+    // AI
+    e->addComponent<AIComponent>();
+    e->getComponent<AIComponent>().setViewDistance(300.f);
+    e->getComponent<AIComponent>().setOutOfView(500.f);
+
+    // Faction
+    e->addComponent<FactionComponent>();
+    e->getComponent<FactionComponent>().setFactionId(2);
+
+    // Stat
     e->addComponent<StatComponent>();
     e->getComponent<StatComponent>().setLife(100);
     e->getComponent<StatComponent>().setLifeMax(200);
     e->getComponent<StatComponent>().setMana(1000);
     e->getComponent<StatComponent>().setManaMax(1000);
     e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
+    e->getComponent<StatComponent>().setPosition(sf::Vector2f(0.f,-30.f));
 
-    // Player
-    e->addComponent<PlayerComponent>();
+    // Box
+    e->addComponent<BoxComponent>();
+    e->getComponent<BoxComponent>().setSize(sf::Vector2f(34.f,64.f));
+    e->getComponent<BoxComponent>().setOrigin(sf::Vector2f(17.f,32.f));
 
-    // Inventory
-    e->addComponent<InventoryComponent>();
-    e->getComponent<InventoryComponent>().setSize(20);
+    // Collision
+    e->addComponent<CollisionComponent>();
+    e->getComponent<CollisionComponent>().setSize(sf::Vector2f(20.f,20.f));
+    e->getComponent<CollisionComponent>().setOrigin(sf::Vector2f(10.f,-10.f));
+
+    // Movement
+    e->addComponent<MovementComponent>();
+    e->getComponent<MovementComponent>().setSpeed(180.f);
+
+    // Human
+    e->addComponent<HumanComponent>();
+    e->getComponent<HumanComponent>().setPosition(position);
 
     // Weapon
     Weapon::Ptr w = std::make_shared<Weapon>();
     w->setType(Weapon::Type::Sword);
-    w->setDamage(20,25);
+    w->setDamage(5,7);
     e->addComponent<WeaponComponent>();
     e->getComponent<WeaponComponent>().setWeapon(w);
-    e->getComponent<WeaponComponent>().setOrigin(16.f,64.f);
 
-    // Spell
-    e->addComponent<SpellComponent>();
-    e->getComponent<SpellComponent>().learnSpell(new Fireball());
-    e->getComponent<SpellComponent>().learnSpell(new Flash());
-    e->getComponent<SpellComponent>().learnSpell(new Heal());
-    e->getComponent<SpellComponent>().learnSpell(new Lightning());
+    // Inventory
+    e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
 
     return e;
 }
 
-es::Entity::Ptr Prefab::createMonster(sf::Vector2f const& position, MonsterComponent::Type type)
+es::Entity::Ptr Prefab::createAlly(sf::Vector2f const& position)
 {
-    es::Entity::Ptr e = mManager.create();
+    es::Entity::Ptr e = mEntities.create();
 
     // Transform
     e->addComponent<TransformComponent>();
     e->getComponent<TransformComponent>().setPosition(position);
-
-    // Sprite
-    e->addComponent<SpriteComponent>(MonsterComponent::getTextureId(type));
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(0,0,32,32));
-    e->getComponent<SpriteComponent>().setOrigin(sf::Vector2f(16.f,16.f));
-
-    // Box
-    e->addComponent<BoxComponent>();
-    e->getComponent<BoxComponent>().setSize(sf::Vector2f(34.f,64.f));
-    e->getComponent<BoxComponent>().setOrigin(sf::Vector2f(17.f,32.f));
-
-    // Collision
-    e->addComponent<CollisionComponent>();
-    e->getComponent<CollisionComponent>().setSize(sf::Vector2f(20.f,20.f));
-    e->getComponent<CollisionComponent>().setOrigin(sf::Vector2f(10.f,-10.f));
-
-    // Movement
-    e->addComponent<MovementComponent>();
-    e->getComponent<MovementComponent>().setSpeed(100.f);
-
-    // Animation
-    e->addComponent<AnimationComponent>();
-    e->getComponent<AnimationComponent>().setSheetSize(sf::Vector2i(32,32));
-    e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
-
-    // Life
-    e->addComponent<StatComponent>();
-    e->getComponent<StatComponent>().setLife(100);
-    e->getComponent<StatComponent>().setLifeMax(200);
-    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
 
     // AI
     e->addComponent<AIComponent>();
     e->getComponent<AIComponent>().setViewDistance(300.f);
     e->getComponent<AIComponent>().setOutOfView(500.f);
 
-    // Monster
-    e->addComponent<MonsterComponent>(type);
+    // Faction
+    e->addComponent<FactionComponent>();
+    e->getComponent<FactionComponent>().setFactionId(1);
 
-    // Inventory
-    e->addComponent<InventoryComponent>();
-    e->getComponent<InventoryComponent>().setSize(20);
-
-    // Weapon
-    e->addComponent<WeaponComponent>();
-    e->getComponent<WeaponComponent>().setRange(50.f);
-    e->getComponent<WeaponComponent>().setDamage(5,7);
-    e->getComponent<WeaponComponent>().setCooldown(sf::seconds(0.2f));
-
-    return e;
-}
-
-es::Entity::Ptr Prefab::createPacific(sf::Vector2f const& position)
-{
-    es::Entity::Ptr e = mManager.create();
-
-    // Transform
-    e->addComponent<TransformComponent>();
-    e->getComponent<TransformComponent>().setPosition(position);
-
-    // Sprite
-    e->addComponent<SpriteComponent>("princess");
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(0,0,64,64));
-    e->getComponent<SpriteComponent>().setOrigin(sf::Vector2f(32.f,32.f));
+    // Stat
+    e->addComponent<StatComponent>();
+    e->getComponent<StatComponent>().setLife(100);
+    e->getComponent<StatComponent>().setLifeMax(200);
+    e->getComponent<StatComponent>().setMana(1000);
+    e->getComponent<StatComponent>().setManaMax(1000);
+    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
+    e->getComponent<StatComponent>().setPosition(sf::Vector2f(0.f,-30.f));
 
     // Box
     e->addComponent<BoxComponent>();
@@ -155,93 +169,34 @@ es::Entity::Ptr Prefab::createPacific(sf::Vector2f const& position)
 
     // Movement
     e->addComponent<MovementComponent>();
-    e->getComponent<MovementComponent>().setSpeed(150.f);
+    e->getComponent<MovementComponent>().setSpeed(180.f);
 
-    // Animation
-    e->addComponent<AnimationComponent>();
-    e->getComponent<AnimationComponent>().setSheetSize(sf::Vector2i(64,64));
-    e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
-
-    // Life
-    e->addComponent<StatComponent>();
-    e->getComponent<StatComponent>().setLife(100);
-    e->getComponent<StatComponent>().setLifeMax(200);
-    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
-
-    // AI
-    e->addComponent<AIComponent>();
-    e->getComponent<AIComponent>().setViewDistance(200.f);
-    e->getComponent<AIComponent>().setOutOfView(400.f);
-
-    // Inventory
-    e->addComponent<InventoryComponent>();
-    e->getComponent<InventoryComponent>().setSize(20);
-
-    return e;
-}
-
-es::Entity::Ptr Prefab::createFighter(sf::Vector2f const& position)
-{
-    es::Entity::Ptr e = mManager.create();
-
-    // Transform
-    e->addComponent<TransformComponent>();
-    e->getComponent<TransformComponent>().setPosition(position);
-
-    // Sprite
-    e->addComponent<SpriteComponent>("soldier2");
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(0,0,64,64));
-    e->getComponent<SpriteComponent>().setOrigin(sf::Vector2f(32.f,32.f));
-
-    // Box
-    e->addComponent<BoxComponent>();
-    e->getComponent<BoxComponent>().setSize(sf::Vector2f(34.f,64.f));
-    e->getComponent<BoxComponent>().setOrigin(sf::Vector2f(17.f,32.f));
-
-    // Collision
-    e->addComponent<CollisionComponent>();
-    e->getComponent<CollisionComponent>().setSize(sf::Vector2f(20.f,20.f));
-    e->getComponent<CollisionComponent>().setOrigin(sf::Vector2f(10.f,-10.f));
-
-    // Movement
-    e->addComponent<MovementComponent>();
-    e->getComponent<MovementComponent>().setSpeed(100.f);
-
-    // Animation
-    e->addComponent<AnimationComponent>();
-    e->getComponent<AnimationComponent>().setSheetSize(sf::Vector2i(64,64));
-    e->getComponent<AnimationComponent>().setWalkDuration(sf::seconds(0.8f));
-
-    // Life
-    e->addComponent<StatComponent>();
-    e->getComponent<StatComponent>().setLife(100);
-    e->getComponent<StatComponent>().setLifeMax(200);
-    e->getComponent<StatComponent>().setLifeBarSize(sf::Vector2f(30.f,6.f));
-    e->getComponent<StatComponent>().setOrigin(sf::Vector2f(0.f,30.f));
-
-    // AI
-    e->addComponent<AIComponent>();
-    e->getComponent<AIComponent>().setViewDistance(300.f);
-    e->getComponent<AIComponent>().setOutOfView(500.f);
-
-    // Inventory
-    e->addComponent<InventoryComponent>();
-    e->getComponent<InventoryComponent>().setSize(20);
+    // Human
+    e->addComponent<HumanComponent>();
+    e->getComponent<HumanComponent>().setPosition(position);
 
     // Weapon
     Weapon::Ptr w = std::make_shared<Weapon>();
-    w->setType(Weapon::Type::Bow);
+    w->setType(Weapon::Type::Sword);
+    w->setDamage(5,7);
     e->addComponent<WeaponComponent>();
     e->getComponent<WeaponComponent>().setWeapon(w);
-    e->getComponent<WeaponComponent>().setOrigin(16.f,64.f);
+
+    // Inventory
+    e->addComponent<InventoryComponent>();
+    e->getComponent<InventoryComponent>().setSize(20);
 
     return e;
 }
 
-es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction)
+es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, sf::Vector2f const& direction, std::size_t strickerId)
 {
-    if (direction == sf::Vector2f() || stricker == nullptr)
+    if (direction == sf::Vector2f())
+    {
+        return nullptr;
+    }
+    es::Entity::Ptr stricker = World::instance().getEntities().get(strickerId);
+    if (stricker == nullptr)
     {
         return nullptr;
     }
@@ -259,7 +214,7 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entit
         return nullptr;
     }
 
-    es::Entity::Ptr e = mManager.create();
+    es::Entity::Ptr e = mEntities.create();
 
     // Transform
     e->addComponent<TransformComponent>();
@@ -283,7 +238,7 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entit
 
     // Projectile
     e->addComponent<ProjectileComponent>();
-    e->getComponent<ProjectileComponent>().setStricker(stricker);
+    e->getComponent<ProjectileComponent>().setStrickerId(strickerId);
     e->getComponent<ProjectileComponent>().setType(ProjectileComponent::Type::Arrow);
     e->getComponent<ProjectileComponent>().setDirection(direction);
     e->getComponent<ProjectileComponent>().setRange(weapon->getRange());
@@ -292,29 +247,23 @@ es::Entity::Ptr Prefab::createProjectile(sf::Vector2f const& position, es::Entit
     return e;
 }
 
-es::Entity::Ptr Prefab::createFireball(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction)
+es::Entity::Ptr Prefab::createSpellBall(sf::Vector2f const& position, sf::Vector2f const& direction, Spell* spell, std::size_t strickerId)
 {
-    if (direction == sf::Vector2f() || stricker == nullptr)
-    {
-        return nullptr;
-    }
-    if (!stricker->hasComponent<SpellComponent>())
+    if (direction == sf::Vector2f() || spell == nullptr)
     {
         return nullptr;
     }
 
-    sf::Vector2f unitDir = thor::unitVector<float>(direction);
-
-    es::Entity::Ptr e = mManager.create();
+    es::Entity::Ptr e = mEntities.create();
 
     // Transform
     e->addComponent<TransformComponent>();
-    e->getComponent<TransformComponent>().setPosition(position + 32.f * unitDir);
+    e->getComponent<TransformComponent>().setPosition(position);
 
     // Sprite
     e->addComponent<SpriteComponent>();
     e->getComponent<SpriteComponent>().setTexture("projectiles");
-    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(ProjectileComponent::Type::Fireball * 16, 0, 16, 32));
+    e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(2 * 16, 0, 16, 32)); // TODO : Update Texture
     e->getComponent<SpriteComponent>().setOrigin(8.f,16.f);
 
     // Box
@@ -327,32 +276,32 @@ es::Entity::Ptr Prefab::createFireball(sf::Vector2f const& position, es::Entity:
     e->getComponent<MovementComponent>().setSpeed(250.f);
     e->getComponent<MovementComponent>().setDirection(direction);
 
-    Spell* spell = stricker->getComponent<SpellComponent>().getActiveSpell();
-
     // Projectile
     e->addComponent<ProjectileComponent>();
-    e->getComponent<ProjectileComponent>().setStricker(stricker);
-    e->getComponent<ProjectileComponent>().setType(ProjectileComponent::Type::Fireball);
+    e->getComponent<ProjectileComponent>().setStrickerId(strickerId);
+    e->getComponent<ProjectileComponent>().setType(ProjectileComponent::Type::Fireball); // TODO : Other Spell Ball
     e->getComponent<ProjectileComponent>().setDirection(direction);
     e->getComponent<ProjectileComponent>().setRange(spell->getRange());
-    e->getComponent<ProjectileComponent>().setDamage(spell->getDamage()); // TODO : Add Intelligence
+    e->getComponent<ProjectileComponent>().setDamage(spell->getDamage());
 
     return e;
 }
 
-
 es::Entity::Ptr Prefab::createItem(sf::Vector2f const& position, Item::Ptr item)
 {
-    es::Entity::Ptr e = mManager.create();
+    es::Entity::Ptr e = mEntities.create();
 
     e->addComponent<TransformComponent>();
     e->getComponent<TransformComponent>().setPosition(position);
 
+    // TODO : Per item texture
     e->addComponent<SpriteComponent>("projectiles");
     e->getComponent<SpriteComponent>().setTextureRect(sf::IntRect(16,0,16,32));
+    e->getComponent<SpriteComponent>().setOrigin(8.f,16.f);
 
     e->addComponent<BoxComponent>();
     e->getComponent<BoxComponent>().setSize(sf::Vector2f(16.f,32.f));
+    e->getComponent<BoxComponent>().setOrigin(8.f,16.f);
 
     e->addComponent<ItemComponent>();
     e->getComponent<ItemComponent>().setItem(item);

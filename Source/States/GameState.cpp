@@ -1,6 +1,4 @@
 #include "GameState.hpp"
-#include "../../Lib/Aharos/Application.hpp"
-#include "../World.hpp"
 
 GameState::GameState(ah::StateManager& manager) : ah::State(manager)
 {
@@ -31,10 +29,10 @@ void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void GameState::onActivate()
 {
-
+    World::instance().initialize();
 }
 
 void GameState::onDeactivate()
 {
-
+    World::instance().terminate();
 }

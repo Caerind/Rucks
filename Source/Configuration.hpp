@@ -1,7 +1,7 @@
 #ifndef CONFIGURATION_HPP
 #define CONFIGURATION_HPP
 
-#include "../Lib/Aharos/ActionTarget.hpp"
+#include "../Aharos/Application/ActionTarget.hpp"
 
 class Configuration
 {
@@ -10,9 +10,6 @@ class Configuration
 
         void initialize();
         void terminate();
-
-        bool loadFromFile(std::string const& filename);
-        bool saveToFile(std::string const& filename);
 
         ah::ActionTarget::ActionMapPtr getPlayerInput();
 

@@ -1,10 +1,17 @@
 #include "WeaponComponent.hpp"
 #include "../World.hpp"
-#include "../../Lib/Aharos/Application.hpp"
+#include "../Prefab.hpp"
+#include "../../Aharos/Application/Application.hpp"
 
 WeaponComponent::WeaponComponent()
 {
     mWeapon = nullptr;
+    rd::Renderer::add(this);
+}
+
+WeaponComponent::~WeaponComponent()
+{
+    rd::Renderer::remove(this);
 }
 
 std::string WeaponComponent::getId()
@@ -12,13 +19,31 @@ std::string WeaponComponent::getId()
     return "WeaponComponent";
 }
 
+void WeaponComponent::render(sf::RenderTarget& target)
+{
+    if (mWeapon != nullptr)
+    {
+        sf::Vector2f pos = mPosition;
+        if (hasParent())
+        {
+            if (mParent->hasComponent<TransformComponent>())
+            {
+                pos += mParent->getComponent<TransformComponent>().getPosition();
+            }
+        }
+        rd::Sprite::setPosition(pos);
+        rd::Sprite::render(target);
+    }
+}
+
 void WeaponComponent::setWeapon(Weapon::Ptr weapon)
 {
     mWeapon = weapon;
-    if (weapon != nullptr)
+    if (mWeapon != nullptr)
     {
-        mWeaponSprite.setTexture(World::instance().getResources().getTexture("weapons"));
-        mWeaponSprite.setTextureRect(sf::IntRect(mWeapon->getType() * 32, 0, 32, 64));
+        setTexture(World::instance().getResources().getTexture("weapons"));
+        setTextureRect(sf::IntRect(mWeapon->getType() * 32, 0, 32, 64));
+        setOrigin(16.f,64.f);
     }
 }
 
@@ -159,7 +184,7 @@ void WeaponComponent::attack(es::Entity::Ptr target)
                 StatComponent& sP = mParent->getComponent<StatComponent>();
                 if (sT.isAlive())
                 {
-                    int damage = getDamage() + sP.getStrength(); // TODO : Better Formule for Damage
+                    int damage = getDamage() + sP.getStrength(); // TODO : Better Formumle for Damage
                     if (sT.inflige(damage))
                     {
                         sP.addExperience(10); // TODO : Add Experience
@@ -175,8 +200,8 @@ void WeaponComponent::attack(sf::Vector2f const& direction)
 {
     if (canAttack() && isLongRange() && hasParent())
     {
-        sf::Vector2f pos = mWeaponSprite.getPosition() + mParent->getComponent<TransformComponent>().getPosition();
-        World::instance().getPrefab().createProjectile(pos, std::shared_ptr<es::Entity>(mParent), direction);
+        sf::Vector2f pos = rd::Sprite::getPosition();
+        World::instance().createProjectile(pos, direction, mParent->getId());
     }
     mTimeSinceLastAttack.restart();
 }
@@ -197,27 +222,6 @@ sf::Time WeaponComponent::getTimeSinceLastAttack() const
 
 void WeaponComponent::setWeaponTransform(float x, float y, float rotation)
 {
-    setPosition(x,y);
-    setRotation(rotation);
+    mPosition = sf::Vector2f(x,y);
+    rd::Sprite::setRotation(rotation);
 }
-
-void WeaponComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    if (mWeapon != nullptr)
-    {
-        states.transform *= getTransform();
-        target.draw(mWeaponSprite,states);
-    }
-}
-
-void WeaponComponent::loadWeaponTextures()
-{
-    World::instance().getResources().loadTexture("weapons","Assets/Textures/weapons.png");
-    World::instance().getResources().getTexture("weapons").setSmooth(true);
-}
-
-void WeaponComponent::releaseWeaponTextures()
-{
-    World::instance().getResources().releaseTexture("weapons");
-}
-

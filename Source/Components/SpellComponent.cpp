@@ -1,21 +1,24 @@
 #include "SpellComponent.hpp"
-#include "../../Lib/EntitySystem/Entity.hpp"
-#include "../Components.hpp"
 #include "../World.hpp"
 
 SpellComponent::SpellComponent()
 {
-    mWasRunning = false;
+    mCastingSpell = 0;
+    mIsCasting = false;
+    for (std::size_t i = 0; i < mSpells.size(); i++)
+    {
+        mSpells[i] = nullptr;
+    }
+    rd::Renderer::add(this);
 }
 
 SpellComponent::~SpellComponent()
 {
+    rd::Renderer::remove(this);
     for (std::size_t i = 0; i < mSpells.size(); i++)
     {
         delete mSpells[i];
-        mSpells[i] = nullptr;
     }
-    mSpells.clear();
 }
 
 std::string SpellComponent::getId()
@@ -23,165 +26,111 @@ std::string SpellComponent::getId()
     return "SpellComponent";
 }
 
-void SpellComponent::learnSpell(Spell* spell)
+Spell* SpellComponent::getSpell(std::size_t i)
 {
-    mSpells.push_back(spell);
+    if (i >= 0 && i < mSpells.size())
+    {
+        return mSpells[i];
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
-std::size_t SpellComponent::getSpellCount() const
+void SpellComponent::setSpell(std::size_t i, Spell* spell)
 {
-    return mSpells.size();
+    if (i >= 0 && i < mSpells.size())
+    {
+        delete mSpells[i];
+        mSpells[i] = spell;
+    }
 }
 
-void SpellComponent::setActiveSpell(std::size_t id)
+bool SpellComponent::isCasting() const
 {
-    mActiveSpell = id;
+    return mIsCasting && mSpells[mCastingSpell] != nullptr;
 }
 
-std::size_t SpellComponent::getActiveSpellId() const
+sf::Time SpellComponent::getCasting() const
 {
-    return mActiveSpell;
+    return mCasting;
 }
 
 Spell* SpellComponent::getActiveSpell()
 {
-    return getSpell(mActiveSpell);
-}
-
-Spell* SpellComponent::getSpell(std::size_t id)
-{
-    if (id >= 0 && id < mSpells.size())
+    if (mCastingSpell >= 0 && mCastingSpell < mSpells.size())
     {
-        return mSpells[id];
+        return mSpells[mCastingSpell];
     }
     return nullptr;
 }
 
-bool SpellComponent::canSpell()
+bool SpellComponent::canSpell(std::size_t i)
 {
-    return mCaster.isExpired();
+    if (i >= 0 && i < mSpells.size())
+    {
+        if (mSpells[i] != nullptr)
+        {
+            return mSpells[i]->canSpell() && !isCasting();
+        }
+    }
+    return false;
 }
 
-void SpellComponent::spell()
+void SpellComponent::spell(std::size_t i)
 {
-    Spell* spell = getSpell(mActiveSpell);
-    if (canSpell() &&  spell != nullptr)
+    if (i >= 0 && i < mSpells.size())
     {
-        if (spell->canSpell())
+        if (mSpells[i] != nullptr)
         {
-            if (hasParent())
+            mCasting = sf::Time::Zero;
+            mCastingSpell = i;
+            mIsCasting = true;
+            rd::Renderer::add(this);
+        }
+    }
+}
+
+void SpellComponent::update(sf::Time dt)
+{
+    if (mIsCasting && mSpells[mCastingSpell] != nullptr)
+    {
+        mCasting += dt;
+        if (mCasting >= mSpells[mCastingSpell]->getCast())
+        {
+            mSpells[mCastingSpell]->activate();
+
+            mIsCasting = false;
+            mCasting = sf::Time::Zero;
+            mCastingSpell = 0;
+            rd::Renderer::remove(this);
+        }
+    }
+}
+
+void SpellComponent::render(sf::RenderTarget& target)
+{
+    if (isCasting())
+    {
+        sf::Vector2f pos = mPosition;
+        if (hasParent())
+        {
+            if (mParent->hasComponent<TransformComponent>())
             {
-                if (mParent->hasComponent<StatComponent>())
-                {
-                    mParent->getComponent<StatComponent>().useMana(spell->getManaCost());
-                }
+                pos += mParent->getComponent<TransformComponent>().getPosition();
             }
-            // TODO : Fix CallbackTimer
-            //mCaster.connect0(std::bind(&Spell::activate, spell));
-            mWasRunning = true;
-            mCaster.restart(spell->getCast());
         }
+        rd::Sprite::setTexture(World::instance().getResources().getTexture("spell"));
+        rd::Sprite::setTextureRect(sf::IntRect(0,0,8,8)); // TODO : Animated spell
+        rd::Sprite::setOrigin(4.f,4.f);
+        rd::Sprite::setColor(mSpells[mCastingSpell]->getColor());
+        rd::Sprite::setPosition(pos);
+        rd::Sprite::render(target);
     }
 }
 
-void SpellComponent::update(es::Entity::Ptr stricker, es::Entity::Ptr target, sf::Vector2f const& position, sf::Vector2f const& direction)
+void SpellComponent::setSpellPosition(float x, float y)
 {
-    if (mWasRunning && mCaster.isExpired())
-    {
-        Spell* spell = getActiveSpell();
-        if (spell != nullptr)
-        {
-            spell->setStricker(stricker);
-            spell->setTarget(target);
-            spell->setPosition(position);
-            spell->setDirection(direction);
-
-            spell->activate();
-        }
-        mWasRunning = false;
-    }
+    mPosition = sf::Vector2f(x,y);
 }
-
-sf::Time SpellComponent::getRemainingCastTime()
-{
-    return mCaster.getRemainingTime();
-}
-
-/*
-void SpellComponent::setType(Type type)
-{
-    mType = type;
-}
-
-SpellComponent::Type SpellComponent::getType() const
-{
-    return mType;
-}
-
-void SpellComponent::setRange(float range)
-{
-    mRange = range;
-}
-
-float SpellComponent::getRange() const
-{
-    return mRange;
-}
-
-void SpellComponent::setDamage(int damage)
-{
-    mDamage = damage;
-}
-
-int SpellComponent::getDamage() const
-{
-    return mDamage;
-}
-
-void SpellComponent::setCooldown(sf::Time cooldown)
-{
-    mCooldown = cooldown;
-}
-
-sf::Time SpellComponent::getCooldown() const
-{
-    return mCooldown;
-}
-
-void SpellComponent::spell(sf::Vector2f const& direction)
-{
-    if (canSpell() && hasParent())
-    {
-        mTimeSinceLastSpell.restart();
-        switch (mType)
-        {
-            case Type::Fireball:
-            {
-                if (mParent->hasComponent<TransformComponent>())
-                {
-                    sf::Vector2f pos = mParent->getComponent<TransformComponent>().getPosition();
-                    World::instance().getPrefab().createFireball(pos, std::shared_ptr<es::Entity>(mParent), direction);
-                }
-            } break;
-
-            case Type::Heal:
-            {
-                if (mParent->hasComponent<StatComponent>())
-                {
-                    mParent->getComponent<StatComponent>().restoreLife(mDamage);
-                }
-            } break;
-        }
-    }
-}
-
-bool SpellComponent::canSpell()
-{
-    return mTimeSinceLastSpell.getElapsedTime() >= mCooldown;
-}
-
-sf::Time SpellComponent::getTimeSinceLastSpell() const
-{
-    return mTimeSinceLastSpell.getElapsedTime();
-}
-*/

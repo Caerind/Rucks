@@ -1,7 +1,7 @@
 #ifndef PLAYERCOMPONENT_HPP
 #define PLAYERCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
 
 class PlayerComponent : public es::Component
 {

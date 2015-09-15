@@ -97,6 +97,11 @@ int Spell::getManaCost() const
     return mManaCost;
 }
 
+sf::Color Spell::getColor() const
+{
+    return mColor;
+}
+
 sf::Time Spell::getRemainingTime() const
 {
     sf::Time dt = mCooldown - mCooldownTimer.getElapsedTime();

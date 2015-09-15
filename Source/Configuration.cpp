@@ -25,16 +25,6 @@ void Configuration::terminate()
 {
 }
 
-bool Configuration::loadFromFile(std::string const& filename)
-{
-    return true;
-}
-
-bool Configuration::saveToFile(std::string const& filename)
-{
-    return true;
-}
-
 ah::ActionTarget::ActionMapPtr Configuration::getPlayerInput()
 {
     return mPlayerInput;

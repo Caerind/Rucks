@@ -1,7 +1,7 @@
 #ifndef LIFESYSTEM_HPP
 #define LIFESYSTEM_HPP
 
-#include "../../Lib/EntitySystem/System.hpp"
+#include "../../Aharos/EntitySystem/System.hpp"
 #include "../Components.hpp"
 
 #include <SFML/System/Clock.hpp>

@@ -1,29 +1,28 @@
 #ifndef PREFAB_HPP
 #define PREFAB_HPP
 
-#include "../Lib/EntitySystem/EntitySystem.hpp"
+#include "../Aharos/EntitySystem/EntitySystem.hpp"
 
-#include "Components.hpp"
-#include "Spells.hpp"
+#include <SFML/System/Vector2.hpp>
+#include <memory>
 
-#include "../Game/Item.hpp"
-#include "../Game/Weapon.hpp"
+class Spell;
+class Item;
 
 class Prefab
 {
     public:
-        Prefab(es::EntityManager& manager);
+        Prefab();
 
         es::Entity::Ptr createPlayer(sf::Vector2f const& position);
-        es::Entity::Ptr createMonster(sf::Vector2f const& position, MonsterComponent::Type type);
-        es::Entity::Ptr createPacific(sf::Vector2f const& position);
-        es::Entity::Ptr createFighter(sf::Vector2f const& position);
-        es::Entity::Ptr createProjectile(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction);
-        es::Entity::Ptr createFireball(sf::Vector2f const& position, es::Entity::Ptr stricker, sf::Vector2f const& direction);
-        es::Entity::Ptr createItem(sf::Vector2f const& position, Item::Ptr item);
+        es::Entity::Ptr createEnemy(sf::Vector2f const& position);
+        es::Entity::Ptr createAlly(sf::Vector2f const& position);
+        es::Entity::Ptr createProjectile(sf::Vector2f const& position, sf::Vector2f const& direction, std::size_t strickerId = 0);
+        es::Entity::Ptr createSpellBall(sf::Vector2f const& position, sf::Vector2f const& direction, Spell* spell, std::size_t strickerId = 0);
+        es::Entity::Ptr createItem(sf::Vector2f const& position, std::shared_ptr<Item> item);
 
-    private:
-        es::EntityManager& mManager;
+    protected:
+        es::EntityManager mEntities;
 };
 
 #endif // PREFAB_HPP

@@ -2,7 +2,7 @@
 #define INVENTORYCOMPONENT_HPP
 
 #include <vector>
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
 #include "../Game/Item.hpp"
 
 class InventoryComponent : public es::Component
@@ -13,6 +13,8 @@ class InventoryComponent : public es::Component
         static std::string getId();
 
         void addItem(Item::Ptr item);
+        void addItem(std::size_t itemId);
+
         Item::Ptr moveLastItem();
 
         void setSize(std::size_t size);
@@ -21,9 +23,12 @@ class InventoryComponent : public es::Component
         std::size_t getItemCount() const;
         bool isFull() const;
 
+        bool has(std::size_t itemId) const;
+        std::size_t amount(std::size_t itemId) const;
+
     private:
         std::size_t mSize;
-        std::vector<Item::Ptr> mItems;
+        std::map<std::size_t,std::size_t> mItems; // <ItemId,Amount>
 };
 
 #endif // INVENTORYCOMPONENT_HPP

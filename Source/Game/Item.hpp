@@ -11,6 +11,11 @@ class Item
 
         Item();
 
+        void setId(int id);
+        int getId() const;
+
+        bool isStackable() const;
+
         void setName(std::string const& name);
         std::string getName() const;
 
@@ -20,6 +25,7 @@ class Item
         virtual bool isWeapon() const;
 
     protected:
+        int mId;
         std::string mName;
         int mPrice;
 };

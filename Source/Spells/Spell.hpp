@@ -4,10 +4,11 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <Thor/Math/Random.hpp>
 #include <Thor/Vectors/VectorAlgebra2D.hpp>
 
-#include "../../Lib/EntitySystem/Entity.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
 
 class Spell
 {
@@ -42,6 +43,7 @@ class Spell
         sf::Time getCooldown() const;
         sf::Time getCast() const;
         int getManaCost() const;
+        sf::Color getColor() const;
 
         sf::Time getRemainingTime() const;
 
@@ -53,6 +55,7 @@ class Spell
         sf::Time mCooldown;
         sf::Time mCast;
         int mManaCost;
+        sf::Color mColor;
 
         es::Entity::Ptr mStricker;
         es::Entity::Ptr mTarget;

@@ -2,7 +2,7 @@
 #define PROJECTILESYSTEM_HPP
 
 #include "../Components.hpp"
-#include "../../Lib/EntitySystem/System.hpp"
+#include "../../Aharos/EntitySystem/System.hpp"
 #include <SFML/System/Time.hpp>
 
 class ProjectileSystem : public es::System

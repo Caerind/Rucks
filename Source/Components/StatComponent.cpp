@@ -1,4 +1,6 @@
 #include "StatComponent.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
+#include "../Components.hpp"
 
 ////////////////////////////////////////////////////////////
 StatComponent::StatComponent()
@@ -12,6 +14,16 @@ StatComponent::StatComponent()
     mStrength = 1;
     mIntelligence = 1;
     mAgility = 1;
+
+    mZ = 2200.f;
+
+    rd::Renderer::add(this);
+}
+
+////////////////////////////////////////////////////////////
+StatComponent::~StatComponent()
+{
+    rd::Renderer::remove(this);
 }
 
 ////////////////////////////////////////////////////////////
@@ -94,27 +106,67 @@ sf::Vector2f StatComponent::getLifeBarSize() const
 }
 
 ////////////////////////////////////////////////////////////
-void StatComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
+sf::FloatRect StatComponent::getBounds()
 {
-    if (mLife < mLifeMax)
+    return sf::FloatRect(sf::Vector2f(getPosition() + sf::Vector2f(-mLifeBarSize.x/2,0.f)),mLifeBarSize);
+}
+
+////////////////////////////////////////////////////////////
+void StatComponent::render(sf::RenderTarget& target)
+{
+    if (mLife < mLifeMax || mMana < mManaMax)
     {
-        states.transform *= getTransform();
+        sf::Vector2f pos = getPosition() + sf::Vector2f(-mLifeBarSize.x/2,0.f);
 
         sf::RectangleShape background;
-        background.setPosition(-mLifeBarSize.x/2,0.f);
+        background.setPosition(pos);
         background.setSize(mLifeBarSize);
         background.setFillColor(sf::Color::Red);
         background.setOutlineThickness(1.2f);
         background.setOutlineColor(sf::Color::Black);
 
         sf::RectangleShape life;
-        life.setPosition(-mLifeBarSize.x/2,0.f);
+        life.setPosition(pos);
         life.setSize(sf::Vector2f(mLifeBarSize.x * static_cast<float>(mLife) / static_cast<float>(mLifeMax), mLifeBarSize.y));
         life.setFillColor(sf::Color::Green);
 
-        target.draw(background,states);
-        target.draw(life,states);
+        sf::RectangleShape bg;
+        bg.setPosition(pos.x,pos.y + mLifeBarSize.y);
+        bg.setSize(sf::Vector2f(mLifeBarSize.x,(2.f/5.f) * mLifeBarSize.y));
+        bg.setFillColor(sf::Color(25,25,100));
+        bg.setOutlineThickness(1.2f);
+        bg.setOutlineColor(sf::Color::Black);
+
+        sf::RectangleShape mana;
+        mana.setPosition(pos.x,pos.y + mLifeBarSize.y);
+        mana.setSize(sf::Vector2f(mLifeBarSize.x * static_cast<float>(mMana) / static_cast<float>(mManaMax), (2.f/5.f) * mLifeBarSize.y));
+        mana.setFillColor(sf::Color::Blue);
+
+        target.draw(background);
+        target.draw(life);
+        target.draw(bg);
+        target.draw(mana);
     }
+}
+
+////////////////////////////////////////////////////////////
+void StatComponent::setPosition(sf::Vector2f const& position)
+{
+    mLifeBarPosition = position;
+}
+
+////////////////////////////////////////////////////////////
+sf::Vector2f StatComponent::getPosition() const
+{
+    sf::Vector2f position = mLifeBarPosition;
+    if (hasParent())
+    {
+        if (mParent->hasComponent<TransformComponent>())
+        {
+            position += mParent->getComponent<TransformComponent>().getPosition();
+        }
+    }
+    return position;
 }
 
 ////////////////////////////////////////////////////////////
@@ -195,6 +247,7 @@ bool StatComponent::addExperience(int experience)
         int diff = experience - getExperienceRemaning();
         addLevel();
         mExperience = diff;
+        return true;
     }
     else
     {
@@ -253,3 +306,26 @@ int StatComponent::getAgility() const
     return mAgility;
 }
 
+////////////////////////////////////////////////////////////
+void StatComponent::setMoney(int money)
+{
+    mMoney = money;
+}
+
+////////////////////////////////////////////////////////////
+int StatComponent::getMoney() const
+{
+    return mMoney;
+}
+
+////////////////////////////////////////////////////////////
+void StatComponent::spendMoney(int money)
+{
+    mMoney -= money;
+}
+
+////////////////////////////////////////////////////////////
+void StatComponent::earnMoney(int money)
+{
+    mMoney += money;
+}

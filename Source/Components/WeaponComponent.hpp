@@ -1,24 +1,28 @@
 #ifndef WEAPONCOMPONENT_HPP
 #define WEAPONCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
-#include "../../Lib/EntitySystem/Entity.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
+
+#include "../../Aharos/Renderer/Renderer.hpp"
+#include "../../Aharos/Renderer/Sprite.hpp"
 
 #include "../Game/Weapon.hpp"
 
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 #include <Thor/Math/Random.hpp>
 
-class WeaponComponent : public es::Component, public sf::Transformable, public sf::Drawable
+class WeaponComponent : public es::Component, public rd::Sprite
 {
     public:
         WeaponComponent();
+        ~WeaponComponent();
 
         static std::string getId();
+
+        void render(sf::RenderTarget& target);
 
         void setWeapon(Weapon::Ptr weapon);
         Weapon::Ptr getWeapon() const;
@@ -50,7 +54,6 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
         sf::Time getTimeSinceLastAttack() const;
 
         void setWeaponTransform(float x, float y, float rotation);
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
         static void loadWeaponTextures();
         static void releaseWeaponTextures();
@@ -58,13 +61,13 @@ class WeaponComponent : public es::Component, public sf::Transformable, public s
     private:
         Weapon::Ptr mWeapon;
 
+        sf::Vector2f mPosition;
+
         float mRange;
         sf::Vector2i mDamage;
         sf::Time mCooldown;
 
         sf::Clock mTimeSinceLastAttack;
-
-        sf::Sprite mWeaponSprite;
 };
 
 #endif // WEAPONCOMPONENT_HPP

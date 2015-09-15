@@ -9,7 +9,8 @@ Heal::Heal()
     mDamage = sf::Vector2i(20,30);
     mCooldown = sf::seconds(3.f);
     mCast = sf::seconds(0.3f);
-    mManaCost = 10;
+    mManaCost = 30;
+    mColor = sf::Color(50,250,250);
 }
 
 void Heal::activate()
@@ -19,6 +20,14 @@ void Heal::activate()
     mTarget->getComponent<StatComponent>().restoreLife(getDamage()); // TODO : Add Intelligence
 
     mCooldownTimer.restart();
+
+    if (mStricker != nullptr)
+    {
+        if (mStricker->hasComponent<StatComponent>())
+        {
+            mStricker->getComponent<StatComponent>().useMana(mManaCost);
+        }
+    }
 }
 
 bool Heal::canSpell()
@@ -32,8 +41,7 @@ bool Heal::canSpell()
     assert(mTarget->hasComponent<TransformComponent>());
     if (mStricker->getComponent<StatComponent>().getMana() >= getManaCost()
     && mCooldownTimer.getElapsedTime() >= getCooldown()
-    && thor::length(mTarget->getComponent<TransformComponent>().getPosition() - mStricker->getComponent<TransformComponent>().getPosition()) <= getRange()
-    && mStricker->hasComponent<MonsterComponent>() == mTarget->hasComponent<MonsterComponent>())
+    && thor::length(mTarget->getComponent<TransformComponent>().getPosition() - mStricker->getComponent<TransformComponent>().getPosition()) <= getRange())
     {
         return true;
     }

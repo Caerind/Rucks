@@ -9,7 +9,8 @@ Flash::Flash()
     mDamage = sf::Vector2i(0,0);
     mCooldown = sf::seconds(20.f);
     mCast = sf::seconds(0.3f);
-    mManaCost = 30;
+    mManaCost = 100;
+    mColor = sf::Color(250,250,50);
 }
 
 void Flash::activate()
@@ -19,6 +20,14 @@ void Flash::activate()
     mStricker->getComponent<TransformComponent>().setPosition(mPosition);
 
     mCooldownTimer.restart();
+
+    if (mStricker != nullptr)
+    {
+        if (mStricker->hasComponent<StatComponent>())
+        {
+            mStricker->getComponent<StatComponent>().useMana(mManaCost);
+        }
+    }
 }
 
 bool Flash::canSpell()

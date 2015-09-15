@@ -14,20 +14,22 @@ std::string MovementSystem::getId()
 
 void MovementSystem::update(sf::Time dt)
 {
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
         sf::Vector2f mvt;
         sf::Vector2f direction = mEntities[i]->getComponent<MovementComponent>().getDirection();
         float speed = mEntities[i]->getComponent<MovementComponent>().getSpeed();
-        if (mEntities[i]->hasComponent<AnimationComponent>())
+
+        if (mEntities[i]->hasComponent<HumanComponent>())
         {
-            AnimationComponent::Direction dirEnt = mEntities[i]->getComponent<AnimationComponent>().getDirection();
-            AnimationComponent::Direction dirMvt = AnimationComponent::getDirection(direction);
+            HumanComponent::Direction dirEnt = mEntities[i]->getComponent<HumanComponent>().getDirection();
+            HumanComponent::Direction dirMvt = HumanComponent::getDirection(direction);
             if (dirEnt == dirMvt + 2 || dirEnt + 2 == dirMvt)
             {
-                speed /= 1.20f;
+                speed *= 0.8f; // Reduce the movement if we go backward
             }
         }
+
         mvt = speed * direction * dt.asSeconds();
 
         if (mEntities[i]->hasComponent<CollisionComponent>())
@@ -36,25 +38,29 @@ void MovementSystem::update(sf::Time dt)
             {
                 if (mEntities[i]->hasComponent<AIComponent>())
                 {
-                    mEntities[i]->getComponent<AIComponent>().setTarget(nullptr);
+                    mEntities[i]->getComponent<AIComponent>().setTargetId(0);
+                    // TODO : A*
                 }
             }
         }
 
+        // Finally move it
         mEntities[i]->getComponent<TransformComponent>().move(mvt);
 
-        if (mEntities[i]->hasComponent<AnimationComponent>())
+        // Human walking
+        if (mEntities[i]->hasComponent<HumanComponent>())
         {
             if (mvt != sf::Vector2f())
             {
-                mEntities[i]->getComponent<AnimationComponent>().addWalkTime(dt);
+                mEntities[i]->getComponent<HumanComponent>().addWalkTime(dt);
             }
             else
             {
-                mEntities[i]->getComponent<AnimationComponent>().resetWalkTime();
+                mEntities[i]->getComponent<HumanComponent>().resetWalkTime();
             }
         }
 
+        // Projectile distance
         if (mEntities[i]->hasComponent<ProjectileComponent>())
         {
             mEntities[i]->getComponent<ProjectileComponent>().addDistanceTraveled(mvt);

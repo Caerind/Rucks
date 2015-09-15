@@ -4,13 +4,11 @@
 
 AIControllerSystem::AIControllerSystem()
 {
-    mFilter.requires(TransformComponent::getId());
-    mFilter.requires(SpriteComponent::getId());
-    mFilter.requires(BoxComponent::getId());
-    mFilter.requires(CollisionComponent::getId());
-    mFilter.requires(MovementComponent::getId());
-    mFilter.requires(AnimationComponent::getId());
     mFilter.requires(AIComponent::getId());
+    mFilter.requires(TransformComponent::getId());
+    mFilter.requires(MovementComponent::getId());
+    mFilter.requires(HumanComponent::getId());
+    mFilter.requires(FactionComponent::getId());
 }
 
 std::string AIControllerSystem::getId()
@@ -20,7 +18,7 @@ std::string AIControllerSystem::getId()
 
 void AIControllerSystem::update()
 {
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
         if (!mEntities[i]->getComponent<AIComponent>().hasTarget() && hasManager())
         {
@@ -29,8 +27,9 @@ void AIControllerSystem::update()
 
         if (mEntities[i]->getComponent<AIComponent>().hasTarget())
         {
-            handleMovement(mEntities[i]);
-            if (mEntities[i]->hasComponent<WeaponComponent>())
+            bool hasWeapon = mEntities[i]->hasComponent<WeaponComponent>();
+            handleMovement(mEntities[i], hasWeapon);
+            if (hasWeapon)
             {
                 handleAttack(mEntities[i]);
             }
@@ -49,43 +48,46 @@ void AIControllerSystem::findTarget(es::Entity::Ptr e)
     {
         es::ComponentFilter targetFilter;
         targetFilter.requires(TransformComponent::getId());
-        targetFilter.requires(SpriteComponent::getId());
+        targetFilter.requires(FactionComponent::getId());
         targetFilter.requires(StatComponent::getId());
         targetList = mManager->getByFilter(targetFilter);
     }
     es::Entity::Ptr target = e->getComponent<AIComponent>().getTarget();
-    sf::Vector2f tPos, ePos = e->getComponent<TransformComponent>().getPosition();
-    for (unsigned int i = 0; i < targetList.size(); i++)
+    sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
+    float d = 999999.f;
+    if (target != nullptr)
+    {
+        if (e->getComponent<AIComponent>().setTargetId(target->getId()))
+        {
+            d = thor::length(target->getComponent<TransformComponent>().getPosition() - ePos);
+        }
+    }
+    for (std::size_t i = 0; i < targetList.size(); i++)
     {
         if (targetList[i] != nullptr)
         {
-            sf::Vector2f tePos = targetList[i]->getComponent<TransformComponent>().getPosition();
-            if (targetList[i]->getId() != e->getId()
-            && targetList[i]->getComponent<StatComponent>().isAlive()
-            && thor::length(ePos - tePos) < e->getComponent<AIComponent>().getViewDistance())
+            float newD = thor::length(targetList[i]->getComponent<TransformComponent>().getPosition() - ePos);
+            if (newD < d)
             {
-                if (targetList[i]->hasComponent<MonsterComponent>() != e->hasComponent<MonsterComponent>())
+                if (e->getComponent<AIComponent>().setTargetId(targetList[i]->getId()))
                 {
-                    if (target == nullptr)
-                    {
-                        target = targetList[i];
-                    }
-                    else if (thor::length(ePos - tePos) < thor::length(ePos - tPos))
-                    {
-                        target = targetList[i];
-                    }
+                    d = newD;
+                    target = targetList[i];
                 }
             }
         }
-        if (target != nullptr)
-        {
-            tPos = target->getComponent<TransformComponent>().getPosition();
-        }
     }
-    e->getComponent<AIComponent>().setTarget(target);
+    if (target != nullptr)
+    {
+        e->getComponent<AIComponent>().setTargetId(target->getId());
+    }
+    else
+    {
+        e->getComponent<AIComponent>().setTargetId(0);
+    }
 }
 
-void AIControllerSystem::handleMovement(es::Entity::Ptr e)
+void AIControllerSystem::handleMovement(es::Entity::Ptr e, bool hasWeapon)
 {
     if (e->getComponent<AIComponent>().hasTarget())
     {
@@ -93,10 +95,10 @@ void AIControllerSystem::handleMovement(es::Entity::Ptr e)
         sf::Vector2f ePos = e->getComponent<TransformComponent>().getPosition();
         sf::Vector2f diff = tPos - ePos;
 
-        if (e->hasComponent<WeaponComponent>())
+        if (hasWeapon)
         {
-            float dist = e->getComponent<WeaponComponent>().getRange() - 16.f;
-            e->getComponent<AnimationComponent>().setDirection(tPos);
+            float dist = e->getComponent<WeaponComponent>().getRange() - 20.f;
+            e->getComponent<HumanComponent>().setDirection(tPos);
             if (thor::length(diff) > dist)
             {
                 e->getComponent<MovementComponent>().setDirection(diff);
@@ -109,7 +111,7 @@ void AIControllerSystem::handleMovement(es::Entity::Ptr e)
         else
         {
             e->getComponent<MovementComponent>().setDirection(-diff);
-            e->getComponent<AnimationComponent>().setDirection(-tPos);
+            e->getComponent<HumanComponent>().setDirection(-tPos);
         }
     }
 }
@@ -137,9 +139,9 @@ void AIControllerSystem::handleAttack(es::Entity::Ptr e)
 
 void AIControllerSystem::handleNoTarget(es::Entity::Ptr e)
 {
-    if (e->hasComponent<AnimationComponent>())
+    if (e->hasComponent<HumanComponent>())
     {
-        e->getComponent<AnimationComponent>().setDirection(AnimationComponent::Direction::S);
+        e->getComponent<HumanComponent>().setDirection(HumanComponent::Direction::S);
         e->getComponent<MovementComponent>().setDirection(sf::Vector2f());
         // TODO : Handle Boring
     }

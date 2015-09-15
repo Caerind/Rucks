@@ -1,6 +1,10 @@
 #include "ItemSystem.hpp"
 #include "../World.hpp"
 
+#include "../Components.hpp"
+
+#include <Thor/Math/Random.hpp>
+
 ItemSystem::ItemSystem()
 {
     mFilter.requires(InventoryComponent::getId());
@@ -13,29 +17,33 @@ std::string ItemSystem::getId()
 
 void ItemSystem::update()
 {
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
         // If an entity want to pick up an item on the ground
         if (mEntities[i]->hasComponent<BoxComponent>())
         {
             sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
 
-            if (hasManager() && !mEntities[i]->getComponent<InventoryComponent>().isFull())
+            if (hasManager())
             {
                 es::ComponentFilter itemFilter;
                 itemFilter.requires(TransformComponent::getId());
-                itemFilter.requires(SpriteComponent::getId());
                 itemFilter.requires(BoxComponent::getId());
                 itemFilter.requires(ItemComponent::getId());
 
                 es::EntityArray items = mManager->getByFilter(itemFilter);
 
-                for (unsigned int j = 0; j < items.size(); j++)
+                for (std::size_t j = 0; j < items.size(); j++)
                 {
                     if (items[j]->getComponent<BoxComponent>().intersects(r) && items[j]->getComponent<ItemComponent>().hasItem())
                     {
-                        mEntities[i]->getComponent<InventoryComponent>().addItem(items[j]->getComponent<ItemComponent>().moveItem());
-                        mManager->remove(items[j]);
+                        std::size_t id = items[j]->getComponent<ItemComponent>().getItem()->getId();
+                        if ((!mEntities[i]->getComponent<InventoryComponent>().isFull() && !mEntities[i]->getComponent<InventoryComponent>().has(id))
+                        || (mEntities[i]->getComponent<InventoryComponent>().has(id)))
+                        {
+                            mEntities[i]->getComponent<InventoryComponent>().addItem(items[j]->getComponent<ItemComponent>().moveItem());
+                            mManager->remove(items[j]);
+                        }
                     }
                 }
             }
@@ -54,7 +62,7 @@ void ItemSystem::update()
                         sf::Vector2f position = mEntities[i]->getComponent<TransformComponent>().getPosition();
                         position.x += thor::random(-20.f,20.f);
                         position.y += thor::random(-20.f,20.f);
-                        World::instance().getPrefab().createItem(position,item);
+                        World::instance().createItem(position,item);
                     }
                 }
             }

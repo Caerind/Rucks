@@ -1,8 +1,9 @@
 #include "AIComponent.hpp"
+#include "../World.hpp"
 
 AIComponent::AIComponent()
 {
-    mTarget = nullptr;
+    mTarget = 0;
 }
 
 std::string AIComponent::getId()
@@ -10,42 +11,50 @@ std::string AIComponent::getId()
     return "AIComponent";
 }
 
-void AIComponent::setTarget(es::Entity::Ptr target)
+bool AIComponent::setTargetId(std::size_t target)
 {
     mTarget = target;
-    hasTarget();
+    return hasTarget();
 }
 
-es::Entity::Ptr AIComponent::getTarget()
+std::size_t AIComponent::getTargetId() const
 {
     return mTarget;
 }
 
+es::Entity::Ptr AIComponent::getTarget()
+{
+    return World::instance().getEntities().get(mTarget);
+}
+
 bool AIComponent::hasTarget()
 {
-    if (mTarget != nullptr)
+    auto t = getTarget();
+    if (t != nullptr)
     {
         es::ComponentFilter targetFilter;
+        targetFilter.requires(FactionComponent::getId());
         targetFilter.requires(TransformComponent::getId());
-        targetFilter.requires(SpriteComponent::getId());
         targetFilter.requires(StatComponent::getId());
-        if (mTarget->hasComponents(targetFilter) && hasParent())
+        if (t->hasComponents(targetFilter) && hasParent())
         {
             sf::Vector2f ePos = mParent->getComponent<TransformComponent>().getPosition();
-            sf::Vector2f tPos = mTarget->getComponent<TransformComponent>().getPosition();
-            if (mTarget->getId() != mParent->getId() && mTarget->getComponent<StatComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView)
+            sf::Vector2f tPos = t->getComponent<TransformComponent>().getPosition();
+            if (t->getId() != mParent->getId() && t->getComponent<StatComponent>().isAlive() && thor::length(ePos - tPos) < mOutOfView && mParent->hasComponent<FactionComponent>())
             {
-                //resetBoredTime();
-                return true;
+                if (mParent->getComponent<FactionComponent>().getFaction().isEnemy(t->getComponent<FactionComponent>().getFactionId()))
+                {
+                    return true;
+                }
             }
             else
             {
-                mTarget = nullptr;
+                mTarget = 0;
             }
         }
         else
         {
-            mTarget = nullptr;
+            mTarget = 0;
         }
     }
     return false;

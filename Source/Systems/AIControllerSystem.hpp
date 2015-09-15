@@ -1,7 +1,7 @@
 #ifndef AICONTROLLERSYSTEM_HPP
 #define AICONTROLLERSYSTEM_HPP
 
-#include "../../Lib/EntitySystem/System.hpp"
+#include "../../Aharos/EntitySystem/System.hpp"
 
 #include "../Components.hpp"
 
@@ -17,7 +17,7 @@ class AIControllerSystem : public es::System
         void update();
 
         void findTarget(es::Entity::Ptr e);
-        void handleMovement(es::Entity::Ptr e);
+        void handleMovement(es::Entity::Ptr e, bool hasWeapon);
         void handleAttack(es::Entity::Ptr e);
         void handleNoTarget(es::Entity::Ptr e);
 };

@@ -1,5 +1,6 @@
 #include "ProjectileSystem.hpp"
 #include "../World.hpp"
+#include "../../Aharos/Application/Application.hpp"
 
 ProjectileSystem::ProjectileSystem()
 {
@@ -17,7 +18,7 @@ std::string ProjectileSystem::getId()
 
 void ProjectileSystem::update()
 {
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
         bool remove = false;
 
@@ -28,27 +29,30 @@ void ProjectileSystem::update()
         sf::FloatRect r = mEntities[i]->getComponent<BoxComponent>().getBounds();
         if (World::instance().getEntities().getSystem<CollisionSystem>().projectileCollision(r,e))
         {
-            if (e != nullptr && p.getStricker() != nullptr) // If we have touched an entity with life component
+            auto s = p.getStricker();
+            if (e != nullptr && s != nullptr) // If we have touched an entity with life component
             {
-                if (e->hasComponent<StatComponent>() && e->hasComponent<MonsterComponent>() != p.getStricker()->hasComponent<MonsterComponent>() && e != p.getStricker())
+                if (e->hasComponent<StatComponent>() && e != s)
                 {
-                    e->getComponent<StatComponent>().inflige(p.getDamage());
+                    if (e->getComponent<StatComponent>().inflige(p.getDamage()) && s->hasComponent<StatComponent>()) // TODO : Better Formule For Damage
+                    {
+                        s->getComponent<StatComponent>().addExperience(10); // TODO : Add Experience
+                    }
+                    remove = true;
                 }
             }
-            else // If we have touched a collide tile
-            {
-            }
-            if (e != p.getStricker())
+            else if (s != nullptr)
             {
                 remove = true;
             }
         }
 
+        // Test if fall down
         if (p.fallDown())
         {
             if (p.getType() == ProjectileComponent::Type::Arrow)
             {
-                World::instance().getPrefab().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),std::make_shared<Item>());
+                World::instance().createItem(mEntities[i]->getComponent<TransformComponent>().getPosition(),std::make_shared<Item>());
             }
             remove = true;
         }

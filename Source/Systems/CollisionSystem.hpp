@@ -1,17 +1,23 @@
 #ifndef COLLISIONSYSTEM_HPP
 #define COLLISIONSYSTEM_HPP
 
-#include "../../Lib/EntitySystem/EntitySystem.hpp"
+#include "../../Aharos/EntitySystem/System.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
 #include "../Components.hpp"
-#include "../Chunk/ChunkManager.hpp"
 #include <SFML/System/Vector2.hpp>
+
+#include "../Map/Map.hpp"
+#include "../Map/Orthogonal.hpp"
+#include "../Map/DefaultGen.hpp"
+
+#include "../../Aharos/Helper/CollisionShape.hpp"
 
 class CollisionSystem : public es::System
 {
     public:
-        CollisionSystem();
+        typedef map::Map<map::Orthogonal,map::DefaultGen<map::Orthogonal>> WorldMap;
 
-        void setChunks(ChunkManager& chunks);
+        CollisionSystem(WorldMap& map);
 
         static std::string getId();
 
@@ -19,7 +25,7 @@ class CollisionSystem : public es::System
         bool projectileCollision(sf::FloatRect const& rect, es::Entity::Ptr& e);
 
     private:
-        ChunkManager* mChunks;
+        WorldMap& mMap;
 };
 
 #endif // COLLISIONSYSTEM_HPP

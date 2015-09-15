@@ -11,21 +11,42 @@ std::string InventoryComponent::getId()
 
 void InventoryComponent::addItem(Item::Ptr item)
 {
-    mItems.push_back(item);
+    if (item != nullptr)
+    {
+        addItem(item->getId());
+    }
+}
+
+void InventoryComponent::addItem(std::size_t itemId)
+{
+    if (!has(itemId) && !isFull())
+    {
+        mItems[itemId] = 1;
+    }
+    else if (has(itemId))
+    {
+        mItems[itemId]++;
+    }
 }
 
 Item::Ptr InventoryComponent::moveLastItem()
 {
-    if (mItems.size() > 0)
+    for (auto itr = mItems.begin(); itr != mItems.end(); itr++)
     {
-        Item::Ptr i = nullptr;
-        if (mItems.back() != nullptr)
+        if (itr->second == 0)
         {
-            i = std::make_shared<Item>(*mItems.back());
+            mItems.erase(itr);
         }
-        mItems.back() = nullptr;
-        mItems.pop_back();
-        return i;
+    }
+    for (auto itr = mItems.begin(); itr != mItems.end(); itr++)
+    {
+        if (itr->second > 0)
+        {
+            itr->second--;
+            Item::Ptr item = std::make_shared<Item>();
+            item->setId(itr->first);
+            return item;
+        }
     }
     return nullptr;
 }
@@ -42,10 +63,32 @@ std::size_t InventoryComponent::getSize() const
 
 std::size_t InventoryComponent::getItemCount() const
 {
-    return mItems.size();
+    std::size_t count = 0;
+    for (auto itr = mItems.begin(); itr != mItems.end(); itr++)
+    {
+        count += itr->second;
+    }
+    return count;
 }
 
 bool InventoryComponent::isFull() const
 {
     return mSize <= mItems.size();
+}
+
+bool InventoryComponent::has(std::size_t itemId) const
+{
+    return mItems.find(itemId) != mItems.end();
+}
+
+std::size_t InventoryComponent::amount(std::size_t itemId) const
+{
+    if (has(itemId))
+    {
+        return mItems.at(itemId);
+    }
+    else
+    {
+        return 0;
+    }
 }

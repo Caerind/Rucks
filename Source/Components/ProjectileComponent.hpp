@@ -1,8 +1,8 @@
 #ifndef PROJECTILECOMPONENT_HPP
 #define PROJECTILECOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
-#include "../../Lib/EntitySystem/Entity.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -15,15 +15,16 @@ class ProjectileComponent : public es::Component
             None,
             Arrow,
             Fireball,
-            // TODO (#7#): More Projectiles !
+            // TODO : More Projectiles !
         };
 
         ProjectileComponent();
 
         static std::string getId();
 
-        void setStricker(es::Entity::Ptr stricker);
-        es::Entity::Ptr getStricker() const;
+        void setStrickerId(std::size_t stricker);
+        std::size_t getStrickerId() const;
+        es::Entity::Ptr getStricker();
 
         void setType(Type type);
         Type getType() const;
@@ -42,25 +43,21 @@ class ProjectileComponent : public es::Component
         float getDistanceTraveled() const;
         bool fallDown() const;
 
-        static std::string getTextureId(Type type);
+        /*static std::string getTextureId(Type type);
         static sf::Vector2f getSize(Type type);
         static sf::Vector2i getSheetSize(Type type);
-        static sf::IntRect getTextureRect(Type type);
-
-        static void loadProjectileTextures();
-        static void releaseProjectileTextures();
+        static sf::IntRect getTextureRect(Type type);*/
 
     private:
         Type mType;
 
         float mRange;
         unsigned int mDamage;
-
         sf::Vector2f mDirection;
 
         float mDistanceTraveled;
 
-        es::Entity::Ptr mStricker;
+        std::size_t mStricker;
 };
 
 #endif // PROJECTILECOMPONENT_HPP

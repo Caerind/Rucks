@@ -1,16 +1,11 @@
-#include "../Lib/Aharos/Application.hpp"
-
-#include "Configuration.hpp"
-#include "World.hpp"
+#include "../Aharos/Application/Application.hpp"
 
 #include "States/GameState.hpp"
 
+#include "Configuration.hpp"
+
 int main()
 {
-    // Load Config
-    Configuration::instance().initialize();
-    Configuration::instance().loadFromFile("Assets/Data/settings.conf");
-
     // Load Application
     ah::Application::instance().loadFont("Coolveticca","Assets/Fonts/Coolveticca.ttf");
     ah::Application::instance().showDebugScreen(true);
@@ -23,23 +18,15 @@ int main()
     ah::Application::instance().setMouseCursorTexture("Assets/Textures/cursor.png");
     ah::Application::instance().useCustomMouseCursor();
 
+    Configuration::instance().initialize();
+
     // Register States
     ah::Application::instance().registerState<GameState>(GameState::getID());
-
-    // Load World
-    World::instance().initialize();
-    World::instance().loadFromFile("Assets/World/world.dat");
 
     // Run
     ah::Application::instance().pushState(GameState::getID());
     ah::Application::instance().run();
 
-    // Save World
-    World::instance().saveToFile("Assets/World/world.dat");
-    World::instance().terminate();
-
-    // Save Config
-    Configuration::instance().saveToFile("Assets/Data/settings.conf");
     Configuration::instance().terminate();
 
     return EXIT_SUCCESS;

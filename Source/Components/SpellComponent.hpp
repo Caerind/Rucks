@@ -1,17 +1,19 @@
 #ifndef SPELLCOMPONENT_HPP
 #define SPELLCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
 
-#include "../../Lib/Aharos/Application.hpp"
+#include "../../Aharos/Renderer/Renderer.hpp"
+#include "../../Aharos/Renderer/Sprite.hpp"
+
+#include "TransformComponent.hpp"
 
 #include "../Spells.hpp"
 
-#include <vector>
+#include <array>
 
-#include <Thor/Time/CallbackTimer.hpp>
-
-class SpellComponent : public es::Component
+class SpellComponent : public es::Component, public rd::Sprite
 {
     public:
         SpellComponent();
@@ -19,27 +21,29 @@ class SpellComponent : public es::Component
 
         static std::string getId();
 
-        void learnSpell(Spell* spell);
+        Spell* getSpell(std::size_t i);
+        void setSpell(std::size_t i, Spell* spell);
 
-        std::size_t getSpellCount() const;
-
-        void setActiveSpell(std::size_t id);
-        std::size_t getActiveSpellId() const;
+        bool isCasting() const;
+        sf::Time getCasting() const;
         Spell* getActiveSpell();
 
-        Spell* getSpell(std::size_t id);
+        bool canSpell(std::size_t i);
+        void spell(std::size_t i);
 
-        bool canSpell();
-        void spell();
-        void update(es::Entity::Ptr stricker, es::Entity::Ptr target, sf::Vector2f const& position, sf::Vector2f const& direction);
-        sf::Time getRemainingCastTime();
+        void update(sf::Time dt);
+        void render(sf::RenderTarget& target);
+
+        void setSpellPosition(float x, float y);
 
     private:
-        std::size_t mActiveSpell;
-        std::vector<Spell*> mSpells;
+        std::array<Spell*,5> mSpells;
 
-        thor::CallbackTimer mCaster;
-        bool mWasRunning; // Fix until we've got a problem with callback
+        std::size_t mCastingSpell;
+        sf::Time mCasting;
+        bool mIsCasting;
+
+        sf::Vector2f mPosition;
 };
 
 #endif // SPELLCOMPONENT_HPP

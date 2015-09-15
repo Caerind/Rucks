@@ -3,7 +3,7 @@
 
 ProjectileComponent::ProjectileComponent()
 {
-    mStricker = nullptr;
+    mStricker = 0;
     mDistanceTraveled = 0.f;
 }
 
@@ -12,14 +12,19 @@ std::string ProjectileComponent::getId()
     return "ProjectileComponent";
 }
 
-void ProjectileComponent::setStricker(es::Entity::Ptr stricker)
+void ProjectileComponent::setStrickerId(std::size_t stricker)
 {
     mStricker = stricker;
 }
 
-es::Entity::Ptr ProjectileComponent::getStricker() const
+std::size_t ProjectileComponent::getStrickerId() const
 {
     return mStricker;
+}
+
+es::Entity::Ptr ProjectileComponent::getStricker()
+{
+    return World::instance().getEntities().get(mStricker);
 }
 
 void ProjectileComponent::setType(ProjectileComponent::Type type)
@@ -54,12 +59,16 @@ unsigned int ProjectileComponent::getDamage() const
 
 void ProjectileComponent::setDirection(sf::Vector2f const& direction)
 {
-    mDirection = thor::unitVector<float>(direction);
+    mDirection = direction;
+	if (mDirection != sf::Vector2f())
+	{
+		mDirection = thor::unitVector<float>(mDirection);
+	}
     if (hasParent())
     {
         if (mParent->hasComponent<TransformComponent>())
         {
-            mParent->getComponent<TransformComponent>().setRotation(static_cast<float>(atan2(direction.y,direction.x) * 180 / 3.14159265) + 90.f);
+            mParent->getComponent<TransformComponent>().setRotation(static_cast<float>(atan2(mDirection.y,mDirection.x) * 180 / 3.14159265) + 90.f);
         }
     }
 }
@@ -112,14 +121,3 @@ sf::IntRect ProjectileComponent::getTextureRect(Type type)
 }
 
 */
-
-void ProjectileComponent::loadProjectileTextures()
-{
-    World::instance().getResources().loadTexture("projectiles","Assets/Textures/projectiles.png");
-    World::instance().getResources().getTexture("projectiles").setSmooth(true);
-}
-
-void ProjectileComponent::releaseProjectileTextures()
-{
-    World::instance().getResources().releaseTexture("projectiles");
-}

@@ -1,16 +1,15 @@
 #include "PlayerControllerSystem.hpp"
-#include "../Configuration.hpp"
-#include "../World.hpp"
-#include "../../Lib/Aharos/Application.hpp"
 
 PlayerControllerSystem::PlayerControllerSystem()
 : es::System()
 , ah::ActionTarget(Configuration::instance().getPlayerInput())
 {
+    mFilter.requires(PlayerComponent::getId());
     mFilter.requires(TransformComponent::getId());
     mFilter.requires(MovementComponent::getId());
-    mFilter.requires(PlayerComponent::getId());
+    mFilter.requires(HumanComponent::getId());
     mFilter.requires(WeaponComponent::getId());
+    mFilter.requires(FactionComponent::getId());
     mFilter.requires(SpellComponent::getId());
 }
 
@@ -23,59 +22,62 @@ void PlayerControllerSystem::update()
 {
     mMap->invokeCallbacks(mSystem,&(ah::Application::instance()));
 
-    sf::Vector2f mPos = ah::Application::instance().getMousePositionView(World::instance().getView());
-
-    es::ComponentFilter filterMonster;
-    filterMonster.requires(MonsterComponent::getId());
-    filterMonster.requires(BoxComponent::getId());
-    filterMonster.requires(StatComponent::getId());
-    es::EntityArray monster = World::instance().getEntities().getByFilter(filterMonster);
-
-    es::ComponentFilter filterSpellTarget;
-    filterSpellTarget.requires(BoxComponent::getId());
-    filterSpellTarget.requires(StatComponent::getId());
-    es::EntityArray spellTarget = World::instance().getEntities().getByFilter(filterSpellTarget);
-
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
-        sf::Vector2f direction;
-        if (isActive("up"))
+        // Movement
         {
-            direction.y -= 1.f;
-        }
-        if (isActive("left"))
-        {
-            direction.x -= 1.f;
-        }
-        if (isActive("down"))
-        {
-            direction.y += 1.f;
-        }
-        if (isActive("right"))
-        {
-            direction.x += 1.f;
-        }
-        mEntities[i]->getComponent<MovementComponent>().setDirection(direction);
-        mEntities[i]->getComponent<AnimationComponent>().setDirection(mPos);
+            sf::Vector2f direction;
+            if (isActive("up"))
+            {
+                direction.y -= 1.f;
+            }
+            if (isActive("left"))
+            {
+                direction.x -= 1.f;
+            }
+            if (isActive("down"))
+            {
+                direction.y += 1.f;
+            }
+            if (isActive("right"))
+            {
+                direction.x += 1.f;
+            }
 
+            mEntities[i]->getComponent<MovementComponent>().setDirection(direction);
+        }
+
+        // Look At
+        sf::Vector2f mPos = ah::Application::instance().getMousePositionView(rd::Renderer::getView());
+        mEntities[i]->getComponent<HumanComponent>().setDirection(mPos);
+
+        // To Start Projectile
+        sf::Vector2f delta = mPos - mEntities[i]->getComponent<TransformComponent>().getPosition();
+        sf::Vector2f dir;
+        if (delta != sf::Vector2f())
+        {
+            dir = thor::unitVector<float>(delta);
+        }
+
+        // Weapon
         if (isActive("action"))
         {
             WeaponComponent& w = mEntities[i]->getComponent<WeaponComponent>();
-            sf::Vector2f diff = mPos - mEntities[i]->getComponent<TransformComponent>().getPosition();
             if (w.canAttack())
             {
                 if (w.isLongRange())
                 {
-                    w.attack(diff);
+                    w.attack(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
                 }
                 else
                 {
                     bool attacked = false;
-                    for (unsigned int j = 0; j < monster.size(); j++)
+                    auto targets = mEntities[i]->getComponent<FactionComponent>().getListOfEnemies();
+                    for (std::size_t j = 0; j < targets.size(); j++)
                     {
-                        if (monster[j]->getComponent<BoxComponent>().contains(mPos))
+                        if (targets[j]->getComponent<BoxComponent>().contains(mPos))
                         {
-                            w.attack(monster[j]);
+                            w.attack(targets[j]);
                             attacked = true;
                         }
                     }
@@ -87,83 +89,52 @@ void PlayerControllerSystem::update()
             }
         }
 
-        SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
-
-        es::Entity::Ptr target = nullptr;
-        for (std::size_t i = 0; i < spellTarget.size(); i++)
+        // Spell
+        if (isActive("spell1") || isActive("spell2") || isActive("spell3") || isActive("spell4") || isActive("spell5"))
         {
-            if (spellTarget[i]->getComponent<BoxComponent>().contains(mPos))
-            {
-                target = spellTarget[i];
-            }
-        }
-        sf::Vector2f dir = thor::unitVector(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
+            std::size_t index;
+            if (isActive("spell1")) index = 0;
+            if (isActive("spell2")) index = 1;
+            if (isActive("spell3")) index = 2;
+            if (isActive("spell4")) index = 3;
+            if (isActive("spell5")) index = 4;
 
-        if (s.canSpell()) // Isnt already casting
-        {
-            bool spell = false;
-            std::size_t id = 0;
-            if (isActive("spell1"))
+            SpellComponent& s = mEntities[i]->getComponent<SpellComponent>();
+            if (s.getSpell(index) != nullptr)
             {
-                spell = true;
-                id = 0;
-            }
-            if (isActive("spell2"))
-            {
-                spell = true;
-                id = 1;
-            }
-            if (isActive("spell3"))
-            {
-                spell = true;
-                id = 2;
-            }
-            if (isActive("spell4"))
-            {
-                spell = true;
-                id = 3;
-            }
-            if (isActive("spell5"))
-            {
-                spell = true;
-                id = 4;
-            }
-
-            Spell* selectedSpell = s.getSpell(id);
-            if (spell && selectedSpell != nullptr)
-            {
-                selectedSpell->setStricker(mEntities[i]);
-                selectedSpell->setTarget(target);
-                selectedSpell->setPosition(mPos);
-                selectedSpell->setDirection(dir);
-                if (selectedSpell->canSpell()) // Mana Cooldown Range
+                s.getSpell(index)->setStricker(mEntities[i]);
+                s.getSpell(index)->setDirection(dir);
+                s.getSpell(index)->setPosition(mPos);
+                s.getSpell(index)->setTarget(getTarget(mPos));
+                if (s.canSpell(index))
                 {
-                    s.setActiveSpell(id);
-                    s.spell();
+                    s.spell(index);
                 }
             }
         }
-        else // Is casting
-        {
-            es::Entity::Ptr target = nullptr;
-            for (std::size_t i = 0; i < spellTarget.size(); i++)
-            {
-                if (spellTarget[i]->getComponent<BoxComponent>().contains(mPos))
-                {
-                    target = spellTarget[i];
-                }
-            }
-            sf::Vector2f dir = thor::unitVector(mPos - mEntities[i]->getComponent<TransformComponent>().getPosition());
 
-            s.update(mEntities[i],target,mPos,dir);
-        }
-
-
-        World::instance().getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());
-        SpellHUD& spellHUD = World::instance().getHUD().getSpells();
-        // TODO : update SPELL HUD
+        rd::Renderer::getView().setCenter(mEntities[i]->getComponent<TransformComponent>().getPosition());
     }
 
-
     mMap->clearEvents();
+}
+
+es::EntityPtr PlayerControllerSystem::getTarget(sf::Vector2f const& position)
+{
+    es::ComponentFilter filter;
+    filter.requires(StatComponent::getId());
+    filter.requires(BoxComponent::getId());
+    filter.requires(TransformComponent::getId());
+
+    auto entities = World::instance().getEntities().getByFilter(filter);
+
+    for (std::size_t i = 0; i < entities.size(); i++)
+    {
+        if (entities[i]->getComponent<BoxComponent>().getBounds().contains(position))
+        {
+            return entities[i];
+        }
+    }
+
+    return nullptr;
 }

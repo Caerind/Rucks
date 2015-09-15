@@ -1,7 +1,7 @@
 #ifndef MOVEMENTCOMPONENT_HPP
 #define MOVEMENTCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <Thor/Vectors/VectorAlgebra2D.hpp>

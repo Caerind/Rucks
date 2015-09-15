@@ -4,9 +4,10 @@
 #include "Item.hpp"
 
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <Thor/Math/Random.hpp>
 
-#include "../Components/ProjectileComponent.hpp"
+//#include "../Components/ProjectileComponent.hpp"
 
 class Weapon : public Item
 {

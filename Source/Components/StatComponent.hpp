@@ -1,19 +1,20 @@
 #ifndef STATCOMPONENT_HPP
 #define STATCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
+
+#include "../../Aharos/Renderer/Renderer.hpp"
+#include "../../Aharos/Renderer/Renderable.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
 
-class StatComponent : public es::Component, public sf::Drawable, public sf::Transformable
+class StatComponent : public es::Component, public rd::Renderable
 {
     public:
         StatComponent();
+        ~StatComponent();
 
         static std::string getId();
-
 
         //
         // Life
@@ -34,8 +35,10 @@ class StatComponent : public es::Component, public sf::Drawable, public sf::Tran
         void setLifeBarSize(sf::Vector2f const& size);
         sf::Vector2f getLifeBarSize() const;
 
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
+        sf::FloatRect getBounds();
+        void render(sf::RenderTarget& target);
+        void setPosition(sf::Vector2f const& position);
+        sf::Vector2f getPosition() const;
 
         //
         // Mana
@@ -75,10 +78,20 @@ class StatComponent : public es::Component, public sf::Drawable, public sf::Tran
         void setAgility(int agility);
         int getAgility() const;
 
+
+        //
+        // Money
+        //
+        void setMoney(int money);
+        int getMoney() const;
+        void spendMoney(int money);
+        void earnMoney(int money);
+
     private:
         int mLife;
         int mLifeMax;
         sf::Vector2f mLifeBarSize;
+        sf::Vector2f mLifeBarPosition;
 
         int mMana;
         int mManaMax;
@@ -89,6 +102,8 @@ class StatComponent : public es::Component, public sf::Drawable, public sf::Tran
         int mStrength;
         int mIntelligence;
         int mAgility;
+
+        int mMoney;
 };
 
 #endif // STATCOMPONENT_HPP

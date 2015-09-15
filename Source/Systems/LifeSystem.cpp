@@ -12,7 +12,7 @@ std::string LifeSystem::getId()
 
 void LifeSystem::update()
 {
-    for (unsigned int i = 0; i < mEntities.size(); i++)
+    for (std::size_t i = 0; i < mEntities.size(); i++)
     {
         if (mEntities[i]->getComponent<StatComponent>().isDead())
         {

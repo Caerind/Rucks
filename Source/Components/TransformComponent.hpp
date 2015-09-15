@@ -1,7 +1,7 @@
 #ifndef TRANSFORMCOMPONENT_HPP
 #define TRANSFORMCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
 
 #include <SFML/Graphics/Transformable.hpp>
 

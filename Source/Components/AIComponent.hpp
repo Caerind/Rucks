@@ -1,8 +1,8 @@
 #ifndef AICOMPONENT_HPP
 #define AICOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
-#include "../../Lib/EntitySystem/Entity.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Entity.hpp"
 
 // Target Filter
 #include "TransformComponent.hpp"
@@ -18,7 +18,8 @@ class AIComponent : public es::Component
 
         static std::string getId();
 
-        void setTarget(es::Entity::Ptr target);
+        bool setTargetId(std::size_t target);
+        std::size_t getTargetId() const;
         es::Entity::Ptr getTarget();
         bool hasTarget();
 
@@ -29,7 +30,7 @@ class AIComponent : public es::Component
         float getOutOfView() const;
 
     private:
-        es::Entity::Ptr mTarget;
+        std::size_t mTarget;
         float mViewDistance;
         float mOutOfView;
 };

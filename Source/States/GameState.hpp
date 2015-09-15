@@ -1,7 +1,9 @@
 #ifndef GAMESTATE_HPP
 #define GAMESTATE_HPP
 
-#include "../../Lib/Aharos/State.hpp"
+#include "../Aharos/Application/State.hpp"
+
+#include "../World.hpp"
 
 class GameState : public ah::State
 {

@@ -4,6 +4,21 @@ Item::Item()
 {
 }
 
+void Item::setId(int id)
+{
+    mId = id;
+}
+
+int Item::getId() const
+{
+    return mId;
+}
+
+bool Item::isStackable() const
+{
+    return true;
+}
+
 void Item::setName(std::string const& name)
 {
     mName = name;

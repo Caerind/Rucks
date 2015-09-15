@@ -1,7 +1,7 @@
 #ifndef ITEMCOMPONENT_HPP
 #define ITEMCOMPONENT_HPP
 
-#include "../../Lib/EntitySystem/Component.hpp"
+#include "../../Aharos/EntitySystem/Component.hpp"
 #include "../Game/Item.hpp"
 
 class ItemComponent : public es::Component
